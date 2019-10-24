@@ -2,7 +2,14 @@ import _ from "lodash";
 
 export class GenericDatasource {
 
-  constructor(instanceSettings,$q,  backendSrv, templateSrv) {
+  /**
+   * Constructor
+   * @param {*} instanceSettings 
+   * @param {*} $q 
+   * @param {*} backendSrv 
+   * @param {*} templateSrv 
+   */
+  constructor(instanceSettings, $q, backendSrv, templateSrv) {
     this.type = instanceSettings.type;
     this.url = instanceSettings.url;
     this.name = instanceSettings.name;
@@ -13,10 +20,17 @@ export class GenericDatasource {
     this.headers = {'Content-Type': 'application/json'};
   }
 
+  /**
+   * Grafana uses this function to initiate all queries
+   */
   query(options) {
     return this.performTimeseriesQuery(options);
   }
 
+  /**
+   * Create a request to the scalyr time series endpoint.
+   * @param {*} options 
+   */
   createTimeSeriesQuery(options) {
     let queries = [];
     let variableFilter = this.getFilterFromVariables();
@@ -45,6 +59,9 @@ export class GenericDatasource {
     }
   }
 
+  /**
+   * Convert the selected variable into filter accepted by scalyr query language
+   */
   getFilterFromVariables() {
     let variableFilter = '';
     if (this.templateSrv.variables && this.templateSrv.variables.length > 0) {
@@ -66,10 +83,18 @@ export class GenericDatasource {
     return variableFilter;
   }
 
+  /**
+   * Get how many buckets to return based on the query time range
+   * @param {*} options 
+   */
   getNumberOfBuckets(options) {
     return Math.floor((_.get(options, 'range.to').valueOf() - _.get(options, 'range.from').valueOf()) / options.intervalMs);
   }
 
+  /**
+   * Perform the timeseries queyr using the grafana proxy.
+   * @param {*} options 
+   */
   performTimeseriesQuery(options) {
     const query = this.createTimeSeriesQuery(options);
     return this.backendSrv.datasourceRequest(query)
@@ -97,6 +122,10 @@ export class GenericDatasource {
     );
   }
   
+  /**
+   * Test data source settings. This verifies API key using the scalyr time series API. 
+   * if the endpoint returns 401 that means, the token is invalid
+   */
   testDatasource() {
     return this.backendSrv.datasourceRequest({
       url: this.url + '/scalyrApi', 
@@ -106,9 +135,17 @@ export class GenericDatasource {
       if (response.status !== 401) {
         return { status: "success", message: "Data source is working", title: "Success" };
       }
+    }).catch(response => {
+      if (response.status !== 401) {
+        return { status: "success", message: "Data source is working", title: "Success" };
+      }
     });
   }
 
+  /**
+   * Grafana uses this function to load metric values. 
+   * @param {*} query 
+   */
   metricFindQuery(query) {
     let d = new Date();
 
@@ -125,7 +162,8 @@ export class GenericDatasource {
       }),
       method: 'POST'
     }).then((response) => {
-      return response.data.values.map(value => 
+      let values = _.get(response, 'data.values', [])
+      return values.map(value => 
         {
           return {
             text: value.value,
@@ -133,7 +171,6 @@ export class GenericDatasource {
           }
         }
       )
-      //return response.data.values.map(value => value.value);
     })
   }
 }

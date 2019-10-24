@@ -5,6 +5,11 @@
   "name": "Scalyr-Grafana-Datasource",
   "id": "scalyr-grafana-datasource",
   "info": {
+    "description": "Scalyr datasource for Grafana",
+    "author": {
+      "name": "Scalyr",
+      "url": "https://www.scalyr.com"
+    }
   },
   "routes": [
     {
