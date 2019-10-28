@@ -1,0 +1,1 @@
+# scalyr-grafana-datasource-plugin
