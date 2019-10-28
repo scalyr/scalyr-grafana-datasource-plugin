@@ -1,0 +1,29 @@
+<div class="gf-form-group">
+  <div class="gf-form-inline">
+    <div class="gf-form">
+      <span class="gf-form-label width-10">Scalyr API Key</span>
+      <input
+        type="text"
+        class="gf-form-input width-30 gf-form-input--has-help-icon"
+        ng-model="ctrl.current.jsonData.scalyrApiKey"
+        spellcheck='false'
+        placeholder="Scalyr API Key"
+      ></input>
+      <info-popover mode="right-absolute">
+        Set this to your read Log Access Key
+      </info-popover>
+    </div>
+  </div>
+  <div class="gf-form-inline">
+    <div class="gf-form">
+      <span class="gf-form-label width-10">Scalyr URL</span>
+      <input
+        type="text"
+        class="gf-form-input width-30 gf-form-input--has-help-icon"
+        ng-model="ctrl.current.jsonData.scalyrUrl"
+        spellcheck='false'
+        placeholder="Scalyr URL"
+      ></input>
+    </div>
+  </div>
+</div>
