@@ -7,6 +7,9 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
     this.scope = $scope;
   }
 
+  /**
+   * Return a list of available function. Count function is only available if a facet isn't selected.
+   */
   getFacetFunctionOptions() {
     let options = [];
     if (!this.target.facet) {
