@@ -1,0 +1,21 @@
+{
+  "type": "datasource",
+  "metrics": true,
+  "annotations": false,
+  "name": "Scalyr-Grafana-Datasource",
+  "id": "scalyr-grafana-datasource",
+  "info": {
+  },
+  "routes": [
+    {
+      "path": "timeSeriesApi",
+      "method": "POST",
+      "url": "{{.JsonData.scalyrUrl}}/api/timeseriesQuery"
+    },
+    {
+      "path": "facetQuery",
+      "method": "POST",
+      "url": "{{.JsonData.scalyrUrl}}/api/facetQuery"
+    }
+  ]
+}
