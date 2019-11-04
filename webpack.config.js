@@ -63,5 +63,4 @@ module.exports = {
       { from: '../README.md', to: '.'}
     ])
   ],
-
 }

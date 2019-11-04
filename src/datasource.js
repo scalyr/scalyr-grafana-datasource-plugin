@@ -19,12 +19,79 @@ export class GenericDatasource {
     this.templateSrv = templateSrv;
     this.headers = {'Content-Type': 'application/json'};
   }
-
+  
   /**
    * Grafana uses this function to initiate all queries
+   * @param {*} options - query settings/options https://grafana.com/docs/plugins/developing/datasources/#query
    */
   query(options) {
     return this.performTimeseriesQuery(options);
+  }
+
+  /**
+   * Grafana uses this function to test data source settings. 
+   * This verifies API key using the facet query API. 
+   * The endpoint returns 401 if the token is invalid.
+   */
+  testDatasource() {
+    let defered = this.q.defer();
+    this.backendSrv.datasourceRequest({
+      url: this.url + '/facetQuery', 
+      data: JSON.stringify({
+        token: this.apiKey,
+        queryType: 'facet',
+        filter: '',
+        startTime: new Date().getTime(),
+        endTime: new Date().getTime(),
+        field: 'XYZ'
+      }),
+      method: 'POST'
+    }).then((response) => {
+      if (response && response.status && response.status === 200) {
+        defered.resolve({
+          status: "success",
+          message: "Data source is working."
+        })
+      } else {
+        defered.reject({
+          status: "error",
+          message: "Incorrect configuration."
+        })
+      }
+    });
+    return defered.promise;
+  }
+  
+  /**
+   * Grafana uses this function to load metric values. 
+   * @param {*} query - query options
+   */
+  metricFindQuery(query) {
+    let d = new Date();
+
+    d.setHours(d.getHours() - 6);
+    return this.backendSrv.datasourceRequest({
+      url: this.url + '/facetQuery',
+      data: JSON.stringify({
+        token: this.apiKey,
+        queryType: 'facet',
+        filter: '',
+        startTime: d.getTime(),
+        endTime: new Date().getTime(),
+        field: query
+      }),
+      method: 'POST'
+    }).then((response) => {
+      let values = _.get(response, 'data.values', [])
+      return values.map(value => 
+        {
+          return {
+            text: value.value,
+            value: value.value
+          }
+        }
+      )
+    })
   }
 
   /**
@@ -60,21 +127,16 @@ export class GenericDatasource {
   }
 
   /**
-   * Convert the selected variable into filter accepted by scalyr query language
+   * Convert the selected variables into filter accepted by scalyr query language
    */
   getFilterFromVariables() {
     let variableFilter = '';
     if (this.templateSrv.variables && this.templateSrv.variables.length > 0) {
-      this.templateSrv.variables.forEach((variable, index) => {
+      this.templateSrv.variables.forEach((variable) => {
         const value = _.get(variable, 'current.value')
         if (variable.multi) {
-          const valueCount =  value.length;
-          for (let i = 0; i < valueCount; i++) {
-            variableFilter = ` ${variableFilter + variable.query} == '${value[i]}' `;
-            if (i !== valueCount - 1) {
-              variableFilter += ' or '
-            }
-          }
+          const variableQuery = value.map(v => ` ${variable.query} == '${v}'`).join(' or ');
+          variableFilter += variableQuery; 
         } else {
           variableFilter = ` ${variableFilter + variable.query} == '${value}' `;
         }
@@ -88,11 +150,11 @@ export class GenericDatasource {
    * @param {*} options 
    */
   getNumberOfBuckets(options) {
-    return Math.floor((_.get(options, 'range.to').valueOf() - _.get(options, 'range.from').valueOf()) / options.intervalMs);
+    return Math.floor((options.range.to.valueOf() - options.range.from.valueOf()) / options.intervalMs);
   }
 
   /**
-   * Perform the timeseries queyr using the grafana proxy.
+   * Perform the timeseries query using the grafana proxy.
    * @param {*} options 
    */
   performTimeseriesQuery(options) {
@@ -100,18 +162,18 @@ export class GenericDatasource {
     return this.backendSrv.datasourceRequest(query)
       .then( (response) => {
         const data = response.data
-        let graphs = {
+        const graphs = {
           data: []
         };
         data.results.forEach((result, index) => {
           let timeStamp = options.range.from.valueOf();
           const dataValues = result.values;
           const currentTarget = options.targets[index];
-          let responseObject = {
+          const responseObject = {
             target: currentTarget.label || currentTarget.queryText,
             datapoints: []
           }
-          for (let i = 0; i <= dataValues.length; i++) {
+          for (let i = 0; i < dataValues.length; i++) {
             responseObject.datapoints.push([dataValues[i], timeStamp]);
             timeStamp += options.intervalMs
           }
@@ -120,57 +182,5 @@ export class GenericDatasource {
         return graphs;
       }
     );
-  }
-  
-  /**
-   * Test data source settings. This verifies API key using the scalyr time series API. 
-   * if the endpoint returns 401 that means, the token is invalid
-   */
-  testDatasource() {
-    return this.backendSrv.datasourceRequest({
-      url: this.url + '/scalyrApi', 
-      data: JSON.stringify({token: this.apiKey, queries: []}),
-      method: 'POST'
-    }).then(response => {
-      if (response.status !== 401) {
-        return { status: "success", message: "Data source is working", title: "Success" };
-      }
-    }).catch(response => {
-      if (response.status !== 401) {
-        return { status: "success", message: "Data source is working", title: "Success" };
-      }
-    });
-  }
-
-  /**
-   * Grafana uses this function to load metric values. 
-   * @param {*} query 
-   */
-  metricFindQuery(query) {
-    let d = new Date();
-
-    d.setHours(d.getHours() - 6);
-    return this.backendSrv.datasourceRequest({
-      url: this.url + '/facetQuery',
-      data: JSON.stringify({
-        token: this.apiKey,
-        queryType: 'facet',
-        filter: '',
-        startTime: d.getTime(),
-        endTime: new Date().getTime(),
-        field: query
-      }),
-      method: 'POST'
-    }).then((response) => {
-      let values = _.get(response, 'data.values', [])
-      return values.map(value => 
-        {
-          return {
-            text: value.value,
-            value: value.value
-          }
-        }
-      )
-    })
   }
 }

@@ -2,7 +2,7 @@
   "type": "datasource",
   "metrics": true,
   "annotations": false,
-  "name": "Scalyr-Grafana-Datasource",
+  "name": "Scalyr Grafana Datasource",
   "id": "scalyr-grafana-datasource",
   "info": {
     "description": "Scalyr datasource for Grafana",

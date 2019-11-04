@@ -8,7 +8,7 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
   }
 
   /**
-   * Return a list of available function. Count function is only available if a facet isn't selected.
+   * Return a list of available functions. The 'count' function is only available if a facet isn't selected.
    */
   getFacetFunctionOptions() {
     let options = [];
@@ -44,4 +44,3 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
 }
 
 GenericDatasourceQueryCtrl.templateUrl = 'partials/query.editor.html';
-
