@@ -1,0 +1,26 @@
+<query-editor-row query-ctrl="ctrl" class="generic-datasource-query-row" has-text-edit-mode="true">
+  <div class="gf-form-inline">
+    <div class="gf-form">
+      <span class="gf-form-label">Function</span>
+      <gf-form-dropdown model="ctrl.target.function"
+        get-options="ctrl.getFacetFunctionOptions()"
+        on-change="ctrl.onChangeInternal()">
+      </gf-form-dropdown>
+    </div>
+
+    <div class="gf-form">
+      <span class="gf-form-label">Facet</span>
+      <input type="text" class="gf-form-input" ng-disabled='ctrl.target.function === "count"' ng-model="ctrl.target.facet" placeholder="Facet" ng-model-options="{debounce: 1000}" ng-change="ctrl.onChangeInternal()"/>
+    </div>
+  </div>
+  <div class="gf-form-inline">
+    <div class="gf-form">
+      <span class="gf-form-label">Label</span>
+      <input type="text" class="gf-form-input" ng-model="ctrl.target.label" placeholder="Label for query" />
+    </div>
+    <div class="gf-form gf-form--grow">
+      <span class="gf-form-label width-10">Query</span>
+      <input type="text" class="gf-form-input" ng-change="ctrl.onChangeInternal()" ng-model-options="{debounce: 1000}" ng-model="ctrl.target.queryText" placeholder="Enter Scalyr Query" />
+    </div>
+  </div>
+</query-editor-row>
