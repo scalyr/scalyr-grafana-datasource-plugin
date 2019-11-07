@@ -8,6 +8,11 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
     this.queryTypes = {
       POWER_QUERY: 'Power Query',
       STANDARD_QUERY: 'Standard Query'
+    };
+
+    // Default to standard query.
+    if (!this.target.queryType) {
+      this.target.queryType = this.queryTypes.STANDARD_QUERY;
     }
   }
 
