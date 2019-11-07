@@ -5,6 +5,10 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
   constructor($scope, $injector)  {
     super($scope, $injector);
     this.scope = $scope;
+    this.queryTypes = {
+      POWER_QUERY: 'Power Query',
+      STANDARD_QUERY: 'Standard Query'
+    }
   }
 
   /**
@@ -30,8 +34,19 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
         { text: '99th %ile', value: 'p99'},
         { text: '99.9th %ile', value: 'p999'}
       ]
-    )
+    );
     return options;
+  }
+
+  /**
+   * Get list of query type options. Only two options are power query or standard query.
+   * @returns {*[]}
+   */
+  getQueryTypeOptions() {
+    return [
+      { text: this.queryTypes.POWER_QUERY, value: this.queryTypes.POWER_QUERY },
+      { text: this.queryTypes.STANDARD_QUERY, value: this.queryTypes.STANDARD_QUERY }
+    ]
   }
 
   toggleEditorMode() {

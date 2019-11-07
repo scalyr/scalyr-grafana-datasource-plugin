@@ -1,6 +1,20 @@
 <query-editor-row query-ctrl="ctrl" class="generic-datasource-query-row" has-text-edit-mode="true">
   <div class="gf-form-inline">
     <div class="gf-form">
+      <span class="gf-form-label">Query Type</span>
+      <gf-form-dropdown model="ctrl.target.queryType"
+        get-options="ctrl.getQueryTypeOptions()">
+      </gf-form-dropdown>
+    </div>
+  </div>
+  <div class="gf-form-inline" ng-if="ctrl.target.queryType === ctrl.queryTypes.POWER_QUERY">
+    <div class="gf-form">
+      <span class="gf-form-label">Query</span>
+      <textarea rows="5" cols="100" class="gf-form-input" ng-blur="ctrl.onChangeInternal()" ng-model="ctrl.target.queryText"></textarea>
+    </div>
+  </div>
+  <div class="gf-form-inline" ng-if="ctrl.target.queryType === ctrl.queryTypes.STANDARD_QUERY">
+    <div class="gf-form">
       <span class="gf-form-label">Function</span>
       <gf-form-dropdown model="ctrl.target.function"
         get-options="ctrl.getFacetFunctionOptions()"
@@ -13,7 +27,7 @@
       <input type="text" class="gf-form-input" ng-disabled='ctrl.target.function === "count"' ng-model="ctrl.target.facet" placeholder="Facet" ng-model-options="{debounce: 1000}" ng-change="ctrl.onChangeInternal()"/>
     </div>
   </div>
-  <div class="gf-form-inline">
+  <div class="gf-form-inline" ng-if="ctrl.target.queryType === ctrl.queryTypes.STANDARD_QUERY">
     <div class="gf-form">
       <span class="gf-form-label">Label</span>
       <input type="text" class="gf-form-input" ng-model="ctrl.target.label" placeholder="Label for query" />
