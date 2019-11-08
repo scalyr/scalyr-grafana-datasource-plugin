@@ -1,6 +1,13 @@
 # Scalyr data source for Grafana
 
-The Scalyr Grafana data source plugin allows existing Scalyr customers to create and visualize graphs and dashboards in Grafana using data in Scalyr. Customers can then visualize Scalyr data next to other data sources they may want to monitor on one single dashboard. 
+The Scalyr Grafana data source plugin you to create and visualize graphs and dashboards in Grafana using data in Scalyr. You can then visualize Scalyr data next to other data sources they may want to monitor on one single dashboard. 
+
+
+![SystemDashboard](images/SystemDashboard.png)
+
+With the Scalyr plugin, you will be able to create and visualize your log-based metrics along side all your other data sources. It's a great way to have a single pane of glass today's complex systems. You can leverage grafana alerts based on Scalyr data to notify you when there are possible issues. More importantly, you'll soon be able to jump to Scalyr's fast, easy and intuitive platform to quickly identify the root cause of issues that may arise. 
+
+
 
 ### Prerequisites
 * **An installed Grafana server instance with write access**: This document assumes that an existing instance of Grafana already exists. If you need help bringing up a Grafana instance, please refer to the documentation provided by Grafana. 
@@ -106,4 +113,5 @@ Note: you can add multiple queries to a visualization to plot multiple series on
 1. Breakdown graphs are currently not supported. These may be supported in the future. 
 
 2. Power Queries is an experimental feature and requires the user to change the visualization to a ***“table”*** inside Grafana. 
+3. Linking back to Scalyr is a work in progress and will be part of the next release. 
 
