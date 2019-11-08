@@ -21,6 +21,11 @@
       "path": "facetQuery",
       "method": "POST",
       "url": "{{.JsonData.scalyrUrl}}/api/facetQuery"
+    },
+    {
+      "path": "powerQuery",
+      "method": "POST",
+      "url": "{{.JsonData.scalyrUrl}}/api/powerQuery"
     }
   ]
 }

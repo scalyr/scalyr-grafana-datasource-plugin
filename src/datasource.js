@@ -18,6 +18,10 @@ export class GenericDatasource {
     this.q = $q;
     this.templateSrv = templateSrv;
     this.headers = {'Content-Type': 'application/json'};
+    this.queryTypes = {
+      POWER_QUERY: 'Power Query',
+      STANDARD_QUERY: 'Standard Query'
+    }
   }
   
   /**
@@ -25,6 +29,24 @@ export class GenericDatasource {
    * @param {*} options - query settings/options https://grafana.com/docs/plugins/developing/datasources/#query
    */
   query(options) {
+    const queryType = options.targets[0].queryType;
+    const defered = this.q.defer();
+    if (!options.targets.every(x => x.queryType === queryType)) {
+      return Promise.reject({
+        status: "error",
+        message: "All queries should have the same query type."
+      });
+    }
+    if (queryType === this.queryTypes.POWER_QUERY) {
+      if (options.targets.length === 1) {
+        return this.performPowerQuery(options);
+      } else {
+        return Promise.reject({
+          status: "error",
+          message: "You can only have one power query per panel."
+        });
+      }
+    }
     return this.performTimeseriesQuery(options);
   }
 
@@ -161,7 +183,7 @@ export class GenericDatasource {
     const query = this.createTimeSeriesQuery(options);
     return this.backendSrv.datasourceRequest(query)
       .then( (response) => {
-        const data = response.data
+        const data = response.data;
         const graphs = {
           data: []
         };
@@ -172,15 +194,58 @@ export class GenericDatasource {
           const responseObject = {
             target: currentTarget.label || currentTarget.queryText,
             datapoints: []
-          }
+          };
           for (let i = 0; i < dataValues.length; i++) {
             responseObject.datapoints.push([dataValues[i], timeStamp]);
             timeStamp += options.intervalMs
           }
           graphs.data.push(responseObject);
-        })
+        });
         return graphs;
       }
     );
+  }
+
+  /**
+   * Create powerquery query to pass to grafana proxy.
+   * @param queryText text of the query
+   * @param startTime start time
+   * @param endTime end time
+   * @returns {{url: string, method: string, headers: {"Content-Type": string}, data: string}}
+   */
+  createPowerQuery(queryText, startTime, endTime) {
+    const query = {
+      token: this.apiKey,
+      query: queryText,
+      startTime: startTime,
+      endTime: endTime
+    };
+    return {
+      url: this.url + '/powerQuery',
+      method: 'POST',
+      headers: this.headers,
+      data: JSON.stringify(query)
+    }
+  }
+
+  /**
+   * Perform the powerquery using grafana proxy.
+   * @param options
+   * @returns {Promise<{data: *[]}> | *}
+   */
+  performPowerQuery(options) {
+    const target = options.targets[0];
+    const query = this.createPowerQuery(target.queryText, options.range.from.valueOf(), options.range.to.valueOf());
+    return this.backendSrv.datasourceRequest(query).then( (response) => {
+      const data = response && response.data;
+      data.columns.map(col => col.text = col.name);
+      return {
+        data : [{
+          type: "table",
+          columns: data.columns,
+          rows: data.values
+        }]
+      };
+    });
   }
 }
