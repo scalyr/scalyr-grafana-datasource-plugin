@@ -64,6 +64,11 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
     }
   }
 
+  /**
+   * Check if the current query target is valid.
+   * @param target
+   * @returns {boolean}
+   */
   isQueryValid(target) {
     let isValid = true;
     if (!!target.conversionFactor) {
