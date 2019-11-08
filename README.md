@@ -39,4 +39,3 @@ After you've installed and configured the datasource, you're ready to start visu
 5. Fill out all the fields and click the Save button. 
 
 Note: you can add multiple queries to a visualization to plot multiple series on the same graph.
-
