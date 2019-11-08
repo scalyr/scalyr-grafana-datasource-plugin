@@ -44,15 +44,15 @@ The Scalyr Grafana data source plugin allows existing Scalyr customers to create
 
 1. In order to verify proper installation you must log in to your grafana instance and navigate to **Configuration Settings -> Data Sources**. 
 
-	![FirstImage] (images/ConfigDataSource.png)
+	![FirstImage](images/ConfigDataSource.png)
 
 2. This will take you into the configuration page. If you already have other data sources installed, you will see them show up here. Click on the **Add data source** button:
 
-	![SecondImage] (images/DataSoureConfig.png)
+	![SecondImage](images/DataSoureConfig.png)
 
 3. If you scroll down on the resulting page you should see “Scalyr Grafana Datasource” show up in the “Others” section. 
 
-	![otherPlugin] (images/OthersPlugin.png)
+	![otherPlugin](images/OthersPlugin.png)
 
 
 4. Click on ***“Select”***. This will take you to a configuration page where you insert your API key mentioned in the prerequisite section. 
