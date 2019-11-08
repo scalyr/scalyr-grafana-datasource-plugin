@@ -245,7 +245,7 @@ export class GenericDatasource {
           columns: data.columns,
           rows: data.values
         }]
-      }
-    })
+      };
+    });
   }
 }

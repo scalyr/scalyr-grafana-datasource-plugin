@@ -23,19 +23,19 @@ The plugin allows you to visualize your data stored in Scalyr in a Grafana insta
     |Scalyr API Key | Your Scalyr Read Logs API Key|
     |Scalyr URL | https://www.scalyr.com or https://eu.scalyr.com for EU users.|
 
-6. Click save and test to verify these settings are correct. 
+6. Click the "Save & Test" button to verify these settings are correct. 
 
 #### Using the Scalyr Datasource
-After you've installed and configured the datasource, you're to start visualizing your Scalyr data inside grafana. To create a visualization in Grafana:
+After you've installed and configured the datasource, you're ready to start visualizing your Scalyr data inside Grafana. To create a visualization in Grafana:
 
-1. Create a new dashboard by click Create > dashboard
+1. Create a new dashboard by clicking Create > dashboard
 2. Select "Add Query"
 3. From the Query dropdown, select "Scalyr Grafana Datasource".
-4. A query datasource consist of 4 parts: 
-    * **Function**: You are given a list of the function that can be applied to the Facet values. You can find more documentation [here](https://www.scalyr.com/help/dashboards#graphFunctions)
+4. A query datasource consist of four parts: 
+    * **Function**: You are given a list of the functions that can be applied to the facet values. You can find more documentation [here](https://www.scalyr.com/help/dashboards#graphFunctions)
     * **Facet**: The name of the event field to be graphed
     * **Label**: Label for the query. This is displayed as the series title in the graph legend.
     * **Query**: Query filter to be used. This field supports [Scalyr query syntax](https://www.scalyr.com/help/query-language).
-5. Fill out all the fields and click the save button. 
+5. Fill out all the fields and click the Save button. 
 
 Note: you can add multiple queries to a visualization to plot multiple series on the same graph.
