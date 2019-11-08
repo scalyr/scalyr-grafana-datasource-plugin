@@ -104,7 +104,7 @@ export class GenericDatasource {
       }),
       method: 'POST'
     }).then((response) => {
-      let values = _.get(response, 'data.values', [])
+      let values = _.get(response, 'data.values', []);
       return values.map(value => 
         {
           return {
@@ -134,7 +134,7 @@ export class GenericDatasource {
         buckets: this.getNumberOfBuckets(options),
         filter: target.queryText + variableFilter,
         function: facetFunction
-      }
+      };
       queries.push(query);
     });
     return {
@@ -176,7 +176,7 @@ export class GenericDatasource {
   }
 
   /**
-   * Perform the timeseries query using the grafana proxy.
+   * Perform the timeseries query using the Grafana proxy.
    * @param {*} options 
    */
   performTimeseriesQuery(options) {
@@ -184,30 +184,56 @@ export class GenericDatasource {
     return this.backendSrv.datasourceRequest(query)
       .then( (response) => {
         const data = response.data;
-        const graphs = {
-          data: []
-        };
-        data.results.forEach((result, index) => {
-          let timeStamp = options.range.from.valueOf();
-          const dataValues = result.values;
-          const currentTarget = options.targets[index];
-          const responseObject = {
-            target: currentTarget.label || currentTarget.queryText,
-            datapoints: []
-          };
-          for (let i = 0; i < dataValues.length; i++) {
-            responseObject.datapoints.push([dataValues[i], timeStamp]);
-            timeStamp += options.intervalMs
-          }
-          graphs.data.push(responseObject);
-        });
-        return graphs;
+        return this.transformTimeSeriesResults(data.results, options);
       }
     );
   }
 
   /**
-   * Create powerquery query to pass to grafana proxy.
+   * Transform data returned by time series query into Grafana timeseries format.
+   * https://grafana.com/docs/plugins/developing/datasources/#query
+   * @param results
+   * @param conversionFactor conversion factor to be applied to each data point. This can be used to for example convert bytes to MB.
+   * @returns {{data: Array}}
+   */
+  transformTimeSeriesResults(results, options) {
+    const graphs = {
+      data: []
+    };
+    results.forEach((result, index) => {
+      let timeStamp = options.range.from.valueOf();
+      const dataValues = result.values;
+      const currentTarget = options.targets[index];
+      const responseObject = {
+        target: currentTarget.label || currentTarget.queryText,
+        datapoints: []
+      };
+      const conversionFactor = this.getValidConversionFactor(currentTarget.conversionFactor);
+      for (let i = 0; i < dataValues.length; i++) {
+        let dataValue = dataValues[i] * conversionFactor;
+        responseObject.datapoints.push([dataValue, timeStamp]);
+        timeStamp += options.intervalMs
+      }
+      graphs.data.push(responseObject);
+    });
+    return graphs;
+  }
+
+  /**
+   * Evaluate the user enter conversion factor to a number.
+   * @param conversionFactor conversion factor.
+   * @returns {*|number}
+   */
+  getValidConversionFactor(conversionFactor) {
+    let evaluatedConversionFactor;
+    try {
+      evaluatedConversionFactor = eval(conversionFactor);
+    } catch (e) {}
+    return evaluatedConversionFactor || 1;
+  }
+
+  /**
+   * Create powerquery query to pass to Grafana proxy.
    * @param queryText text of the query
    * @param startTime start time
    * @param endTime end time
@@ -229,7 +255,7 @@ export class GenericDatasource {
   }
 
   /**
-   * Perform the powerquery using grafana proxy.
+   * Perform the powerquery using Grafana proxy.
    * @param options
    * @returns {Promise<{data: *[]}> | *}
    */
@@ -238,14 +264,25 @@ export class GenericDatasource {
     const query = this.createPowerQuery(target.queryText, options.range.from.valueOf(), options.range.to.valueOf());
     return this.backendSrv.datasourceRequest(query).then( (response) => {
       const data = response && response.data;
-      data.columns.map(col => col.text = col.name);
-      return {
-        data : [{
-          type: "table",
-          columns: data.columns,
-          rows: data.values
-        }]
-      };
-    });
+      return this.transformPowerQueryData(data);
+    })
+  }
+
+  /**
+   * Pure function to transform Power Query Data in table format that Grafana needs.
+   * https://grafana.com/docs/plugins/developing/datasources/#query
+   * @param data
+   * @returns {{data: *[]}}
+   */
+  transformPowerQueryData(data) {
+    const cloneData = _.clone(data);
+    cloneData.columns.map(col => col.text = col.name);
+    return {
+      data : [{
+        type: "table",
+        columns: cloneData.columns,
+        rows: cloneData.values
+      }]
+    }
   }
 }

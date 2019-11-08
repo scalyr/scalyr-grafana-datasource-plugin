@@ -59,7 +59,27 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
   }
 
   onChangeInternal() {
-    this.panelCtrl.refresh(); // Asks the panel to refresh data.
+    if (this.isQueryValid(this.target)) {
+      this.panelCtrl.refresh(); // Asks the panel to refresh data.
+    }
+  }
+
+  /**
+   * Check if the current query target is valid.
+   * @param target
+   * @returns {boolean}
+   */
+  isQueryValid(target) {
+    let isValid = true;
+    if (!!target.conversionFactor) {
+      try {
+        const value = eval(target.conversionFactor);
+        isValid = _.isFinite(value);
+      } catch (e) {
+        isValid = false;
+      }
+    }
+    return isValid;
   }
 }
 

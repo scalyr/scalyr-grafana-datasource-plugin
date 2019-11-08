@@ -26,6 +26,10 @@
       <span class="gf-form-label">Facet</span>
       <input type="text" class="gf-form-input" ng-disabled='ctrl.target.function === "count"' ng-model="ctrl.target.facet" placeholder="Facet" ng-model-options="{debounce: 1000}" ng-change="ctrl.onChangeInternal()"/>
     </div>
+    <div class="gf-form">
+      <span class="gf-form-label">Conversion Factor</span>
+      <input type="text" class="gf-form-input" ng-model="ctrl.target.conversionFactor" placeholder="e.g. 1/1024" ng-model-options="{debounce: 1000}" ng-change="ctrl.onChangeInternal()">
+    </div>
   </div>
   <div class="gf-form-inline" ng-if="ctrl.target.queryType === ctrl.queryTypes.STANDARD_QUERY">
     <div class="gf-form">
