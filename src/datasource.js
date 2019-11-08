@@ -176,7 +176,7 @@ export class GenericDatasource {
   }
 
   /**
-   * Perform the timeseries query using the grafana proxy.
+   * Perform the timeseries query using the Grafana proxy.
    * @param {*} options 
    */
   performTimeseriesQuery(options) {
@@ -190,18 +190,17 @@ export class GenericDatasource {
   }
 
   /**
-   * Pure function to transform data returned by time series query into grafana timeseries format.
+   * Transform data returned by time series query into Grafana timeseries format.
    * https://grafana.com/docs/plugins/developing/datasources/#query
    * @param results
    * @param conversionFactor conversion factor to be applied to each data point. This can be used to for example convert bytes to MB.
    * @returns {{data: Array}}
    */
   transformTimeSeriesResults(results, options) {
-    let result = _.clone(results);
     const graphs = {
       data: []
     };
-    result.forEach((result, index) => {
+    results.forEach((result, index) => {
       let timeStamp = options.range.from.valueOf();
       const dataValues = result.values;
       const currentTarget = options.targets[index];
@@ -221,7 +220,7 @@ export class GenericDatasource {
   }
 
   /**
-   * Evalute the user enter conversion factor to a number.
+   * Evaluate the user enter conversion factor to a number.
    * @param conversionFactor conversion factor.
    * @returns {*|number}
    */
@@ -234,7 +233,7 @@ export class GenericDatasource {
   }
 
   /**
-   * Create powerquery query to pass to grafana proxy.
+   * Create powerquery query to pass to Grafana proxy.
    * @param queryText text of the query
    * @param startTime start time
    * @param endTime end time
@@ -256,7 +255,7 @@ export class GenericDatasource {
   }
 
   /**
-   * Perform the powerquery using grafana proxy.
+   * Perform the powerquery using Grafana proxy.
    * @param options
    * @returns {Promise<{data: *[]}> | *}
    */
@@ -270,7 +269,7 @@ export class GenericDatasource {
   }
 
   /**
-   * Pure function to transform Power Query Data in table format that grafana needs.
+   * Pure function to transform Power Query Data in table format that Grafana needs.
    * https://grafana.com/docs/plugins/developing/datasources/#query
    * @param data
    * @returns {{data: *[]}}
