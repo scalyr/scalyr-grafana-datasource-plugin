@@ -220,6 +220,11 @@ export class GenericDatasource {
     return graphs;
   }
 
+  /**
+   * Evalute the user enter conversion factor to a number.
+   * @param conversionFactor conversion factor.
+   * @returns {*|number}
+   */
   getValidConversionFactor(conversionFactor) {
     let evaluatedConversionFactor;
     try {
