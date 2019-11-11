@@ -30,7 +30,6 @@ export class GenericDatasource {
    */
   query(options) {
     const queryType = options.targets[0].queryType;
-    const defered = this.q.defer();
     if (!options.targets.every(x => x.queryType === queryType)) {
       return Promise.reject({
         status: "error",
@@ -47,7 +46,7 @@ export class GenericDatasource {
         });
       }
     }
-    return this.performTimeseriesQuery(options);
+    return this.performTimeseriesQuery(options, this.templateSrv.variables);
   }
 
   /**
@@ -120,9 +119,9 @@ export class GenericDatasource {
    * Create a request to the scalyr time series endpoint.
    * @param {*} options 
    */
-  createTimeSeriesQuery(options) {
+  createTimeSeriesQuery(options, variables) {
     let queries = [];
-    let variableFilter = this.getFilterFromVariables();
+    let variableFilter = this.getFilterFromVariables(variables);
     options.targets.forEach((target) => {
       let facetFunction = '';
       if (target.facet) {
@@ -151,13 +150,13 @@ export class GenericDatasource {
   /**
    * Convert the selected variables into filter accepted by scalyr query language
    */
-  getFilterFromVariables() {
+  getFilterFromVariables(variables) {
     let variableFilter = '';
-    if (this.templateSrv.variables && this.templateSrv.variables.length > 0) {
-      this.templateSrv.variables.forEach((variable) => {
-        const value = _.get(variable, 'current.value')
+    if (variables && variables.length > 0) {
+      variables.forEach((variable) => {
+        const value = _.get(variable, 'current.value');
         if (variable.multi) {
-          const variableQuery = value.map(v => ` ${variable.query} == '${v}'`).join(' or ');
+          const variableQuery = value.map(v => `${variable.query} == '${v}'`).join(' or ');
           variableFilter += variableQuery; 
         } else {
           variableFilter = ` ${variableFilter + variable.query} == '${value}' `;
@@ -179,8 +178,8 @@ export class GenericDatasource {
    * Perform the timeseries query using the Grafana proxy.
    * @param {*} options 
    */
-  performTimeseriesQuery(options) {
-    const query = this.createTimeSeriesQuery(options);
+  performTimeseriesQuery(options, variables) {
+    const query = this.createTimeSeriesQuery(options, variables);
     return this.backendSrv.datasourceRequest(query)
       .then( (response) => {
         const data = response.data;
