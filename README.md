@@ -1,11 +1,11 @@
 # Scalyr data source for Grafana
 
-The Scalyr Grafana data source plugin you to create and visualize graphs and dashboards in Grafana using data in Scalyr. You can then visualize Scalyr data next to other data sources they may want to monitor on one single dashboard. 
+The Scalyr Grafana data source plugin allows you to create and visualize graphs and dashboards in Grafana using data in Scalyr. You may want to then visualize Scalyr data next to other data sources they may want to monitor on one single dashboard. 
 
 
 ![SystemDashboard](images/SystemDashboard.png)
 
-With the Scalyr plugin, you will be able to create and visualize your log-based metrics along side all your other data sources. It's a great way to have a single pane of glass today's complex systems. You can leverage grafana alerts based on Scalyr data to notify you when there are possible issues. More importantly, you'll soon be able to jump to Scalyr's fast, easy and intuitive platform to quickly identify the root cause of issues that may arise. 
+With the Scalyr plugin, you will be able to create and visualize your log-based metrics along side all your other data sources. It's a great way to have a single pane of glass for today's complex systems. You can leverage grafana alerts based on Scalyr data to notify you when there are possible issues. More importantly, you'll soon be able to jump to Scalyr's fast, easy and intuitive platform to quickly identify the root cause of issues that may arise. 
 
 
 
