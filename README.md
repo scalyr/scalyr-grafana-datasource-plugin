@@ -115,3 +115,8 @@ Note: you can add multiple queries to a visualization to plot multiple series on
 2. Power Queries is an experimental feature and requires the user to change the visualization to a ***“table”*** inside Grafana. 
 3. Linking back to Scalyr is a work in progress and will be part of the next release. 
 
+#### License
+
+The Scalyr Grafana plugin is licensed under Apache License, version 2.0. More information is available in the LICENSE.txt file or at https://www.apache.org/licenses
+
+
