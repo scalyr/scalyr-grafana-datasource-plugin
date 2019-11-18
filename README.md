@@ -1,16 +1,16 @@
 # Scalyr data source for Grafana
 
-The Scalyr Grafana data source plugin allows you to create and visualize graphs and dashboards in Grafana using data in Scalyr. You may want to use this plugin to allow yo to to visualize Scalyr data next to other data sources when you want to monitor many feeds on a single dashboard. 
+The Scalyr Grafana data source plugin allows you to create and visualize graphs and dashboards in Grafana using data in Scalyr. You may want to use this plugin to allow you to visualize Scalyr data next to other data sources, for instance when you want to monitor many feeds on a single dashboard. 
 
 
 ![SystemDashboard](images/SystemDashboard.png)
 
-With the Scalyr plugin, you will be able to create and visualize your log-based metrics along side all of your other data sources. It's a great way to have a single pane of glass for today's complex systems. You can leverage grafana alerts based on Scalyr data to notify you when there are possible issues. More importantly, you'll soon be able to jump to Scalyr's fast, easy and intuitive platform to quickly identify the underlying causes of issues that may arise. 
+With the Scalyr plugin, you will be able to create and visualize your log-based metrics along side all of your other data sources. It's a great way to have a single pane of glass for today's complex systems. You can leverage Grafana alerts based on Scalyr data to notify you when there are possible issues. More importantly, you'll soon be able to jump to Scalyr's fast, easy and intuitive platform to quickly identify the underlying causes of issues that may arise. 
 
 
 
 ### Prerequisites
-* **An installed Grafana server instance with write access**: This document assumes that an existing instance of Grafana already exists. If you need help bringing up a Grafana instance, please refer to the documentation provided by Grafana. 
+* **An installed Grafana server instance with write access**: This document assumes that an existing instance of Grafana already exists. If you need help bringing up a Grafana instance, please refer to the [documentation provided by Grafana](https://grafana.com/docs/installation/). 
 * **A Scalyr read log API Key**: A Scalyr API key is required for Grafana to pull data from Scalyr. You can obtain one by going to your account in the Scalyr product and selecting the “API Keys” from the menu in the top right corner. You can find documentation on API Keys [here](https://www.scalyr.com/help/api#scalyr-api-keys).
 
 
