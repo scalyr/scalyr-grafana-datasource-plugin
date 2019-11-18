@@ -14,6 +14,7 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
     if (!this.target.queryType) {
       this.target.queryType = this.queryTypes.STANDARD_QUERY;
     }
+    // this.target.visualizationType = 
   }
 
   /**
@@ -59,6 +60,7 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
   }
 
   onChangeInternal() {
+    this.target.panelType = this.panel.type;
     if (this.isQueryValid(this.target)) {
       this.panelCtrl.refresh(); // Asks the panel to refresh data.
     }
