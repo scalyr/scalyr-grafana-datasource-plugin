@@ -117,7 +117,7 @@ describe('Scalyr datasource tests', () => {
     });
 
     it('Should transform power query results to graph series', () => {
-      const transformedResults = datasource.transformPowerQueryDataToTimeSeries(results).data;
+      const transformedResults = datasource.transformPowerQueryDataToGraph(results).data;
       expect(transformedResults.length).toBe(13);
       expect(transformedResults.some(x => x.target === 'r1')).toBeTruthy();
       expect(transformedResults.every(x => x.datapoints.length === 1)).toBeTruthy();
