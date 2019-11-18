@@ -14,7 +14,6 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
     if (!this.target.queryType) {
       this.target.queryType = this.queryTypes.STANDARD_QUERY;
     }
-    // this.target.visualizationType = 
   }
 
   /**

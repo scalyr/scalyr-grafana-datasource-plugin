@@ -280,7 +280,7 @@ export class GenericDatasource {
    * @returns {{data: Object[]}} transformed data that can be used by Grafana
    */
   transformPowerQueryData(data, visualizationType) {
-    if (visualizationType === 'table') {
+    if (visualizationType === this.visualizationType.TABLE) {
       return this.transformPowerQueryDataToTable(data);
     }
     return this.transformPowerQueryDataToGraph(data);
@@ -319,7 +319,7 @@ export class GenericDatasource {
 
     return {
       data : [{
-        type: "table",
+        type: this.visualizationType.TABLE,
         columns: cloneData.columns,
         rows: cloneData.values
       }]
