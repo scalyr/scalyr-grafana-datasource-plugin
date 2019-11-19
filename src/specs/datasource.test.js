@@ -95,13 +95,17 @@ describe('Scalyr datasource tests', () => {
   });
 
   describe('Power queries', () => {
-    it('Should transform power query results', () => {
-      const results = {
+    let results;
+    beforeEach(() => {
+      results = {
         columns: [{name: 'col1'}, {name: 'col2'}],
         warnings: [],
         values: [['r1', 1], ['r2', 1], ['r3', 1], ['r4', 1], ['r5', 1], ['r6', 1], ['r7', 1], ['r8', 1], ['r9', 1], ['r10', 1], ['r11', 1], ['r12', 1], ['r13', 1]]
       };
-      const transformedResults = datasource.transformPowerQueryData(results).data;
+    });
+    
+    it('Should transform power query results to table', () => {
+      const transformedResults = datasource.transformPowerQueryDataToTable(results).data;
       expect(transformedResults.length).toBe(1);
       const resultEntry = transformedResults[0];
       expect(resultEntry.columns.length).toBe(2);
@@ -110,6 +114,13 @@ describe('Scalyr datasource tests', () => {
       expect(resultEntry.rows.length).toBe(results.values.length);
       expect(resultEntry.rows.every(x => x.length === 2)).toBeTruthy();
       expect(resultEntry.rows.some(x => x[0] === 'r12')).toBeTruthy();
+    });
+
+    it('Should transform power query results to graph series', () => {
+      const transformedResults = datasource.transformPowerQueryDataToGraph(results).data;
+      expect(transformedResults.length).toBe(13);
+      expect(transformedResults.some(x => x.target === 'r1')).toBeTruthy();
+      expect(transformedResults.every(x => x.datapoints.length === 1)).toBeTruthy();
     });
   });
 

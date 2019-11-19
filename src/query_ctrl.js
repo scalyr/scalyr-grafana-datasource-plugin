@@ -59,6 +59,7 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
   }
 
   onChangeInternal() {
+    this.target.panelType = this.panel.type;
     if (this.isQueryValid(this.target)) {
       this.panelCtrl.refresh(); // Asks the panel to refresh data.
     }

@@ -22,6 +22,11 @@ export class GenericDatasource {
       POWER_QUERY: 'Power Query',
       STANDARD_QUERY: 'Standard Query'
     }
+
+    this.visualizationType = {
+      GRAPH: 'graph',
+      TABLE: 'table'
+    }
   }
   
   /**
@@ -38,7 +43,8 @@ export class GenericDatasource {
     }
     if (queryType === this.queryTypes.POWER_QUERY) {
       if (options.targets.length === 1) {
-        return this.performPowerQuery(options);
+        const panelType = options.targets[0].panelType;
+        return this.performPowerQuery(options, panelType);
       } else {
         return Promise.reject({
           status: "error",
@@ -258,27 +264,61 @@ export class GenericDatasource {
    * @param options
    * @returns {Promise<{data: *[]}> | *}
    */
-  performPowerQuery(options) {
+  performPowerQuery(options, visualizationType) {
     const target = options.targets[0];
     const query = this.createPowerQuery(target.queryText, options.range.from.valueOf(), options.range.to.valueOf());
     return this.backendSrv.datasourceRequest(query).then( (response) => {
       const data = response && response.data;
-      return this.transformPowerQueryData(data);
+      return this.transformPowerQueryData(data, visualizationType);
     })
   }
 
   /**
-   * Pure function to transform Power Query Data in table format that Grafana needs.
+   * Transform power query data based on the visualization type
+   * @param data data returned by the power query API
+   * @returns {{data: Object[]}} transformed data that can be used by Grafana
+   */
+  transformPowerQueryData(data, visualizationType) {
+    if (visualizationType === this.visualizationType.TABLE) {
+      return this.transformPowerQueryDataToTable(data);
+    }
+    return this.transformPowerQueryDataToGraph(data);
+  }
+
+  /**
+   * Transform data returned by power query to a graph format.
+   * Each row is an individual series; this helps in looking at each value as bar in graphs.
+   * @param {*} data 
+   */
+  transformPowerQueryDataToGraph(data) {
+    const result = [];
+    const values = data.values;
+    for (let i = 0; i < values.length; i++) {
+      let dataValue = values[i];
+      const responseObject = {
+        target: dataValue[0],
+        datapoints: [[dataValue[1], dataValue[0]]]
+      };
+      result.push(responseObject);
+    }
+    return {
+      data: result
+    }
+  }
+
+  /**
+   * Transform Power Query Data in table format that Grafana needs.
    * https://grafana.com/docs/plugins/developing/datasources/#query
    * @param data
    * @returns {{data: *[]}}
    */
-  transformPowerQueryData(data) {
+  transformPowerQueryDataToTable(data) {
     const cloneData = _.clone(data);
     cloneData.columns.map(col => col.text = col.name);
+
     return {
       data : [{
-        type: "table",
+        type: this.visualizationType.TABLE,
         columns: cloneData.columns,
         rows: cloneData.values
       }]
