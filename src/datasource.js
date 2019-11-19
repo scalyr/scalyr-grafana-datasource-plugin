@@ -44,7 +44,6 @@ export class GenericDatasource {
     if (queryType === this.queryTypes.POWER_QUERY) {
       if (options.targets.length === 1) {
         const panelType = options.targets[0].panelType;
-        console.log(panelType);
         return this.performPowerQuery(options, panelType);
       } else {
         return Promise.reject({
@@ -288,7 +287,7 @@ export class GenericDatasource {
 
   /**
    * Transform data returned by power query to a graph format.
-   * Each row is an individual series this helps in looking at each value as bar in graphs.
+   * Each row is an individual series; this helps in looking at each value as bar in graphs.
    * @param {*} data 
    */
   transformPowerQueryDataToGraph(data) {
@@ -299,7 +298,7 @@ export class GenericDatasource {
       const responseObject = {
         target: dataValue[0],
         datapoints: [[dataValue[1], dataValue[0]]]
-      }
+      };
       result.push(responseObject);
     }
     return {
