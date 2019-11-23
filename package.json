@@ -1,16 +1,23 @@
 {
-  "name": "scalyr-panel",
+  "name": "scalyr-grafana-datasource-plugin",
   "version": "1.0.0",
-  "description": "",
+  "description": "This grafana plugin allows Scalyr as a datasource for metrics and graphs",
   "main": "webpack.config.js",
   "scripts": {
     "build": "webpack --mode=development",
     "watch": "webpack --mode=development --watch",
     "test": "jest",
-    "lint": "eslint src/"
+    "lint": "eslint src/ "
   },
   "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scalyr/scalyr-grafana-datasource-plugin"
+  },
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">= 10.17.0"
+  },
   "dependencies": {
     "@babel/core": "^7.5.5",
     "babel-loader": "^8.0.6",
@@ -23,15 +30,18 @@
     "@babel/preset-react": "^7.0.0",
     "@grafana/ui": "^6.4.0",
     "babel-eslint": "^10.0.2",
-    "eslint": "^6.1.0",
-    "eslint-config-airbnb": "^17.1.1",
-    "eslint-config-prettier": "^6.0.0",
+    "eslint": "^6.7.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-prettier": "^6.7.0",
     "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-jest": "^22.16.0",
+    "eslint-plugin-jest": "^22.21.0",
     "eslint-plugin-jsx-a11y": "^6.2.3",
-    "eslint-plugin-prettier": "^3.1.0",
-    "eslint-plugin-react": "^7.14.3",
+    "eslint-plugin-prettier": "^3.1.1",
+    "eslint-plugin-react": "^7.16.0",
+    "eslint-plugin-react-hooks": "^2.3.0",
     "jest": "^24.9.0",
+    "prettier": "^1.19.1",
+    "slate-react": "^0.22.10",
     "webpack-cli": "^3.3.9"
   }
 }
