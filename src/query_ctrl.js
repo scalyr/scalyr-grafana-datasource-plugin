@@ -26,7 +26,7 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
     if (!this.target.facet) {
       options.push({
         text: 'count', value: 'count'
-      })
+      });
     }
     options = options.concat(
       [
@@ -53,7 +53,7 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
     return [
       { text: this.queryTypes.POWER_QUERY, value: this.queryTypes.POWER_QUERY },
       { text: this.queryTypes.STANDARD_QUERY, value: this.queryTypes.STANDARD_QUERY }
-    ]
+    ];
   }
 
   toggleEditorMode() {

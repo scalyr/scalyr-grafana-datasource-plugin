@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import {GenericDatasource} from './datasource';
 import {GenericDatasourceQueryCtrl} from './query_ctrl';
 import {GenericConfigCtrl} from './config_ctrl';

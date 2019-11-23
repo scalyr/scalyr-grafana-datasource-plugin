@@ -62,7 +62,7 @@ export class GenericDatasource {
    * The endpoint returns 401 if the token is invalid.
    */
   testDatasource() {
-    this.backendSrv.datasourceRequest({
+    return this.backendSrv.datasourceRequest({
       url: this.url + '/facetQuery', 
       data: JSON.stringify({
         token: this.apiKey,
@@ -136,7 +136,7 @@ export class GenericDatasource {
    */
   createTimeSeriesQuery(options, variables) {
     const queries = [];
-    const variableFilter = this.getFilterFromVariables(variables);
+    const variableFilter = GenericDatasource.getFilterFromVariables(variables);
     options.targets.forEach((target) => {
       let facetFunction = '';
       if (target.facet) {
@@ -145,7 +145,7 @@ export class GenericDatasource {
       const query = {
         startTime: options.range.from.valueOf(),
         endTime: options.range.to.valueOf(),
-        buckets: this.getNumberOfBuckets(options),
+        buckets: GenericDatasource.getNumberOfBuckets(options),
         filter: target.queryText + variableFilter,
         function: facetFunction
       };
@@ -210,7 +210,7 @@ export class GenericDatasource {
    * @param conversionFactor conversion factor to be applied to each data point. This can be used to for example convert bytes to MB.
    * @returns {{data: Array}}
    */
-  transformTimeSeriesResults(results, options) {
+  static transformTimeSeriesResults(results, options) {
     const graphs = {
       data: []
     };
@@ -222,7 +222,7 @@ export class GenericDatasource {
         target: currentTarget.label || currentTarget.queryText,
         datapoints: []
       };
-      const conversionFactor = this.getValidConversionFactor(currentTarget.conversionFactor);
+      const conversionFactor = GenericDatasource.getValidConversionFactor(currentTarget.conversionFactor);
       for (let i = 0; i < dataValues.length; i += 1) {
         const dataValue = dataValues[i] * conversionFactor;
         responseObject.datapoints.push([dataValue, timeStamp]);
@@ -240,7 +240,28 @@ export class GenericDatasource {
    */
   static getValidConversionFactor(conversionFactor) {
     try {
-      return parseFloat(conversionFactor);
+      // https://gist.github.com/drifterz28/6971440
+      let result;
+      if(conversionFactor.search('/') >= 0) {
+          let frac;
+          let deci;
+          let wholeNum = 0;
+          if(conversionFactor.search('-') >= 0) {
+              wholeNum = conversionFactor.split('-');
+              conversionFactor = wholeNum[1];
+              wholeNum = parseInt(wholeNum[0], 10);
+          } else {
+              frac = conversionFactor;
+          }
+          if(conversionFactor.search('/') >=0) {
+              frac =  frac.split('/');
+              deci = parseInt(frac[0], 10) / parseInt(frac[1], 10);
+          }
+          result = wholeNum + deci;
+      } else {
+          result = conversionFactor;
+      }
+      return parseFloat(result) || 1.0;
     } catch (e) {
       return 1.0;  
     }

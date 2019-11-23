@@ -116,6 +116,10 @@ Note: you can add multiple queries to a visualization to plot multiple series on
 
 3. Linking back to Scalyr is a work in progress and will be part of the next release. 
 
+#### Contributing
+
+See [How to contribute?](/HOW_TO_CONTRIBUTE.md) for developer documentation.
+
 #### License
 
 The Scalyr Grafana plugin is licensed under Apache License, version 2.0. More information is available in the LICENSE.txt file or at https://www.apache.org/licenses
