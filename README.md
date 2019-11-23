@@ -1,4 +1,5 @@
 # Scalyr data source for Grafana
+[![Build Status](https://circleci.com/gh/scalyr/scalyr-grafana-datasource-plugin/tree/master.svg?style=svg)](https://circleci.com/gh/scalyr/scalyr-grafana-datasource-plugin/tree/master)
 
 The Scalyr Grafana data source plugin allows you to create and visualize graphs and dashboards in Grafana using data in Scalyr. You may want to use this plugin to allow you to visualize Scalyr data next to other data sources, for instance when you want to monitor many feeds on a single dashboard. 
 
