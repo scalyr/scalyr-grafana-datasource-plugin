@@ -280,7 +280,7 @@ export class GenericDatasource {
     if (visualizationType === this.visualizationType.TABLE) {
       return this.transformPowerQueryDataToTable(data);
     }
-    return this.transformPowerQueryDataToGraph(data);
+    return GenericDatasource.transformPowerQueryDataToGraph(data);
   }
 
   /**
