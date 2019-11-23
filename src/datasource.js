@@ -1,5 +1,7 @@
 import _ from "lodash";
 
+import { getValidConversionFactor } from './util';
+
 export class GenericDatasource {
 
   /**
@@ -198,7 +200,7 @@ export class GenericDatasource {
     return this.backendSrv.datasourceRequest(query)
       .then( (response) => {
         const data = response.data;
-        return this.transformTimeSeriesResults(data.results, options);
+        return GenericDatasource.transformTimeSeriesResults(data.results, options);
       }
     );
   }
@@ -222,7 +224,7 @@ export class GenericDatasource {
         target: currentTarget.label || currentTarget.queryText,
         datapoints: []
       };
-      const conversionFactor = GenericDatasource.getValidConversionFactor(currentTarget.conversionFactor);
+      const conversionFactor = getValidConversionFactor(currentTarget.conversionFactor);
       for (let i = 0; i < dataValues.length; i += 1) {
         const dataValue = dataValues[i] * conversionFactor;
         responseObject.datapoints.push([dataValue, timeStamp]);
@@ -231,40 +233,6 @@ export class GenericDatasource {
       graphs.data.push(responseObject);
     });
     return graphs;
-  }
-
-  /**
-   * Evaluate the user enter conversion factor to a number.
-   * @param conversionFactor conversion factor.
-   * @returns {*|number}
-   */
-  static getValidConversionFactor(conversionFactor) {
-    try {
-      // https://gist.github.com/drifterz28/6971440
-      let result;
-      if(conversionFactor.search('/') >= 0) {
-          let frac;
-          let deci;
-          let wholeNum = 0;
-          if(conversionFactor.search('-') >= 0) {
-              wholeNum = conversionFactor.split('-');
-              conversionFactor = wholeNum[1];
-              wholeNum = parseInt(wholeNum[0], 10);
-          } else {
-              frac = conversionFactor;
-          }
-          if(conversionFactor.search('/') >=0) {
-              frac =  frac.split('/');
-              deci = parseInt(frac[0], 10) / parseInt(frac[1], 10);
-          }
-          result = wholeNum + deci;
-      } else {
-          result = conversionFactor;
-      }
-      return parseFloat(result) || 1.0;
-    } catch (e) {
-      return 1.0;  
-    }
   }
 
   /**

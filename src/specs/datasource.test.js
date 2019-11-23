@@ -124,16 +124,6 @@ describe('Scalyr datasource tests', () => {
     });
   });
 
-  describe('Conversion Factor', () => {
-    it('Should convert fractions', () => {
-      expect(GenericDatasource.getValidConversionFactor('1/4')).toBe(0.25);
-    });
-
-    it('Should return 1 for invalid conversion factor', () => {
-      expect(GenericDatasource.getValidConversionFactor('xxx')).toBe(1);
-    });
-  });
-
   describe('Filter from variables', () => {
     it('Should return empty string when no variables are present', () => {
       expect(GenericDatasource.getFilterFromVariables([])).toBe('');
