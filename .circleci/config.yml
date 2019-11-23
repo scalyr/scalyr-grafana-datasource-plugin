@@ -36,3 +36,5 @@ jobs:
           key: dependency-cache-{{ checksum "yarn.lock" }}
       - run: yarn lint
       - run: yarn build
+
+# TODO: Ship dist/ folder to github releases and tag them
