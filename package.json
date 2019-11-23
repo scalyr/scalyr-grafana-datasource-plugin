@@ -6,7 +6,8 @@
   "scripts": {
     "build": "webpack --mode=development",
     "watch": "webpack --mode=development --watch",
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint src/"
   },
   "author": "",
   "license": "ISC",
@@ -14,12 +15,22 @@
     "@babel/core": "^7.5.5",
     "babel-loader": "^8.0.6",
     "copy-webpack-plugin": "^5.0.3",
+    "lodash": "^4.17.15",
     "webpack": "^4.35.3"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.6.2",
     "@babel/preset-react": "^7.0.0",
     "@grafana/ui": "^6.4.0",
+    "babel-eslint": "^10.0.2",
+    "eslint": "^6.1.0",
+    "eslint-config-airbnb": "^17.1.1",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jest": "^22.16.0",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-react": "^7.14.3",
     "jest": "^24.9.0",
     "webpack-cli": "^3.3.9"
   }
