@@ -1,4 +1,6 @@
-import {QueryCtrl} from 'grafana/app/plugins/sdk'
+import _ from "lodash";
+
+import {QueryCtrl} from 'grafana/app/plugins/sdk';
 
 export class GenericDatasourceQueryCtrl extends QueryCtrl {
 
@@ -70,17 +72,17 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
    * @param target
    * @returns {boolean}
    */
-  isQueryValid(target) {
-    let isValid = true;
-    if (!!target.conversionFactor) {
+  static isQueryValid(target) {
+    if (target.conversionFactor) {
       try {
-        const value = eval(target.conversionFactor);
-        isValid = _.isFinite(value);
+        const value = parseFloat(target.conversionFactor);
+        return _.isFinite(value);
       } catch (e) {
-        isValid = false;
+        return false;
       }
     }
-    return isValid;
+
+    return true;
   }
 }
 

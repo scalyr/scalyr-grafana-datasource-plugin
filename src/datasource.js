@@ -21,12 +21,12 @@ export class GenericDatasource {
     this.queryTypes = {
       POWER_QUERY: 'Power Query',
       STANDARD_QUERY: 'Standard Query'
-    }
+    };
 
     this.visualizationType = {
       GRAPH: 'graph',
       TABLE: 'table'
-    }
+    };
   }
   
   /**
@@ -36,22 +36,23 @@ export class GenericDatasource {
   query(options) {
     const queryType = options.targets[0].queryType;
     if (!options.targets.every(x => x.queryType === queryType)) {
-      return Promise.reject({
+      return {
         status: "error",
         message: "All queries should have the same query type."
-      });
+      };
     }
+
     if (queryType === this.queryTypes.POWER_QUERY) {
       if (options.targets.length === 1) {
         const panelType = options.targets[0].panelType;
         return this.performPowerQuery(options, panelType);
-      } else {
-        return Promise.reject({
-          status: "error",
-          message: "You can only have one power query per panel."
-        });
-      }
+      } 
+      return {
+        status: "error",
+        message: "You can only have one power query per panel."
+      };      
     }
+
     return this.performTimeseriesQuery(options, this.templateSrv.variables);
   }
 
@@ -61,7 +62,6 @@ export class GenericDatasource {
    * The endpoint returns 401 if the token is invalid.
    */
   testDatasource() {
-    let defered = this.q.defer();
     this.backendSrv.datasourceRequest({
       url: this.url + '/facetQuery', 
       data: JSON.stringify({
@@ -75,18 +75,27 @@ export class GenericDatasource {
       method: 'POST'
     }).then((response) => {
       if (response && response.status && response.status === 200) {
-        defered.resolve({
+        return {
           status: "success",
-          message: "Data source is working."
-        })
-      } else {
-        defered.reject({
-          status: "error",
-          message: "Incorrect configuration."
-        })
+          message: "Successfully connected to Scalyr!",
+        };
+      }   
+      
+      // We will never hit this but eslint complains about lack of return
+      return {
+        status: "error",
+        message: `Scalyr returned HTTP code ${response.status}`
+      };
+    }).catch((err) => {
+      let message = "Cannot connect to Scalyr!";
+      if (err && err.data && err.data.message) {
+        message = `${message} Scalyr repsponse - ${err.data.message}`;
       }
+      return {
+        status: "error",
+        message
+      };
     });
-    return defered.promise;
   }
   
   /**
@@ -94,7 +103,7 @@ export class GenericDatasource {
    * @param {*} query - query options
    */
   metricFindQuery(query) {
-    let d = new Date();
+    const d = new Date();
 
     d.setHours(d.getHours() - 6);
     return this.backendSrv.datasourceRequest({
@@ -109,16 +118,16 @@ export class GenericDatasource {
       }),
       method: 'POST'
     }).then((response) => {
-      let values = _.get(response, 'data.values', []);
+      const values = _.get(response, 'data.values', []);
       return values.map(value => 
         {
           return {
             text: value.value,
             value: value.value
-          }
+          };
         }
-      )
-    })
+      );
+    });
   }
 
   /**
@@ -126,8 +135,8 @@ export class GenericDatasource {
    * @param {*} options 
    */
   createTimeSeriesQuery(options, variables) {
-    let queries = [];
-    let variableFilter = this.getFilterFromVariables(variables);
+    const queries = [];
+    const variableFilter = this.getFilterFromVariables(variables);
     options.targets.forEach((target) => {
       let facetFunction = '';
       if (target.facet) {
@@ -148,15 +157,15 @@ export class GenericDatasource {
       headers: this.headers,
       data: JSON.stringify({
         token: this.apiKey,
-        queries: queries
+        queries
       })
-    }
+    };
   }
 
   /**
    * Convert the selected variables into filter accepted by scalyr query language
    */
-  getFilterFromVariables(variables) {
+  static getFilterFromVariables(variables) {
     let variableFilter = '';
     if (variables && variables.length > 0) {
       variables.forEach((variable) => {
@@ -167,7 +176,7 @@ export class GenericDatasource {
         } else {
           variableFilter = ` ${variableFilter + variable.query} == '${value}' `;
         }
-      })
+      });
     }
     return variableFilter;
   }
@@ -176,7 +185,7 @@ export class GenericDatasource {
    * Get how many buckets to return based on the query time range
    * @param {*} options 
    */
-  getNumberOfBuckets(options) {
+  static getNumberOfBuckets(options) {
     return Math.floor((options.range.to.valueOf() - options.range.from.valueOf()) / options.intervalMs);
   }
 
@@ -214,10 +223,10 @@ export class GenericDatasource {
         datapoints: []
       };
       const conversionFactor = this.getValidConversionFactor(currentTarget.conversionFactor);
-      for (let i = 0; i < dataValues.length; i++) {
-        let dataValue = dataValues[i] * conversionFactor;
+      for (let i = 0; i < dataValues.length; i += 1) {
+        const dataValue = dataValues[i] * conversionFactor;
         responseObject.datapoints.push([dataValue, timeStamp]);
-        timeStamp += options.intervalMs
+        timeStamp += options.intervalMs;
       }
       graphs.data.push(responseObject);
     });
@@ -229,12 +238,12 @@ export class GenericDatasource {
    * @param conversionFactor conversion factor.
    * @returns {*|number}
    */
-  getValidConversionFactor(conversionFactor) {
-    let evaluatedConversionFactor;
+  static getValidConversionFactor(conversionFactor) {
     try {
-      evaluatedConversionFactor = eval(conversionFactor);
-    } catch (e) {}
-    return evaluatedConversionFactor || 1;
+      return parseFloat(conversionFactor);
+    } catch (e) {
+      return 1.0;  
+    }
   }
 
   /**
@@ -248,15 +257,15 @@ export class GenericDatasource {
     const query = {
       token: this.apiKey,
       query: queryText,
-      startTime: startTime,
-      endTime: endTime
+      startTime,
+      endTime
     };
     return {
       url: this.url + '/powerQuery',
       method: 'POST',
       headers: this.headers,
       data: JSON.stringify(query)
-    }
+    };
   }
 
   /**
@@ -270,7 +279,7 @@ export class GenericDatasource {
     return this.backendSrv.datasourceRequest(query).then( (response) => {
       const data = response && response.data;
       return this.transformPowerQueryData(data, visualizationType);
-    })
+    });
   }
 
   /**
@@ -290,11 +299,11 @@ export class GenericDatasource {
    * Each row is an individual series; this helps in looking at each value as bar in graphs.
    * @param {*} data 
    */
-  transformPowerQueryDataToGraph(data) {
+  static transformPowerQueryDataToGraph(data) {
     const result = [];
     const values = data.values;
-    for (let i = 0; i < values.length; i++) {
-      let dataValue = values[i];
+    for (let i = 0; i < values.length; i += 1) {
+      const dataValue = values[i];
       const responseObject = {
         target: dataValue[0],
         datapoints: [[dataValue[1], dataValue[0]]]
@@ -303,7 +312,7 @@ export class GenericDatasource {
     }
     return {
       data: result
-    }
+    };
   }
 
   /**
@@ -314,7 +323,7 @@ export class GenericDatasource {
    */
   transformPowerQueryDataToTable(data) {
     const cloneData = _.clone(data);
-    cloneData.columns.map(col => col.text = col.name);
+    cloneData.columns.map((col) => {col.text = col.name; return col;});
 
     return {
       data : [{
@@ -322,6 +331,6 @@ export class GenericDatasource {
         columns: cloneData.columns,
         rows: cloneData.values
       }]
-    }
+    };
   }
 }

@@ -90,7 +90,7 @@ describe('Scalyr datasource tests', () => {
       expect(dataPoints.length).toBe(results[0].values.length);
       dataPoints.forEach((point) => {
         expect(point[0]).toBe(10);
-      })
+      });
     });
   });
 
@@ -152,7 +152,7 @@ describe('Scalyr datasource tests', () => {
           type: 'query'
         }
       ];
-      expect(datasource.getFilterFromVariables(multiVariables)).toBe("$query == 'value 1' or $query == 'value 2'")
+      expect(datasource.getFilterFromVariables(multiVariables)).toBe("$query == 'value 1' or $query == 'value 2'");
     });
 
     it('Should handle multiple variables', () => {

@@ -9,4 +9,3 @@ export class GenericConfigCtrl {
 }
 
 GenericConfigCtrl.templateUrl = 'partials/config.html';
-
