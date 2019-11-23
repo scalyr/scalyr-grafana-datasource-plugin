@@ -1,6 +1,8 @@
 import _ from "lodash";
 
-import {QueryCtrl} from 'grafana/app/plugins/sdk';
+import { QueryCtrl } from 'grafana/app/plugins/sdk';
+
+import { getValidConversionFactor } from './util';
 
 export class GenericDatasourceQueryCtrl extends QueryCtrl {
 
@@ -75,7 +77,7 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
   static isQueryValid(target) {
     if (target.conversionFactor) {
       try {
-        const value = parseFloat(target.conversionFactor);
+        const value = getValidConversionFactor(target.conversionFactor);
         return _.isFinite(value);
       } catch (e) {
         return false;
