@@ -60,7 +60,8 @@ module.exports = {
     new CopyWebpackPlugin([
       { from: 'plugin.json', to: '.' },
       { from: 'partials', to: 'partials'},
-      { from: '../README.md', to: '.'}
+      { from: '../README.md', to: '.'},
+      { from: '../src/img/**', to: '.'}
     ])
   ],
 }
