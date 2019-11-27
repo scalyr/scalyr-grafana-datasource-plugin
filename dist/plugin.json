@@ -12,8 +12,8 @@
       "url": "https://www.scalyr.com"
     },
     "logos": {
-      "small": "img/scalyr-180x180.png",
-      "large": "img/scalyr-180x180.png"
+      "small": "img/scalyr.svg",
+      "large": "img/scalyr.svg"
     }
   },
   "dependencies": {
