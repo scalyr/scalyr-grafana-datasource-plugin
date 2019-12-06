@@ -2,11 +2,12 @@
   "type": "datasource",
   "metrics": true,
   "annotations": false,
-  "name": "Scalyr Grafana Datasource",
+  "category": "logging",
+  "name": "Scalyr",
   "id": "scalyr-grafana-datasource",
   "info": {
     "version": "1.0.0",
-    "description": "Scalyr datasource for Grafana",
+    "description": "Scalyr Observability Platform",
     "author": {
       "name": "Scalyr",
       "url": "https://www.scalyr.com"
