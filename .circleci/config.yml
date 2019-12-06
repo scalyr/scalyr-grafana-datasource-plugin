@@ -62,8 +62,8 @@ jobs:
     requires:
       - build
     filters:
-      - filter-only-tagged-commits-on-masters
-      - filter-circleci-testing
+      branches:
+        only: feature/circleci
     steps:
       - run:
           name: "Publish Release on GitHub"
