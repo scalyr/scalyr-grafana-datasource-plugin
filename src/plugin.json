@@ -5,11 +5,19 @@
   "name": "Scalyr Grafana Datasource",
   "id": "scalyr-grafana-datasource",
   "info": {
+    "version": "1.0.0",
     "description": "Scalyr datasource for Grafana",
     "author": {
       "name": "Scalyr",
       "url": "https://www.scalyr.com"
+    },
+    "logos": {
+      "small": "img/scalyr.svg",
+      "large": "img/scalyr.svg"
     }
+  },
+  "dependencies": {
+    "grafanaVersion": ">=6.3.7"
   },
   "routes": [
     {
