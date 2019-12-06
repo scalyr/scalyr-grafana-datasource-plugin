@@ -13,7 +13,9 @@ aliases:
   - &filter-only-master
     branches:
       only: master
-  
+  - &filter-circleci-testing
+    branches:
+      only: feature/circleci
   - &filter-only-tagged-commits-on-master
     branches:
       only: master
@@ -49,7 +51,7 @@ jobs:
           name: Build artifacts
           command: |
             yarn build
-            cp -rf dist/ /home/circleci/artifacts/
+            cp -rf dist/ /home/circleci/artifacts/ 
       - store_artifacts:
           path: ~/artifacts
           destination: dist
@@ -61,11 +63,12 @@ jobs:
       - build
     filters:
       - filter-only-tagged-commits-on-masters
+      - filter-circleci-testing
     steps:
       - run:
           name: "Publish Release on GitHub"
           command: |
             go get github.com/tcnksm/ghr
-            VERSION=$(my-binary --version)
+            VERSION=${CIRCLE_TAG}
             ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
             
