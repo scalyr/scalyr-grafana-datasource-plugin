@@ -42,7 +42,14 @@ jobs:
           key: dependency-cache-{{ checksum "yarn.lock" }}
       - run: yarn lint
       - run: yarn test
-      - run: yarn build
+      - run:
+          name: Create directories for Artifacts
+          command: mkdir -p ~/artifacts/scalyr_plugin/
+      - run: 
+          name: Build artifacts
+          command: |
+            yarn build
+            cp -rf dist/ /home/circleci/artifacts/
       - store_artifacts:
           path: ~/artifacts
           destination: dist
@@ -60,5 +67,5 @@ jobs:
           command: |
             go get github.com/tcnksm/ghr
             VERSION=$(my-binary --version)
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/dist/
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
             
