@@ -83,14 +83,14 @@ describe('Scalyr datasource tests', () => {
           values: [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
         }
       ];
-      const transformedData = datasource.transformTimeSeriesResults(results, standardQueryOptions);
+      const transformedData = GenericDatasource.transformTimeSeriesResults(results, standardQueryOptions);
       expect(transformedData.data.length).toBe(1);
       expect(transformedData.data[0].target).toBe('Test');
       const dataPoints = transformedData.data[0].datapoints;
       expect(dataPoints.length).toBe(results[0].values.length);
       dataPoints.forEach((point) => {
         expect(point[0]).toBe(10);
-      })
+      });
     });
   });
 
@@ -117,26 +117,16 @@ describe('Scalyr datasource tests', () => {
     });
 
     it('Should transform power query results to graph series', () => {
-      const transformedResults = datasource.transformPowerQueryDataToGraph(results).data;
+      const transformedResults = GenericDatasource.transformPowerQueryDataToGraph(results).data;
       expect(transformedResults.length).toBe(13);
       expect(transformedResults.some(x => x.target === 'r1')).toBeTruthy();
       expect(transformedResults.every(x => x.datapoints.length === 1)).toBeTruthy();
     });
   });
 
-  describe('Conversion Factor', () => {
-    it('Should convert fractions', () => {
-      expect(datasource.getValidConversionFactor('1/4')).toBe(0.25);
-    });
-
-    it('Should return 1 for invalid conversion factor', () => {
-      expect(datasource.getValidConversionFactor('xxx')).toBe(1);
-    });
-  });
-
   describe('Filter from variables', () => {
     it('Should return empty string when no variables are present', () => {
-      expect(datasource.getFilterFromVariables([])).toBe('');
+      expect(GenericDatasource.getFilterFromVariables([])).toBe('');
     });
 
     it('Should create or enteries for variables with multi property set to true', () => {
@@ -152,11 +142,11 @@ describe('Scalyr datasource tests', () => {
           type: 'query'
         }
       ];
-      expect(datasource.getFilterFromVariables(multiVariables)).toBe("$query == 'value 1' or $query == 'value 2'")
+      expect(GenericDatasource.getFilterFromVariables(multiVariables)).toBe("$query == 'value 1' or $query == 'value 2'");
     });
 
     it('Should handle multiple variables', () => {
-      expect(datasource.getFilterFromVariables(variables)).toBe(" $query == 'value 1' or $query == 'value 2'$query2 == 'value' ");
+      expect(GenericDatasource.getFilterFromVariables(variables)).toBe(" $query == 'value 1' or $query == 'value 2'$query2 == 'value' ");
     });
   });
 

@@ -1,0 +1,22 @@
+{
+    "extends": ["airbnb", "prettier", "plugin:jest/recommended"],
+    "plugins": ["prettier", "jest"],
+    "rules": {
+ 
+      "react/prop-types": 0,
+      "no-underscore-dangle": 0,
+      "import/imports-first": ["error"],
+      "import/newline-after-import": "error",
+      "import/prefer-default-export": "off",
+      "import/no-unresolved": "off",
+      "prefer-template": "off",
+      "no-use-before-define": "off",
+      "prefer-destructuring": "off",
+      "no-param-reassign": "off"
+    },
+    "env": {
+      "jest": true
+    },
+ 
+    "parser": "babel-eslint"
+}

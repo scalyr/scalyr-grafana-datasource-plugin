@@ -1,4 +1,8 @@
-import {QueryCtrl} from 'grafana/app/plugins/sdk'
+import _ from "lodash";
+
+import { QueryCtrl } from 'grafana/app/plugins/sdk';
+
+import { getValidConversionFactor } from './util';
 
 export class GenericDatasourceQueryCtrl extends QueryCtrl {
 
@@ -24,7 +28,7 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
     if (!this.target.facet) {
       options.push({
         text: 'count', value: 'count'
-      })
+      });
     }
     options = options.concat(
       [
@@ -51,7 +55,7 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
     return [
       { text: this.queryTypes.POWER_QUERY, value: this.queryTypes.POWER_QUERY },
       { text: this.queryTypes.STANDARD_QUERY, value: this.queryTypes.STANDARD_QUERY }
-    ]
+    ];
   }
 
   toggleEditorMode() {
@@ -60,7 +64,7 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
 
   onChangeInternal() {
     this.target.panelType = this.panel.type;
-    if (this.isQueryValid(this.target)) {
+    if (GenericDatasourceQueryCtrl.isQueryValid(this.target)) {
       this.panelCtrl.refresh(); // Asks the panel to refresh data.
     }
   }
@@ -70,17 +74,17 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
    * @param target
    * @returns {boolean}
    */
-  isQueryValid(target) {
-    let isValid = true;
-    if (!!target.conversionFactor) {
+  static isQueryValid(target) {
+    if (target.conversionFactor) {
       try {
-        const value = eval(target.conversionFactor);
-        isValid = _.isFinite(value);
+        const value = getValidConversionFactor(target.conversionFactor);
+        return _.isFinite(value);
       } catch (e) {
-        isValid = false;
+        return false;
       }
     }
-    return isValid;
+
+    return true;
   }
 }
 

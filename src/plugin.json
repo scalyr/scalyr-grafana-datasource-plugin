@@ -4,13 +4,21 @@
   "annotations": false,
   "category": "logging",
   "name": "Scalyr",
-  "id": "scalyr",
+  "id": "scalyr-grafana-datasource",
   "info": {
+    "version": "1.0.0",
     "description": "Scalyr Observability Platform",
     "author": {
       "name": "Scalyr",
       "url": "https://www.scalyr.com"
+    },
+    "logos": {
+      "small": "img/scalyr.svg",
+      "large": "img/scalyr.svg"
     }
+  },
+  "dependencies": {
+    "grafanaVersion": ">=6.3.7"
   },
   "routes": [
     {
