@@ -9,6 +9,9 @@ We welcome and appreciate contributions of any kind (code, tests, documentation,
     and use appropriate labels to indicate the kind of issue.
 * Please fork this repo and create a branch to make your changes
 * Please include the issues you are fixing in the commits
+* Please add an entry in [CHANGELOG.md](./CHANGELOG.md) in `In Development` section along with 
+  github issue number and author information. For example:
+  `Power queries now support blah (#1234) (Alice Wonderland)`
 
 ## Plugin development
 
