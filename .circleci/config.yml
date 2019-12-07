@@ -2,26 +2,6 @@
 #
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
-aliases:
-  # Workflow filters
-  - &filter-not-release-or-master
-    tags:
-      ignore: /^v[0-9]+(\.[0-9]+){2}(-.+|[^-.]*)$/
-    branches:
-      ignore:
-        - master
-  - &filter-only-master
-    branches:
-      only: master
-  - &filter-circleci-testing
-    branches:
-      only: feature/circleci
-  - &filter-only-tagged-commits-on-master
-    branches:
-      only: master
-    tags:
-      only: /(?<=^[Vv]|^)(?:(?<major>(?:0|[1-9](?:(?:0|[1-9])+)*))[.](?<minor>(?:0|[1-9](?:(?:0|[1-9])+)*))[.](?<patch>(?:0|[1-9](?:(?:0|[1-9])+)*))(?:-(?<prerelease>(?:(?:(?:[A-Za-z]|-)(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)?|(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)(?:[A-Za-z]|-)(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)?)|(?:0|[1-9](?:(?:0|[1-9])+)*))(?:[.](?:(?:(?:[A-Za-z]|-)(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)?|(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)(?:[A-Za-z]|-)(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)?)|(?:0|[1-9](?:(?:0|[1-9])+)*)))*))?(?:[+](?<build>(?:(?:(?:[A-Za-z]|-)(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)?|(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)(?:[A-Za-z]|-)(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)?)|(?:(?:0|[1-9])+))(?:[.](?:(?:(?:[A-Za-z]|-)(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)?|(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)(?:[A-Za-z]|-)(?:(?:(?:0|[1-9])|(?:[A-Za-z]|-))+)?)|(?:(?:0|[1-9])+)))*))?)$/
-
 version: 2
 jobs:
   build:
@@ -36,6 +16,11 @@ jobs:
           # fallback to using the latest cache if no exact match is found
           - dependency-cache-
       - run:
+          name: Setup Environment Variables
+          command: |
+            echo "export GIT_SHA1=$(echo ${CIRCLE_SHA1} | cut -c -7)" >> $BASH_ENV
+            source $BASH_ENV
+      - run:
           name: yarn install
           command: 'yarn install --pure-lockfile --no-progress'
       - save_cache:
@@ -46,29 +31,51 @@ jobs:
       - run: yarn test
       - run:
           name: Create directories for Artifacts
-          command: mkdir -p ~/artifacts/scalyr_plugin/
+          command: mkdir -p ~/artifacts/scalyr_plugin/target/
       - run: 
           name: Build artifacts
           command: |
             yarn build
-            cp -rf dist/ /home/circleci/artifacts/ 
+            cp -rf dist/ ~/artifacts/scalyr_plugin/
+            echo Plugin git sha is ${GIT_SHA1}
+            cd ~/artifacts/scalyr_plugin/ && tar -czvf scalyr_grafana_plugin_${GIT_SHA1}.tar.gz dist/ && mv scalyr_grafana_plugin_${GIT_SHA1}.tar.gz target/
+      - persist_to_workspace:
+          root: ~/artifacts/scalyr_plugin/target/
+          paths:
+            - scalyr_grafana_plugin_*.tar.gz
       - store_artifacts:
-          path: ~/artifacts
-          destination: dist
+          path: ~/artifacts/scalyr_plugin/target/
+          destination: scalyr_grafana_plugin
   
-  deploy-to-github-release:
+  deploy-to-github-releases:
     docker: 
-      - image: circleci/golang:1.8
-    requires:
-      - build
-    filters:
-      - filter-only-tagged-commits-on-masters
-      - filter-circleci-testing
+      - image: circleci/golang:1.12
     steps:
+      - attach_workspace:
+          at: ~/artifacts/scalyr_plugin/
       - run:
           name: "Publish Release on GitHub"
           command: |
             go get github.com/tcnksm/ghr
             VERSION=${CIRCLE_TAG}
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
-            
+            echo Releasing version $VERSION
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} /home/circleci/artifacts/scalyr_plugin/
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /.*/
+
+      - deploy-to-github-releases:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              # See https://discuss.circleci.com/t/filter-job-by-tag-not-working-regexp-possibly-unsupported/28484
+              only: /^(\d|[1-9]\d*)\.(\d|[1-9]\d*)\.(\d|[1-9]\d*)(-(0|[1-9A-Za-z-][0-9A-Za-z-]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(\.(0|[1-9A-Za-z-][0-9A-Za-z-]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*)?(\+[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$/
