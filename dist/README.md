@@ -17,7 +17,8 @@ With the Scalyr plugin, you will be able to create and visualize your log-based 
 
 ### Getting started
 
-1. Clone the [plugin repository](https://github.com/scalyr/scalyr-grafana-datasource) from GitHub.
+1. If you want a stable version of plugin, download the desired version from 
+[github relases](https://github.com/scalyr/scalyr-grafana-datasource-plugin/releases). If you want the `development` version of the plugin, clone the [plugin repository](https://github.com/scalyr/scalyr-grafana-datasource) from GitHub.
 
 	```
 	git  clone https://github.com/scalyr/scalyr-grafana-datasource-plugin.git
@@ -30,7 +31,16 @@ With the Scalyr plugin, you will be able to create and visualize your log-based 
 
 3. Copy the contents of the Scalyr plugin into grafana: 
 
+	Stable version:
+
+	```bash
+	tar -xvf scalyr_grafana_plugin_3cb3128.tar.gz
+	cp -rf dist/ /var/lib/grafana/plugins/scalyr/
 	```
+
+	Development version:
+
+	```bash
 	cp -r scalyr-grafana-datasource/dist/ /var/lib/grafana/plugins/scalyr/
 	```
 
