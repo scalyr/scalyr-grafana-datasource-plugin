@@ -9,8 +9,8 @@ We welcome and appreciate contributions of any kind (code, tests, documentation,
     and use appropriate labels to indicate the kind of issue.
 * Please fork this repo and create a branch to make your changes
 * Please include the issues you are fixing in the commits
-* Please add an entry in [CHANGELOG.md](./CHANGELOG.md) in `In Development` section along with 
-  github issue number and author information. For example:
+* Please add an entry in [CHANGELOG.md](./CHANGELOG.md) in `In Development`
+  section along with github issue number and author information. For example:
   `Power queries now support blah (#1234) (Alice Wonderland)`
 
 ## Plugin development
@@ -50,7 +50,13 @@ in Google Chrome.
    plugin artifacts to.
 
     ```bash
-    UID=$(id -u) USER=$(whoami) docker run -d --name grafana --user $UID --volume "/Users/${USER}/Work/var/run/docker/grafana/:/var/lib/grafana" -p 3000:3000 -e "GF_LOG_CONSOLE_LEVEL=debug" -e "GF_DATAPROXY_LOGGING=true" grafana/grafana:6.3.7
+    UID=$(id -u) USER=$(whoami) docker run -d --name grafana \
+        --user $UID \
+        --volume "/Users/${USER}/Work/var/run/docker/grafana/:/var/lib/grafana" \
+        -p 3000:3000 \
+        -e "GF_LOG_CONSOLE_LEVEL=debug" \
+        -e "GF_DATAPROXY_LOGGING=true" \
+        grafana/grafana:6.3.7
     ```
 
     Note that you can control verbosity of logs by setting log levels to desired
