@@ -22,7 +22,7 @@ jobs:
             source $BASH_ENV
       - run:
           name: Setup markdownlint-cli
-          command: npm install -g markdownlint-cli
+          command: sudo npm install -g markdownlint-cli
       - run:
           name: Lint Markdown files
           command: |
