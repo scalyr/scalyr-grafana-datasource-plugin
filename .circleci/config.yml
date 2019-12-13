@@ -26,10 +26,10 @@ jobs:
       - run:
           name: Lint Markdown files
           command: |
-            markdownlint ./README.md
-            markdownlint ./HOW_TO_CONTRIBUTE.md
-            markdownlint ./CHANGELOG.md
-            markdownlint ./MAINTAINERS.md
+            markdownlint -c mdlint.json ./README.md
+            markdownlint -c mdlint.json ./HOW_TO_CONTRIBUTE.md
+            markdownlint -c mdlint.json ./CHANGELOG.md
+            markdownlint -c mdlint.json ./MAINTAINERS.md
       - run:
           name: yarn install
           command: 'yarn install --pure-lockfile --no-progress'

@@ -4,7 +4,8 @@
 
 The Scalyr Grafana data source plugin allows you to create and visualize graphs
 and dashboards in Grafana using data in Scalyr. You may want to use this plugin
-to allow you to visualize Scalyr data next to other data sources, for instance when you want to monitor many feeds on a single dashboard.
+to allow you to visualize Scalyr data next to other data sources, for instance
+when you want to monitor many feeds on a single dashboard.
 
 ![SystemDashboard](images/SystemDashboard.png)
 
@@ -30,7 +31,9 @@ can find documentation on API Keys [here](https://www.scalyr.com/help/api#scalyr
 
 1. If you want a stable version of plugin, download the desired version from
 [github relases](https://github.com/scalyr/scalyr-grafana-datasource-plugin/releases).
-If you want the `development` version of the plugin, clone the [plugin repository](https://github.com/scalyr/scalyr-grafana-datasource) from GitHub.
+If you want the `development` version of the plugin,
+clone the [plugin repository](https://github.com/scalyr/scalyr-grafana-datasource)
+from GitHub.
 
     ```bash
     git  clone https://github.com/scalyr/scalyr-grafana-datasource-plugin.git
@@ -73,19 +76,23 @@ If you want the `development` version of the plugin, clone the [plugin repositor
 
 ### Verify the Plugin was Installed
 
-1. In order to verify proper installation you must log in to your grafana instance and navigate to **Configuration Settings -> Data Sources**.
+1. In order to verify proper installation you must log in to your grafana instance
+   and navigate to **Configuration Settings -> Data Sources**.
 
     ![FirstImage](images/ConfigDataSource.png)
 
-2. This will take you into the configuration page. If you already have other data sources installed, you will see them show up here. Click on the **Add data source** button:
+2. This will take you into the configuration page. If you already have other data
+   sources installed, you will see them show up here. Click on the **Add data source** button:
 
     ![SecondImage](images/DataSoureConfig.png)
 
-3. If you scroll down on the resulting page you should see “Scalyr Grafana Datasource” show up in the “Others” section.
+3. If you scroll down on the resulting page you should see “Scalyr Grafana
+   Datasource” show up in the “Others” section.
 
     ![otherPlugin](images/OthersPlugin.png)
 
-4. Click on ***“Select”***. This will take you to a configuration page where you insert your API key mentioned in the prerequisite section.
+4. Click on ***“Select”***. This will take you to a configuration page where you
+   insert your API key mentioned in the prerequisite section.
 
     ![PluginConfig](images/PluginConfig.png)
 
@@ -100,7 +107,9 @@ If you want the `development` version of the plugin, clone the [plugin repositor
 
 ## Using the Scalyr Datasource
 
-Now that you’ve completed installing and configuring the Scalyr data source plugin, lets go through an example of how you can start using it to create a dashboard using Scalyr data.
+Now that you’ve completed installing and configuring the Scalyr data source plugin,
+lets go through an example of how you can start using it to create a dashboard
+using Scalyr data.
 
 1. Create a new dashboard by click Create > dashboard
 
@@ -115,14 +124,18 @@ Now that you’ve completed installing and configuring the Scalyr data source pl
     ![ScalyrPlugin](images/ScalyrPlugin.png)
 
 4. A query datasource consist of 4 parts:
-    * **Function**: You are given a list of the function that can be applied to the Facet values. You can find more documentation [here](https://www.scalyr.com/help/dashboards#graphFunctions)
+    * **Function**: You are given a list of the function that can be applied to
+    the Facet values.
+    Scalyr [graphFunctions documentation](https://www.scalyr.com/help/dashboards#graphFunctions)
+    is a good resource to see the list of supported functions.
     * **Facet**: The name of the event field to be graphed
     * **Label**: Label for the query. This is displayed as the series title in the graph legend.
     * **Query**: Query filter to be used. This field supports [Scalyr query syntax](https://www.scalyr.com/help/query-language).
 
 5. Fill out all the fields and click the save button. In the image below, we’ve
-added a query to graph CPU Utilization. In general, if you have used graphs and
-dashboards within Scalyr, you should be able to port those over to grafana usingthe same Scalyr query syntax.
+   added a query to graph CPU Utilization. In general, if you have used graphs and
+   dashboards within Scalyr, you should be able to port those over to grafana
+   usingthe same Scalyr query syntax.
 
     ![CPUQuery](images/CPUQuery.png)
 
@@ -132,11 +145,14 @@ Note: you can add multiple queries to a visualization to plot multiple series on
 
 ## Limitations and Future Improvements
 
-1. Breakdown graphs are currently not supported. These may be supported in the future.
+1. Breakdown graphs are currently not supported. These may be supported in the
+   future.
 
-2. Power Queries is an experimental feature and requires the user to change the visualization to a ***“table”*** inside Grafana.
+2. Power Queries is an experimental feature and requires the user to change the
+   visualization to a ***“table”*** inside Grafana.
 
-3. Linking back to Scalyr is a work in progress and will be part of the next release.
+3. Linking back to Scalyr is a work in progress and will be part of the next
+   release.
 
 ## Contributing
 
@@ -144,4 +160,6 @@ See [How to contribute?](/HOW_TO_CONTRIBUTE.md) for developer documentation.
 
 ## License
 
-The Scalyr Grafana plugin is licensed under [Apache License](https://www.apache.org/licenses), version 2.0. More information is available in the [LICENSE](./LICENSE.txt) file.
+The Scalyr Grafana plugin is licensed under
+[Apache License](https://www.apache.org/licenses), version 2.0. More information
+is available in the [LICENSE](./LICENSE.txt) file.
