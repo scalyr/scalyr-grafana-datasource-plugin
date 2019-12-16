@@ -21,6 +21,16 @@ jobs:
             echo "export GIT_SHA1=$(echo ${CIRCLE_SHA1} | cut -c -7)" >> $BASH_ENV
             source $BASH_ENV
       - run:
+          name: Setup markdownlint-cli
+          command: sudo npm install -g markdownlint-cli
+      - run:
+          name: Lint Markdown files
+          command: |
+            markdownlint -c mdlint.json ./README.md
+            markdownlint -c mdlint.json ./HOW_TO_CONTRIBUTE.md
+            markdownlint -c mdlint.json ./CHANGELOG.md
+            markdownlint -c mdlint.json ./MAINTAINERS.md
+      - run:
           name: yarn install
           command: 'yarn install --pure-lockfile --no-progress'
       - save_cache:

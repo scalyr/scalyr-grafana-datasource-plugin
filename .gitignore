@@ -3,3 +3,4 @@
 .vscode/
 .jshintrc
 .nvmrc
+.DS_Store
