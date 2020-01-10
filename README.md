@@ -30,7 +30,7 @@ can find documentation on API Keys [here](https://www.scalyr.com/help/api#scalyr
 ## Getting started
 
 1. If you want a stable version of plugin, download the desired version from
-[github relases](https://github.com/scalyr/scalyr-grafana-datasource-plugin/releases).
+[github releases](https://github.com/scalyr/scalyr-grafana-datasource-plugin/releases).
 If you want the `development` version of the plugin,
 clone the [plugin repository](https://github.com/scalyr/scalyr-grafana-datasource)
 from GitHub.
@@ -135,7 +135,7 @@ using Scalyr data.
 5. Fill out all the fields and click the save button. In the image below, we’ve
    added a query to graph CPU Utilization. In general, if you have used graphs and
    dashboards within Scalyr, you should be able to port those over to grafana
-   usingthe same Scalyr query syntax.
+   using the same Scalyr query syntax.
 
     ![CPUQuery](images/CPUQuery.png)
 
@@ -149,7 +149,9 @@ Note: you can add multiple queries to a visualization to plot multiple series on
    future.
 
 2. Power Queries is an experimental feature and requires the user to change the
-   visualization to a ***“table”*** inside Grafana.
+   visualization to a ***“table”*** inside Grafana. You can also attempt to graph
+   your results with a ***“graph”*** visualization, by setting the x-axis mode
+   to ***“series”***.
 
 3. Linking back to Scalyr is a work in progress and will be part of the next
    release.
