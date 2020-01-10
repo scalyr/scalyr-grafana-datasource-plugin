@@ -161,7 +161,7 @@ export class GenericDatasource {
   createTimeSeriesQuery(options) {
     const queries = [];
     options.targets.forEach((target) => {
-      const queryText = this.templateSrv.replace(target.queryText, options.scopedVars, this.interpolateVariable);
+      const queryText = this.templateSrv.replace(target.queryText, options.scopedVars, GenericDatasource.interpolateVariable);
       let facetFunction = '';
       if (target.facet) {
         facetFunction = `${target.function || 'count'}(${target.facet})`;
