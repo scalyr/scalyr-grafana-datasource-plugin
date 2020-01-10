@@ -62,7 +62,17 @@ describe('Scalyr datasource tests', () => {
     datasourceRequest: jest.fn()
   };
 
-  const datasource = new GenericDatasource(instanceSettings, {}, backendSrv, {});
+  /* eslint-disable no-unused-vars */
+  /* eslint-disable class-methods-use-this */
+  class TestTemplateSrv {
+    replace(a, b, c) {
+      return a;
+    }
+  }
+  /* eslint-enable no-unused-vars */
+  /* eslint-enable class-methods-use-this */
+
+  const datasource = new GenericDatasource(instanceSettings, {}, backendSrv, new TestTemplateSrv());
 
   describe('Time Series', () => {
     it('Should create a time series request', () => {
@@ -119,34 +129,8 @@ describe('Scalyr datasource tests', () => {
     it('Should transform power query results to graph series', () => {
       const transformedResults = GenericDatasource.transformPowerQueryDataToGraph(results).data;
       expect(transformedResults.length).toBe(13);
-      expect(transformedResults.some(x => x.target === 'r1')).toBeTruthy();
+      expect(transformedResults.some(x => x.target === 'r1: col2')).toBeTruthy();
       expect(transformedResults.every(x => x.datapoints.length === 1)).toBeTruthy();
-    });
-  });
-
-  describe('Filter from variables', () => {
-    it('Should return empty string when no variables are present', () => {
-      expect(GenericDatasource.getFilterFromVariables([])).toBe('');
-    });
-
-    it('Should create or enteries for variables with multi property set to true', () => {
-      const multiVariables = [
-        {
-          multi: true,
-          current: {
-            text: 'value 1 + value 2',
-            value: ['value 1', 'value 2'],
-          },
-          name: 'name',
-          query: '$query',
-          type: 'query'
-        }
-      ];
-      expect(GenericDatasource.getFilterFromVariables(multiVariables)).toBe("$query == 'value 1' or $query == 'value 2'");
-    });
-
-    it('Should handle multiple variables', () => {
-      expect(GenericDatasource.getFilterFromVariables(variables)).toBe(" $query == 'value 1' or $query == 'value 2'$query2 == 'value' ");
     });
   });
 

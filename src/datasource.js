@@ -55,7 +55,7 @@ export class GenericDatasource {
       };      
     }
 
-    return this.performTimeseriesQuery(options, this.templateSrv.variables);
+    return this.performTimeseriesQuery(options);
   }
 
   /**
@@ -132,14 +132,36 @@ export class GenericDatasource {
     });
   }
 
+  static interpolateVariable(value, variable) {
+    if (typeof value === 'string') {
+      if (variable.multi || variable.includeAll) {
+        return "'" + value.replace(/'/g, `''`) + "'";
+      }
+      return value;
+    }
+
+    if (typeof value === 'number') {
+      return value;
+    }
+
+    const quotedValues = _.map(value, val => {
+      if (typeof value === 'number') {
+        return value;
+      }
+
+      return "'" + val.replace(/'/g, `''`) + "'";
+    });
+    return quotedValues.join(',');
+  }
+
   /**
    * Create a request to the scalyr time series endpoint.
    * @param {*} options 
    */
-  createTimeSeriesQuery(options, variables) {
+  createTimeSeriesQuery(options) {
     const queries = [];
-    const variableFilter = GenericDatasource.getFilterFromVariables(variables);
     options.targets.forEach((target) => {
+      const queryText = this.templateSrv.replace(target.queryText, options.scopedVars, this.interpolateVariable);
       let facetFunction = '';
       if (target.facet) {
         facetFunction = `${target.function || 'count'}(${target.facet})`;
@@ -148,7 +170,7 @@ export class GenericDatasource {
         startTime: options.range.from.valueOf(),
         endTime: options.range.to.valueOf(),
         buckets: GenericDatasource.getNumberOfBuckets(options),
-        filter: target.queryText + variableFilter,
+        filter: queryText,
         function: facetFunction
       };
       queries.push(query);
@@ -165,25 +187,6 @@ export class GenericDatasource {
   }
 
   /**
-   * Convert the selected variables into filter accepted by scalyr query language
-   */
-  static getFilterFromVariables(variables) {
-    let variableFilter = '';
-    if (variables && variables.length > 0) {
-      variables.forEach((variable) => {
-        const value = _.get(variable, 'current.value');
-        if (variable.multi) {
-          const variableQuery = value.map(v => `${variable.query} == '${v}'`).join(' or ');
-          variableFilter += variableQuery; 
-        } else {
-          variableFilter = ` ${variableFilter + variable.query} == '${value}' `;
-        }
-      });
-    }
-    return variableFilter;
-  }
-
-  /**
    * Get how many buckets to return based on the query time range
    * @param {*} options 
    */
@@ -195,8 +198,8 @@ export class GenericDatasource {
    * Perform the timeseries query using the Grafana proxy.
    * @param {*} options 
    */
-  performTimeseriesQuery(options, variables) {
-    const query = this.createTimeSeriesQuery(options, variables);
+  performTimeseriesQuery(options) {
+    const query = this.createTimeSeriesQuery(options);
     return this.backendSrv.datasourceRequest(query)
       .then( (response) => {
         const data = response.data;
@@ -293,11 +296,13 @@ export class GenericDatasource {
     const values = data.values;
     for (let i = 0; i < values.length; i += 1) {
       const dataValue = values[i];
-      const responseObject = {
-        target: dataValue[0],
-        datapoints: [[dataValue[1], dataValue[0]]]
-      };
-      result.push(responseObject);
+      for (let j = 1; j < dataValue.length; j += 1) {
+        const responseObject = {
+          target: dataValue[0] + ": " + data.columns[j].name,
+          datapoints: [[dataValue[j], Date.now()]]
+        };
+        result.push(responseObject);
+      }
     }
     return {
       data: result
