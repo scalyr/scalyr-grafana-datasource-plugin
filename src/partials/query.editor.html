@@ -41,4 +41,10 @@
       <input type="text" class="gf-form-input" ng-change="ctrl.onChangeInternal()" ng-model-options="{debounce: 1000}" ng-model="ctrl.target.queryText" placeholder="Enter Scalyr Query" />
     </div>
   </div>
+  <div class="gf-form-inline" ng-if="ctrl.target.queryType === ctrl.queryTypes.STANDARD_QUERY">
+    <div class="gf-form gf-form--grow">
+      <span class="gf-form-label width-10">DataLink URL</span>
+        <span ng-bind="ctrl.target.dataLink">{{ctrl.target.dataLink}}</span>
+    </div>
+  </div>
 </query-editor-row>
