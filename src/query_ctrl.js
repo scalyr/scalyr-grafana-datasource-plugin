@@ -22,6 +22,10 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
     }
   }
 
+  copyDataLink() {
+    navigator.clipboard.writeText(this.target.dataLink);
+  }
+
   /**
    * Return a list of available functions. The 'count' function is only available if a facet isn't selected.
    */
