@@ -23,7 +23,9 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
   }
 
   copyDataLink() {
+    /* eslint-disable no-undef */
     navigator.clipboard.writeText(this.target.dataLink);
+    /* eslint-enable no-undef */
   }
 
   /**
