@@ -7,7 +7,7 @@ import { getValidConversionFactor } from './util';
 
 export class GenericDatasourceQueryCtrl extends QueryCtrl {
 
-  constructor($scope, $injector)  {
+  constructor($scope, $injector) {
     super($scope, $injector);
     this.scope = $scope;
     this.queryTypes = {
@@ -90,9 +90,9 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
     return result;
   }
 
-  static getScalyrDatasourceUrl() {
+  getScalyrDatasourceUrl() {
     /* eslint-disable no-undef */
-    const str = grafanaBootData.settings.datasources.Scalyr.jsonData.scalyrUrl;
+    const str = this.panelCtrl.datasource.scalyrUrl;
     /* eslint-enable no-undef */
     if (str.charAt(str.length - 1) !== "/") {
       return str + "/";
@@ -116,7 +116,7 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
                            }, []).join("");
           dataLinkFilter = "&filter=" + queryText;
         }
-        this.target.dataLink = GenericDatasourceQueryCtrl.getScalyrDatasourceUrl() + "events?startTime=${__from}&endTime=${__to}" + dataLinkFilter
+        this.target.dataLink = this.getScalyrDatasourceUrl() + "v2/grafana-redirect?startTime=${__from}&endTime=${__to}" + dataLinkFilter
       }
   }
 

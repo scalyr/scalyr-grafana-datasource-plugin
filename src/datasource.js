@@ -16,6 +16,7 @@ export class GenericDatasource {
     this.url = instanceSettings.url;
     this.name = instanceSettings.name;
     this.apiKey = instanceSettings.jsonData.scalyrApiKey;
+    this.scalyrUrl = instanceSettings.jsonData.scalyrUrl;
     this.backendSrv = backendSrv;
     this.q = $q;
     this.templateSrv = templateSrv;
