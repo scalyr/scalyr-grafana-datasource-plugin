@@ -91,9 +91,7 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
   }
 
   getScalyrDatasourceUrl() {
-    /* eslint-disable no-undef */
     const str = this.panelCtrl.datasource.scalyrUrl;
-    /* eslint-enable no-undef */
     if (str.charAt(str.length - 1) !== "/") {
       return str + "/";
     }
@@ -106,7 +104,6 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
         if (this.target.queryText !== "") {
           const varRegex = /\$(\w+)|\[\[([\s\S]+?)(?::(\w+))?\]\]|\${(\w+)(?:\.([^:^}]+))?(?::(\w+))?}/g
           const extractedVars = this.target.queryText.match(varRegex);
-          // TODO: encode any extractedVars that dont match up to a variable the user has defined maybe?
           const queryWithoutVars = GenericDatasourceQueryCtrl.splitOnArrayElements(this.target.queryText, extractedVars);
           for (let i = 0; i < queryWithoutVars.length; i += 1) {
             queryWithoutVars[i] = encodeURIComponent(queryWithoutVars[i]);
