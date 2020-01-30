@@ -44,8 +44,8 @@
   <div class="gf-form-inline" ng-if="ctrl.target.queryType === ctrl.queryTypes.STANDARD_QUERY">
     <div class="gf-form gf-form--grow">
       <span class="gf-form-label width-10">DataLink URL</span>
-      <span ng-bind="ctrl.target.dataLink">{{ctrl.target.dataLink}}</span>
-      <button class="btn navbar-button gf-timepicker-nav-btn" ng-click="ctrl.copyDataLink()">Copy</button>
+      <span class="gf-form-input" ng-bind="ctrl.target.dataLink">{{ctrl.target.dataLink}}</span>
+      <button class="btn navbar-button gf-timepicker-nav-btn width-5" ng-click="ctrl.copyDataLink()">{{ctrl.target.copyText}}</button>
     </div>
   </div>
 </query-editor-row>

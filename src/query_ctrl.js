@@ -20,11 +20,14 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
     if (!this.target.queryType) {
       this.target.queryType = this.queryTypes.STANDARD_QUERY;
     }
+
+    this.target.copyText = "Copy";
   }
 
   copyDataLink() {
     /* eslint-disable no-undef */
     navigator.clipboard.writeText(this.target.dataLink);
+    this.target.copyText = "Copied";
     /* eslint-enable no-undef */
   }
 
@@ -74,6 +77,7 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
     this.target.panelType = this.panel.type;
     if (GenericDatasourceQueryCtrl.isQueryValid(this.target)) {
       this.createDataLinkURL();
+      this.target.copyText = "Copy";
       this.panelCtrl.refresh(); // Asks the panel to refresh data.
     }
   }
