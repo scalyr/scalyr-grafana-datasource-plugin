@@ -128,9 +128,12 @@ using Scalyr data.
     the Facet values.
     Scalyr [graphFunctions documentation](https://www.scalyr.com/help/dashboards#graphFunctions)
     is a good resource to see the list of supported functions.
-    * **Facet**: The name of the event field to be graphed
+    * **Facet**: The name of the event field to be graphed.
+    * **Conversion Factor**: (Optional) Value to multiply the values of the graph, useful for converting units.
     * **Label**: Label for the query. This is displayed as the series title in the graph legend.
     * **Query**: Query filter to be used. This field supports [Scalyr query syntax](https://www.scalyr.com/help/query-language).
+    * **DataLink URL**: A read-only generated field, this link can be copied to a new DataLink (at the end of the Visualization
+    section). This DataLink will go to the logs in the Scalyr used to create this graph.
 
 5. Fill out all the fields and click the save button. In the image below, we’ve
    added a query to graph CPU Utilization. In general, if you have used graphs and
@@ -143,6 +146,23 @@ You’ve successfully installed, configured and created a graph in Grafana using
 
 Note: you can add multiple queries to a visualization to plot multiple series on the same graph.
 
+## Variables
+
+Queries support all Grafana variable substitution syntaxes, for example:
+
+    $varname
+    [[varname]]
+    ${varname:option}
+   
+For multi-value variables there is a custom default substitution method, the values will be quoted and seperated with 
+commas, for example:
+
+    "value1","value2","value3"
+    
+The expected use of multi-value variables is for `in` queries, for example:
+
+    $serverHost=($host)
+
 ## Limitations and Future Improvements
 
 1. Breakdown graphs are currently not supported. These may be supported in the
@@ -152,9 +172,9 @@ Note: you can add multiple queries to a visualization to plot multiple series on
    visualization to a ***“table”*** inside Grafana. You can also attempt to graph
    your results with a ***“graph”*** visualization, by setting the x-axis mode
    to ***“series”***.
-
-3. Linking back to Scalyr is a work in progress and will be part of the next
-   release.
+   
+3. Complex queries with multiple functions are currently not supported. These may
+   be supported in the future
 
 ## Contributing
 
