@@ -150,18 +150,24 @@ Note: you can add multiple queries to a visualization to plot multiple series on
 
 Queries support all Grafana variable substitution syntaxes, for example:
 
+```
     $varname
     [[varname]]
     ${varname:option}
-   
-For multi-value variables there is a custom default substitution method, the values will be quoted and seperated with 
+```
+
+For multi-value variables there is a custom default substitution method, the values will be quoted and seperated with
 commas, for example:
 
+```
     "value1","value2","value3"
-    
+```
+
 The expected use of multi-value variables is for `in` queries, for example:
 
+```
     $serverHost=($host)
+```
 
 ## Limitations and Future Improvements
 
