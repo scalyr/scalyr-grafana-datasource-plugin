@@ -84,12 +84,14 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
 
   static splitOnArrayElements(str, splitters) {
     let result = [str];
-    for (let i = 0; i < splitters.length; i += 1) {
-      let subresult = [];
-      for (let j = 0; j < result.length; j += 1) {
-        subresult = subresult.concat(result[j].split(splitters[i]));
+    if (splitters) {
+      for (let i = 0; i < splitters.length; i += 1) {
+        let subresult = [];
+        for (let j = 0; j < result.length; j += 1) {
+          subresult = subresult.concat(result[j].split(splitters[i]));
+        }
+        result = subresult;
       }
-      result = subresult;
     }
     return result;
   }
@@ -105,9 +107,9 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
   createDataLinkURL() {
       if (this.target.queryType === this.queryTypes.STANDARD_QUERY) {
         let dataLinkFilter = ""
-        if (this.target.queryText !== "") {
-          const varRegex = /\$(\w+)|\[\[([\s\S]+?)(?::(\w+))?\]\]|\${(\w+)(?:\.([^:^}]+))?(?::(\w+))?}/g
+        if (this.target.queryText) {
           const extractedVars = this.target.queryText.match(varRegex);
+          const varRegex = /\$(\w+)|\[\[([\s\S]+?)(?::(\w+))?\]\]|\${(\w+)(?:\.([^:^}]+))?(?::(\w+))?}/g
           const queryWithoutVars = GenericDatasourceQueryCtrl.splitOnArrayElements(this.target.queryText, extractedVars);
           for (let i = 0; i < queryWithoutVars.length; i += 1) {
             queryWithoutVars[i] = encodeURIComponent(queryWithoutVars[i]);
