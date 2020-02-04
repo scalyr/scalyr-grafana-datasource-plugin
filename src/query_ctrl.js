@@ -1,4 +1,3 @@
-/* eslint-disable no-template-curly-in-string */
 import _ from "lodash";
 
 import { QueryCtrl } from 'grafana/app/plugins/sdk';

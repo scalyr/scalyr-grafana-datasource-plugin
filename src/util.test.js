@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string */
 import { getValidConversionFactor, splitOnArrayElements, createDataLinkURL } from './util';
 
 describe('Util - Conversion Factor', () => {

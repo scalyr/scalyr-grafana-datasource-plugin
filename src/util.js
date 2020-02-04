@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string */
   /**
    * Convert the user entered conversion factor to a number. 
    * User entered conversion factor can be expressed as fractions as well. 
