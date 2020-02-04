@@ -3,7 +3,7 @@ import _ from "lodash";
 
 import { QueryCtrl } from 'grafana/app/plugins/sdk';
 
-import { getValidConversionFactor } from './util';
+import { getValidConversionFactor, createDataLinkURL } from './util';
 
 export class GenericDatasourceQueryCtrl extends QueryCtrl {
 
@@ -14,20 +14,27 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
       POWER_QUERY: 'Power Query',
       STANDARD_QUERY: 'Standard Query'
     };
-    this.createDataLinkURL();
 
     // Default to standard query.
     if (!this.target.queryType) {
       this.target.queryType = this.queryTypes.STANDARD_QUERY;
     }
 
+    this.target.dataLink = createDataLinkURL(this.target.queryText, this.getScalyrDatasourceUrl());
+
     this.target.copyText = "Copy";
   }
 
+  /**
+   * Put the current DataLink into the user's clipboard
+   */
   copyDataLink() {
     /* eslint-disable no-undef */
-    navigator.clipboard.writeText(this.target.dataLink);
-    this.target.copyText = "Copied";
+    navigator.clipboard.writeText(this.target.dataLink).then(() => {
+      this.target.copyText = "Copied";
+    }, () => {
+      this.target.copyText = "FAILED";
+    });
     /* eslint-enable no-undef */
   }
 
@@ -76,24 +83,12 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
   onChangeInternal() {
     this.target.panelType = this.panel.type;
     if (GenericDatasourceQueryCtrl.isQueryValid(this.target)) {
-      this.createDataLinkURL();
+      if (this.target.queryType === this.queryTypes.STANDARD_QUERY) {
+        this.target.dataLink = createDataLinkURL(this.target.queryText, this.getScalyrDatasourceUrl());
+      }
       this.target.copyText = "Copy";
       this.panelCtrl.refresh(); // Asks the panel to refresh data.
     }
-  }
-
-  static splitOnArrayElements(str, splitters) {
-    let result = [str];
-    if (splitters) {
-      for (let i = 0; i < splitters.length; i += 1) {
-        let subresult = [];
-        for (let j = 0; j < result.length; j += 1) {
-          subresult = subresult.concat(result[j].split(splitters[i]));
-        }
-        result = subresult;
-      }
-    }
-    return result;
   }
 
   getScalyrDatasourceUrl() {
@@ -102,25 +97,6 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
       return str + "/";
     }
     return str;
-  }
-
-  createDataLinkURL() {
-      if (this.target.queryType === this.queryTypes.STANDARD_QUERY) {
-        let dataLinkFilter = ""
-        if (this.target.queryText) {
-          const extractedVars = this.target.queryText.match(varRegex);
-          const varRegex = /\$(\w+)|\[\[([\s\S]+?)(?::(\w+))?\]\]|\${(\w+)(?:\.([^:^}]+))?(?::(\w+))?}/g
-          const queryWithoutVars = GenericDatasourceQueryCtrl.splitOnArrayElements(this.target.queryText, extractedVars);
-          for (let i = 0; i < queryWithoutVars.length; i += 1) {
-            queryWithoutVars[i] = encodeURIComponent(queryWithoutVars[i]);
-          }
-          const queryText = queryWithoutVars.reduce((arr, v, i) => {
-                             return arr.concat(v, extractedVars[i]);
-                           }, []).join("");
-          dataLinkFilter = "&filter=" + queryText;
-        }
-        this.target.dataLink = this.getScalyrDatasourceUrl() + "v2/grafana-redirect?startTime=${__from}&endTime=${__to}" + dataLinkFilter
-      }
   }
 
   /**

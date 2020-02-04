@@ -130,7 +130,7 @@ using Scalyr data.
     is a good resource to see the list of supported functions.
     * **Facet**: The name of the event field to be graphed.
     * **Conversion Factor**: (Optional) Value to multiply the values of the graph, useful for converting units.
-    * **Label**: Label for the query. This is displayed as the series title in the graph legend.
+    * **Label**: (Optional) Label for the query. This is displayed as the series title in the graph legend. Same value as the `Query` field by default.
     * **Query**: Query filter to be used. This field supports [Scalyr query syntax](https://www.scalyr.com/help/query-language).
     * **DataLink URL**: A read-only generated field, this link can be copied to a new DataLink (at the end of the Visualization
     section). This DataLink will go to the logs in the Scalyr used to create this graph.

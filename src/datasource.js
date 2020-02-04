@@ -133,6 +133,13 @@ export class GenericDatasource {
     });
   }
 
+  /**
+   * Default interpolator for Grafana variables for this datasource
+   *
+   * @param value The value of this variable
+   * @param variable The Grafana variable information
+   * @returns {string}
+   */
   static interpolateVariable(value, variable) {
     if (typeof value === 'string') {
       if (variable.multi || variable.includeAll) {
