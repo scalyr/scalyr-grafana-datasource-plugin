@@ -30,7 +30,7 @@ can find documentation on API Keys [here](https://www.scalyr.com/help/api#scalyr
 ## Getting started
 
 1. If you want a stable version of plugin, download the desired version from
-[github relases](https://github.com/scalyr/scalyr-grafana-datasource-plugin/releases).
+[github releases](https://github.com/scalyr/scalyr-grafana-datasource-plugin/releases).
 If you want the `development` version of the plugin,
 clone the [plugin repository](https://github.com/scalyr/scalyr-grafana-datasource)
 from GitHub.
@@ -128,14 +128,18 @@ using Scalyr data.
     the Facet values.
     Scalyr [graphFunctions documentation](https://www.scalyr.com/help/dashboards#graphFunctions)
     is a good resource to see the list of supported functions.
-    * **Facet**: The name of the event field to be graphed
-    * **Label**: Label for the query. This is displayed as the series title in the graph legend.
+    * **Facet**: The name of the event field to be graphed.
+    * **Conversion Factor**: (Optional) Value to multiply the values of the graph, useful for converting units.
+    * **Label**: (Optional) Label for the query. This is displayed as the series title in the graph legend. Same value
+    as the `Query` field by default.
     * **Query**: Query filter to be used. This field supports [Scalyr query syntax](https://www.scalyr.com/help/query-language).
+    * **DataLink URL**: A read-only generated field, this link can be copied to a new DataLink (at the end of the Visualization
+    section). This DataLink will go to the logs in the Scalyr used to create this graph.
 
 5. Fill out all the fields and click the save button. In the image below, we’ve
    added a query to graph CPU Utilization. In general, if you have used graphs and
    dashboards within Scalyr, you should be able to port those over to grafana
-   usingthe same Scalyr query syntax.
+   using the same Scalyr query syntax.
 
     ![CPUQuery](images/CPUQuery.png)
 
@@ -143,16 +147,41 @@ You’ve successfully installed, configured and created a graph in Grafana using
 
 Note: you can add multiple queries to a visualization to plot multiple series on the same graph.
 
+## Variables
+
+Queries support all Grafana variable substitution syntaxes, for example:
+
+```bash
+$varname
+[[varname]]
+${varname:option}
+```
+
+For multi-value variables there is a custom default substitution method, the values will be quoted and seperated with
+commas, for example:
+
+```bash
+"value1","value2","value3"
+```
+
+The expected use of multi-value variables is for `in` queries, for example:
+
+```bash
+$serverHost=($host)
+```
+
 ## Limitations and Future Improvements
 
 1. Breakdown graphs are currently not supported. These may be supported in the
    future.
 
 2. Power Queries is an experimental feature and requires the user to change the
-   visualization to a ***“table”*** inside Grafana.
+   visualization to a ***“table”*** inside Grafana. You can also attempt to graph
+   your results with a ***“graph”*** visualization, by setting the x-axis mode
+   to ***“series”***.
 
-3. Linking back to Scalyr is a work in progress and will be part of the next
-   release.
+3. Complex queries with multiple functions are currently not supported. These may
+   be supported in the future
 
 ## Contributing
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string */
   /**
    * Convert the user entered conversion factor to a number. 
    * User entered conversion factor can be expressed as fractions as well. 
@@ -33,4 +34,59 @@
     } catch (e) {
       return 1.0;  
     }
+  }
+
+  /**
+   * Split a given string on multiple separators given in a list
+   *
+   * @param str String to split
+   * @param splitters List of values to split the string on
+   * @returns {string[]}
+   */
+  export function splitOnArrayElements(str, splitters) {
+    let result = [str];
+    if (splitters) {
+      for (let i = 0; i < splitters.length; i += 1) {
+        let subresult = [];
+        for (let j = 0; j < result.length; j += 1) {
+          subresult = subresult.concat(result[j].split(splitters[i]));
+        }
+        result = subresult;
+      }
+    }
+    return result;
+  }
+
+
+  /**
+   * Create a DataLink URL for a given query and datasource destination
+   *
+   * @param queryText Query for this DataLink
+   * @param scalyrDatasourceUrl Scalyr server URL this datasource is pointed to
+   * @returns {string}
+   */
+  export function createDataLinkURL(queryText, scalyrDatasourceUrl) {
+    let dataLinkFilter = "";
+    if (queryText) {
+      // This regex should be the same one that Grafana uses to find variables, at time of writing it is here:
+      // https://github.com/grafana/grafana/blob/cf2cc713933599e7646416a56a665282c9d9e3bb/public/app/features/templating/variable.ts#L11
+      const varRegex = /\$(\w+)|\[\[([\s\S]+?)(?::(\w+))?\]\]|\${(\w+)(?:\.([^:^}]+))?(?::(\w+))?}/g;
+      const extractedVars = queryText.match(varRegex);
+
+      const queryWithoutVars = splitOnArrayElements(queryText, extractedVars);
+      for (let i = 0; i < queryWithoutVars.length; i += 1) {
+        queryWithoutVars[i] = encodeURIComponent(queryWithoutVars[i]);
+      }
+      let filterText = "";
+      if (extractedVars) {
+        filterText = queryWithoutVars.reduce((arr, v, i) => {
+                         return arr.concat(v, extractedVars[i]);
+                       }, []).join("");
+      }
+      else {
+        filterText = queryWithoutVars[0];
+      }
+      dataLinkFilter = "&filter=" + filterText;
+    }
+    return scalyrDatasourceUrl + "v2/grafana-redirect?startTime=${__from}&endTime=${__to}" + dataLinkFilter;
   }

@@ -2,11 +2,11 @@ import _ from "lodash";
 
 import { QueryCtrl } from 'grafana/app/plugins/sdk';
 
-import { getValidConversionFactor } from './util';
+import { getValidConversionFactor, createDataLinkURL } from './util';
 
 export class GenericDatasourceQueryCtrl extends QueryCtrl {
 
-  constructor($scope, $injector)  {
+  constructor($scope, $injector) {
     super($scope, $injector);
     this.scope = $scope;
     this.queryTypes = {
@@ -18,6 +18,23 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
     if (!this.target.queryType) {
       this.target.queryType = this.queryTypes.STANDARD_QUERY;
     }
+
+    this.target.dataLink = createDataLinkURL(this.target.queryText, this.getScalyrDatasourceUrl());
+
+    this.target.copyText = "Copy";
+  }
+
+  /**
+   * Put the current DataLink into the user's clipboard
+   */
+  copyDataLink() {
+    /* eslint-disable no-undef */
+    navigator.clipboard.writeText(this.target.dataLink).then(() => {
+      this.target.copyText = "Copied";
+    }, () => {
+      this.target.copyText = "FAILED";
+    });
+    /* eslint-enable no-undef */
   }
 
   /**
@@ -65,8 +82,20 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
   onChangeInternal() {
     this.target.panelType = this.panel.type;
     if (GenericDatasourceQueryCtrl.isQueryValid(this.target)) {
+      if (this.target.queryType === this.queryTypes.STANDARD_QUERY) {
+        this.target.dataLink = createDataLinkURL(this.target.queryText, this.getScalyrDatasourceUrl());
+      }
+      this.target.copyText = "Copy";
       this.panelCtrl.refresh(); // Asks the panel to refresh data.
     }
+  }
+
+  getScalyrDatasourceUrl() {
+    const str = this.panelCtrl.datasource.scalyrUrl;
+    if (str.charAt(str.length - 1) !== "/") {
+      return str + "/";
+    }
+    return str;
   }
 
   /**

@@ -62,7 +62,17 @@ describe('Scalyr datasource tests', () => {
     datasourceRequest: jest.fn()
   };
 
-  const datasource = new GenericDatasource(instanceSettings, {}, backendSrv, {});
+  /* eslint-disable no-unused-vars */
+  /* eslint-disable class-methods-use-this */
+  class TestTemplateSrv {
+    replace(a, b, c) {
+      return a;
+    }
+  }
+  /* eslint-enable no-unused-vars */
+  /* eslint-enable class-methods-use-this */
+
+  const datasource = new GenericDatasource(instanceSettings, {}, backendSrv, new TestTemplateSrv());
 
   describe('Time Series', () => {
     it('Should create a time series request', () => {
@@ -98,9 +108,9 @@ describe('Scalyr datasource tests', () => {
     let results;
     beforeEach(() => {
       results = {
-        columns: [{name: 'col1'}, {name: 'col2'}],
+        columns: [{name: 'col1'}, {name: 'col2'}, {name: 'col3'}],
         warnings: [],
-        values: [['r1', 1], ['r2', 1], ['r3', 1], ['r4', 1], ['r5', 1], ['r6', 1], ['r7', 1], ['r8', 1], ['r9', 1], ['r10', 1], ['r11', 1], ['r12', 1], ['r13', 1]]
+        values: [['r1', 1, 2], ['r2', 1, 2], ['r3', 1, 2], ['r4', 1, 2], ['r5', 1, 2], ['r6', 1, 2], ['r7', 1, 2], ['r8', 1, 2], ['r9', 1, 2], ['r10', 1, 2], ['r11', 1, 2], ['r12', 1, 2], ['r13', 1, 2]]
       };
     });
     
@@ -108,45 +118,20 @@ describe('Scalyr datasource tests', () => {
       const transformedResults = datasource.transformPowerQueryDataToTable(results).data;
       expect(transformedResults.length).toBe(1);
       const resultEntry = transformedResults[0];
-      expect(resultEntry.columns.length).toBe(2);
+      expect(resultEntry.columns.length).toBe(3);
       expect(resultEntry.columns.some(x => x.text === 'col1')).toBeTruthy();
       expect(resultEntry.type).toBe('table');
       expect(resultEntry.rows.length).toBe(results.values.length);
-      expect(resultEntry.rows.every(x => x.length === 2)).toBeTruthy();
+      expect(resultEntry.rows.every(x => x.length === 3)).toBeTruthy();
       expect(resultEntry.rows.some(x => x[0] === 'r12')).toBeTruthy();
     });
 
     it('Should transform power query results to graph series', () => {
       const transformedResults = GenericDatasource.transformPowerQueryDataToGraph(results).data;
-      expect(transformedResults.length).toBe(13);
-      expect(transformedResults.some(x => x.target === 'r1')).toBeTruthy();
+      expect(transformedResults.length).toBe(26);
+      expect(transformedResults.some(x => x.target === 'r1: col2')).toBeTruthy();
+      expect(transformedResults.some(x => x.target === 'r1: col3')).toBeTruthy();
       expect(transformedResults.every(x => x.datapoints.length === 1)).toBeTruthy();
-    });
-  });
-
-  describe('Filter from variables', () => {
-    it('Should return empty string when no variables are present', () => {
-      expect(GenericDatasource.getFilterFromVariables([])).toBe('');
-    });
-
-    it('Should create or enteries for variables with multi property set to true', () => {
-      const multiVariables = [
-        {
-          multi: true,
-          current: {
-            text: 'value 1 + value 2',
-            value: ['value 1', 'value 2'],
-          },
-          name: 'name',
-          query: '$query',
-          type: 'query'
-        }
-      ];
-      expect(GenericDatasource.getFilterFromVariables(multiVariables)).toBe("$query == 'value 1' or $query == 'value 2'");
-    });
-
-    it('Should handle multiple variables', () => {
-      expect(GenericDatasource.getFilterFromVariables(variables)).toBe(" $query == 'value 1' or $query == 'value 2'$query2 == 'value' ");
     });
   });
 
