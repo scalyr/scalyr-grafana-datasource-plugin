@@ -72,8 +72,8 @@
       // https://github.com/grafana/grafana/blob/cf2cc713933599e7646416a56a665282c9d9e3bb/public/app/features/templating/variable.ts#L11
       const varRegex = /\$(\w+)|\[\[([\s\S]+?)(?::(\w+))?\]\]|\${(\w+)(?:\.([^:^}]+))?(?::(\w+))?}/g;
 
-      let extractedVars = [];
-      let extractedVarNames = [];
+      const extractedVars = [];
+      const extractedVarNames = [];
       let match = varRegex.exec(queryText);
       while (match != null) {
         extractedVars.push(match[0]);
@@ -95,9 +95,8 @@
         filterText = queryWithoutVars.reduce((arr, v, i) => {
                          if (extractedVarNames[i]) {
                            return arr.concat(v, "${" + extractedVarNames[i] + ":lucene}");
-                         } else {
-                           return arr.concat(v, extractedVarNames[i]);
                          }
+                         return arr.concat(v, extractedVarNames[i]);
                        }, []).join("");
       }
       else {
