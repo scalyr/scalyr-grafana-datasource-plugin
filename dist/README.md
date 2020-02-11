@@ -182,6 +182,10 @@ $serverHost=($host)
 
 3. Complex queries with multiple functions are currently not supported. These may
    be supported in the future
+   
+4. Generated DataLinks only support variables in their default format (With no
+   option passed in) due to limitations in format during variable substitution
+   in DataLinks.
 
 ## Contributing
 
