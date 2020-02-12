@@ -71,7 +71,20 @@
       // This regex should be the same one that Grafana uses to find variables, at time of writing it is here:
       // https://github.com/grafana/grafana/blob/cf2cc713933599e7646416a56a665282c9d9e3bb/public/app/features/templating/variable.ts#L11
       const varRegex = /\$(\w+)|\[\[([\s\S]+?)(?::(\w+))?\]\]|\${(\w+)(?:\.([^:^}]+))?(?::(\w+))?}/g;
-      const extractedVars = queryText.match(varRegex);
+
+      const extractedVars = [];
+      const extractedVarNames = [];
+      let match = varRegex.exec(queryText);
+      while (match != null) {
+        extractedVars.push(match[0]);
+        for (let i = 1; i < match.length; i += 1) {
+          if (match[i]) {
+            extractedVarNames.push(match[i]);
+            break;
+          }
+        }
+        match = varRegex.exec(queryText);
+      }
 
       const queryWithoutVars = splitOnArrayElements(queryText, extractedVars);
       for (let i = 0; i < queryWithoutVars.length; i += 1) {
@@ -80,11 +93,14 @@
       let filterText = "";
       if (extractedVars) {
         filterText = queryWithoutVars.reduce((arr, v, i) => {
-                         return arr.concat(v, extractedVars[i]);
+                         if (extractedVarNames[i]) {
+                           return arr.concat(v, "${" + extractedVarNames[i] + ":lucene}");
+                         }
+                         return arr.concat(v, extractedVarNames[i]);
                        }, []).join("");
       }
       else {
-        filterText = queryWithoutVars[0];
+        filterText = '"' + queryWithoutVars[0] + '"';
       }
       dataLinkFilter = "&filter=" + filterText;
     }

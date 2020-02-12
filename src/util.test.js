@@ -26,6 +26,6 @@ describe('Util - Build DataLink URL for Query', () => {
       expect(createDataLinkURL("test : test", "test/")).toBe("test/v2/grafana-redirect?startTime=${__from}&endTime=${__to}&filter=test%20%3A%20test");
     });
     it('Should not %encode variables', () => {
-      expect(createDataLinkURL("${aaa:aaa}", "test/")).toBe("test/v2/grafana-redirect?startTime=${__from}&endTime=${__to}&filter=${aaa:aaa}");
+      expect(createDataLinkURL("${aaa}", "test/")).toBe("test/v2/grafana-redirect?startTime=${__from}&endTime=${__to}&filter=${aaa:lucene}");
     });
 });
