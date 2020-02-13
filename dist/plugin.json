@@ -4,7 +4,7 @@
   "annotations": false,
   "category": "logging",
   "name": "Scalyr",
-  "id": "scalyr-grafana-datasource",
+  "id": "scalyr-datasource",
   "info": {
     "version": "1.0.0",
     "description": "Scalyr Observability Platform",
