@@ -149,6 +149,8 @@ Note: you can add multiple queries to a visualization to plot multiple series on
 
 ## Variables
 
+For general information on Grafana variables see the [Grafana documentation](https://grafana.com/docs/grafana/latest/reference/templating/)
+
 Queries support all Grafana variable substitution syntaxes, for example:
 
 ```bash
@@ -157,7 +159,7 @@ $varname
 ${varname:option}
 ```
 
-For multi-value variables there is a custom default substitution method, the values will be quoted and seperated with
+For multi-value variables there is a custom default substitution method, the values will be quoted and separated with
 commas, for example:
 
 ```bash
@@ -170,6 +172,34 @@ The expected use of multi-value variables is for `in` queries, for example:
 $serverHost=($host)
 ```
 
+## DataLinks
+
+Your queries will automatically generate a URL you can use as a DataLink in Grafana,
+this link will take you to the logs used to generate your graph in the Scalyr UI
+
+   ![GeneratedDataLink](images/QueryWithDataLink.png)
+
+To set up the DataLink first click `Copy` to copy the link into your clipboard
+
+   ![CopiedDataLink](images/CopiedDataLink.png)
+
+Next go to the **Visualization** tab and scroll down to the **Data links** section
+
+   ![DataLinksSection](images/DataLinksSection.png)
+
+Click `Add link`, give it an appropriate title, and paste your URL into the `URL` field
+
+   ![ExampleDataLink](images/ExampleDataLink.png)
+
+Your Data Link is now ready! If you now go to your graph and click on the line you will
+have a new option, this will take you to Scalyr and show the logs your graph represents
+
+   ![DataLinkDropdown](images/DataLinkDropdown.png)
+
+Note: You will need to already be logged in to Scalyr for the DataLink to reach the UI,
+and variables are accepted in DataLinks but there are limitations due to a
+[Grafana bug](https://github.com/grafana/grafana/issues/22125)
+
 ## Limitations and Future Improvements
 
 1. Breakdown graphs are currently not supported. These may be supported in the
@@ -181,11 +211,10 @@ $serverHost=($host)
    to ***“series”***.
 
 3. Complex queries with multiple functions are currently not supported. These may
-   be supported in the future
-   
-4. Generated DataLinks only support variables in their default format (With no
-   option passed in) due to limitations in format during variable substitution
-   in DataLinks.
+   be supported in the future.
+
+4. The DataLinks feature currently only works for queries without variables due to
+   a [Grafana bug](https://github.com/grafana/grafana/issues/22125).
 
 ## Contributing
 
