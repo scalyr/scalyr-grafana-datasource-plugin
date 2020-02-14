@@ -198,7 +198,7 @@ have a new option, this will take you to Scalyr and show the logs your graph rep
 
 Note: You will need to already be logged in to Scalyr for the DataLink to reach the UI,
 and variables are accepted in DataLinks but there are limitations due to a
-[Grafana bug](https://github.com/grafana/grafana/issues/22183)
+[Grafana bug](https://github.com/grafana/grafana/issues/22125)
 
 ## Limitations and Future Improvements
 
@@ -214,7 +214,7 @@ and variables are accepted in DataLinks but there are limitations due to a
    be supported in the future.
 
 4. The DataLinks feature currently only works for queries without variables due to
-   a [Grafana bug](https://github.com/grafana/grafana/issues/22183).
+   a [Grafana bug](https://github.com/grafana/grafana/issues/22125).
 
 ## Contributing
 
