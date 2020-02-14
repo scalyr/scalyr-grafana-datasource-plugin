@@ -6,7 +6,7 @@
   "name": "Scalyr",
   "id": "scalyr-grafana-datasource",
   "info": {
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "Scalyr Observability Platform",
     "author": {
       "name": "Scalyr",
