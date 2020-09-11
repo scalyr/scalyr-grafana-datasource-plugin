@@ -22,8 +22,16 @@
     "@babel/core": "^7.5.5",
     "babel-loader": "^8.0.6",
     "copy-webpack-plugin": "^5.1.1",
-    "lodash": "^4.17.15",
-    "webpack": "^4.35.3"
+    "lodash": "^4.17.19",
+    "webpack": "^4.35.3",
+    "serialize-javascript": "^3.1.0",
+    "elliptic": "^6.5.3",
+    "papaparse": "^5.2.0",
+    "acorn": "^7.1.1",
+    "jquery": "^3.5.0",
+    "node-fetch": "^2.6.1",
+    "yargs-parser": "^18.1.2",
+    "minimist": "^1.2.3"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.6.2",
