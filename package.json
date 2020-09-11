@@ -22,7 +22,7 @@
     "@babel/core": "^7.5.5",
     "babel-loader": "^8.0.6",
     "copy-webpack-plugin": "^5.1.1",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.15",
     "webpack": "^4.35.3"
   },
   "devDependencies": {
