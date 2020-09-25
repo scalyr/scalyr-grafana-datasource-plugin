@@ -59,6 +59,16 @@ export class GenericDatasource {
     return this.performTimeseriesQuery(options);
   }
 
+  annotationQuery(options) {
+    const query = this.createLogsQueryForAnnotation(options);
+    return this.backendSrv.datasourceRequest(query)
+      .then( (response) => {
+        const data = response.data;
+        return GenericDatasource.transformAnnotationResults(data.matches, options);
+      }
+    );
+  }
+
   /**
    * Grafana uses this function to test data source settings. 
    * This verifies API key using the facet query API. 
@@ -194,6 +204,24 @@ export class GenericDatasource {
     };
   }
 
+  createLogsQueryForAnnotation(options) {
+    const queryText = this.templateSrv.replace(options.annotation.queryText, options.scopedVars, GenericDatasource.interpolateVariable);
+
+    return {
+      url: this.url + '/query',
+      method: 'POST',
+      headers: this.headers,
+      data: JSON.stringify({
+        token: this.apiKey,
+        queryType: "log",
+        filter: queryText,
+        startTime: options.range.from.valueOf(),
+        endTime: options.range.to.valueOf(),
+        maxCount: 5000
+      })
+    };
+  }
+
   /**
    * Get how many buckets to return based on the query time range
    * @param {*} options 
@@ -244,6 +272,24 @@ export class GenericDatasource {
       graphs.data.push(responseObject);
     });
     return graphs;
+  }
+
+  /**
+   * Transform data returned by time series query into Grafana annotation format.
+   * @param results
+   * @param options
+   * @returns Array
+   */
+  static transformAnnotationResults(results, options) {
+    let annotations = [];
+    results.forEach((result, index) => {
+      const dataValues = result.values;
+      let responseObject = {};
+      responseObject.time = result["timestamp"] / 1000000;
+      responseObject.text = result["message"];
+      annotations.push(responseObject);
+    });
+    return annotations;
   }
 
   /**
