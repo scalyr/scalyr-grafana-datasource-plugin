@@ -64,7 +64,7 @@ export class GenericDatasource {
     return this.backendSrv.datasourceRequest(query)
       .then( (response) => {
         const data = response.data;
-        return GenericDatasource.transformAnnotationResults(data.matches, options);
+        return GenericDatasource.transformAnnotationResults(data.matches);
       }
     );
   }
@@ -280,13 +280,12 @@ export class GenericDatasource {
    * @param options
    * @returns Array
    */
-  static transformAnnotationResults(results, options) {
-    let annotations = [];
-    results.forEach((result, index) => {
-      const dataValues = result.values;
-      let responseObject = {};
-      responseObject.time = result["timestamp"] / 1000000;
-      responseObject.text = result["message"];
+  static transformAnnotationResults(results) {
+    const annotations = [];
+    results.forEach((result) => {
+      const responseObject = {};
+      responseObject.time = result.timestamp / 1000000;
+      responseObject.text = result.message;
       annotations.push(responseObject);
     });
     return annotations;
