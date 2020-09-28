@@ -288,16 +288,16 @@ export class GenericDatasource {
     results.forEach((result) => {
       const responseObject = {};
       responseObject.time = Number(result[timeField]) / 1000000;
-      if (!responseObject.time || 0 === responseObject.time.length) {
+      if (!responseObject.time || responseObject.time.length === 0) {
         responseObject.time = Number(result.attributes[timeField]) / 1000000;
       }
       responseObject.text = result[textField];
-      if (!responseObject.text || 0 === responseObject.text.length) {
+      if (!responseObject.text || responseObject.text.length === 0) {
         responseObject.text = result.attributes[textField];
       }
-      if (timeEndField && !(0 === timeEndField.length)) {
+      if (timeEndField && !(timeEndField.length === 0)) {
         responseObject.timeEnd = Number(result[timeEndField]) / 1000000;
-        if (!responseObject.timeEnd || 0 === responseObject.timeEnd.length) {
+        if (!responseObject.timeEnd || responseObject.timeEnd.length === 0) {
           responseObject.timeEnd = Number(result.attributes[timeEndField]) / 1000000;
         }
       }
