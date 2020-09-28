@@ -64,7 +64,10 @@ export class GenericDatasource {
     return this.backendSrv.datasourceRequest(query)
       .then( (response) => {
         const data = response.data;
-        return GenericDatasource.transformAnnotationResults(data.matches);
+        const timeField = options.annotation.timeField || "timestamp"
+        const timeEndField = options.annotation.timeEndField || null
+        const textField = options.annotation.textField || "message"
+        return GenericDatasource.transformAnnotationResults(data.matches, timeField, timeEndField, textField);
       }
     );
   }
@@ -280,12 +283,24 @@ export class GenericDatasource {
    * @param options
    * @returns Array
    */
-  static transformAnnotationResults(results) {
+  static transformAnnotationResults(results, timeField, timeEndField, textField) {
     const annotations = [];
     results.forEach((result) => {
       const responseObject = {};
-      responseObject.time = result.timestamp / 1000000;
-      responseObject.text = result.message;
+      responseObject.time = Number(result[timeField]) / 1000000;
+      if (!responseObject.time || 0 === responseObject.time.length) {
+        responseObject.time = Number(result.attributes[timeField]) / 1000000;
+      }
+      responseObject.text = result[textField];
+      if (!responseObject.text || 0 === responseObject.text.length) {
+        responseObject.text = result.attributes[textField];
+      }
+      if (timeEndField && !(0 === timeEndField.length)) {
+        responseObject.timeEnd = Number(result[timeEndField]) / 1000000;
+        if (!responseObject.timeEnd || 0 === responseObject.timeEnd.length) {
+          responseObject.timeEnd = Number(result.attributes[timeEndField]) / 1000000;
+        }
+      }
       annotations.push(responseObject);
     });
     return annotations;
