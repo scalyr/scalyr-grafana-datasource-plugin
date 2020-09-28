@@ -160,12 +160,22 @@ describe('Scalyr datasource tests', () => {
       {
         timefield: 12345,
         messagefield: "testmessage2",
-        timeendfield: 54321
+        timeendfield: 54321,
+        attributes: {
+          timefield: 11111,
+          messagefield: "wrong",
+          timeendfield: 22222,
+        }
       },
       {
         timefield: 12345,
-        messagefield: "testmessage3",
-        timeendfield: 54321
+        messagefield: "testmessage4",
+        timeendfield: 54321,
+        attributes: {
+          timefield2: 123456,
+          messagefield2: "testmessage5",
+          timeendfield2: 543211,
+        }
       }
       ];
     });
@@ -187,6 +197,33 @@ describe('Scalyr datasource tests', () => {
       expect(resultEntry.text).toBe("testmessage1");
       expect(resultEntry.time).toBe(0.012345);
       expect(resultEntry.timeEnd).toBe(0.054321);
+    });
+
+    it('Should transform standard query results to annotations, falling back to attribute fields', () => {
+      const transformedResults = GenericDatasource.transformAnnotationResults(results, "timefield2", "timeendfield2", "messagefield2");
+      expect(transformedResults.length).toBe(3);
+      const resultEntry = transformedResults[2];
+      expect(resultEntry.text).toBe("testmessage5");
+      expect(resultEntry.time).toBe(0.123456);
+      expect(resultEntry.timeEnd).toBe(0.543211);
+    });
+
+    it('Should transform standard query results to annotations not from attributes first', () => {
+      const transformedResults = GenericDatasource.transformAnnotationResults(results, "timefield", "timeendfield", "messagefield");
+      expect(transformedResults.length).toBe(3);
+      const resultEntry = transformedResults[1];
+      expect(resultEntry.text).toBe("testmessage2");
+      expect(resultEntry.time).toBe(0.012345);
+      expect(resultEntry.timeEnd).toBe(0.054321);
+    });
+
+    it('Should transform standard query results to annotations with bad field names', () => {
+      const transformedResults = GenericDatasource.transformAnnotationResults(results, "missingField", null, null);
+      expect(transformedResults.length).toBe(3);
+      const resultEntry = transformedResults[0];
+      expect(resultEntry.text).toBe(undefined);
+      expect(resultEntry.time).toBe(NaN);
+      expect(resultEntry.timeEnd).toBe(undefined);
     });
   });
 
