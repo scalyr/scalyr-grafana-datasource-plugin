@@ -201,8 +201,8 @@ describe('Scalyr datasource tests', () => {
 
     it('Should transform standard query results to annotations, falling back to attribute fields', () => {
       const transformedResults = GenericDatasource.transformAnnotationResults(results, "timefield2", "timeendfield2", "messagefield2");
-      expect(transformedResults.length).toBe(3);
-      const resultEntry = transformedResults[2];
+      expect(transformedResults.length).toBe(1);
+      const resultEntry = transformedResults[0];
       expect(resultEntry.text).toBe("testmessage5");
       expect(resultEntry.time).toBe(0.123456);
       expect(resultEntry.timeEnd).toBe(0.543211);
@@ -217,13 +217,9 @@ describe('Scalyr datasource tests', () => {
       expect(resultEntry.timeEnd).toBe(0.054321);
     });
 
-    it('Should transform standard query results to annotations with bad field names', () => {
+    it('Shouldn\'t transform standard query results to annotations with bad field names', () => {
       const transformedResults = GenericDatasource.transformAnnotationResults(results, "missingField", null, null);
-      expect(transformedResults.length).toBe(3);
-      const resultEntry = transformedResults[0];
-      expect(resultEntry.text).toBe(undefined);
-      expect(resultEntry.time).toBe(NaN);
-      expect(resultEntry.timeEnd).toBe(undefined);
+      expect(transformedResults.length).toBe(0);
     });
   });
 
