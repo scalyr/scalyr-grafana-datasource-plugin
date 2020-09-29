@@ -291,12 +291,9 @@ export class GenericDatasource {
       if (!responseObject.time && result.attributes) {
         responseObject.time = Number(result.attributes[timeField]) / 1000000;
       }
-      if (!responseObject.time) {
-        return; // The `.forEach` equivalent of `continue`
-      }
 
       responseObject.text = result[textField];
-      if ((!responseObject.text || responseObject.text.length === 0) && result.attributes) {
+      if (!responseObject.text && result.attributes) {
         responseObject.text = result.attributes[textField];
       }
 
@@ -306,7 +303,9 @@ export class GenericDatasource {
           responseObject.timeEnd = Number(result.attributes[timeEndField]) / 1000000;
         }
       }
-      annotations.push(responseObject);
+      if (responseObject.time) {
+        annotations.push(responseObject);
+      }
     });
     return annotations;
   }
