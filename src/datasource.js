@@ -291,10 +291,15 @@ export class GenericDatasource {
       if (!responseObject.time && result.attributes) {
         responseObject.time = Number(result.attributes[timeField]) / 1000000;
       }
+      if (!responseObject.time) {
+        return; // The `.forEach` equivalent of `continue`
+      }
+
       responseObject.text = result[textField];
       if ((!responseObject.text || responseObject.text.length === 0) && result.attributes) {
         responseObject.text = result.attributes[textField];
       }
+
       if (timeEndField && !(timeEndField.length === 0)) {
         responseObject.timeEnd = Number(result[timeEndField]) / 1000000;
         if (!responseObject.timeEnd && result.attributes) {
