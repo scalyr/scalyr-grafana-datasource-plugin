@@ -297,7 +297,7 @@ export class GenericDatasource {
         responseObject.text = result.attributes[textField];
       }
 
-      if (timeEndField && !(timeEndField.length === 0)) {
+      if (timeEndField) {
         responseObject.timeEnd = Number(result[timeEndField]) / 1000000;
         if (!responseObject.timeEnd && result.attributes) {
           responseObject.timeEnd = Number(result.attributes[timeEndField]) / 1000000;
