@@ -13,5 +13,6 @@ export {
   GenericDatasource as Datasource,
   GenericDatasourceQueryCtrl as QueryCtrl,
   GenericConfigCtrl as ConfigCtrl,
-  GenericQueryOptionsCtrl as QueryOptionsCtrl
+  GenericQueryOptionsCtrl as QueryOptionsCtrl,
+  GenericAnnotationsQueryCtrl as AnnotationsQueryCtrl
 };

@@ -27,6 +27,19 @@ describe('Scalyr datasource tests', () => {
     ]
   };
 
+  const annotationQueryOptions = {
+    range: {
+      from: sixHoursAgo.toISOString(),
+      to: now.toISOString()
+    },
+    interval: '5s',
+    annotation: [
+      {
+        queryText: '$foo=\'bar\'',
+      }
+    ]
+  };
+
   const variables = [
     {
       multi: true,
@@ -132,6 +145,81 @@ describe('Scalyr datasource tests', () => {
       expect(transformedResults.some(x => x.target === 'r1: col2')).toBeTruthy();
       expect(transformedResults.some(x => x.target === 'r1: col3')).toBeTruthy();
       expect(transformedResults.every(x => x.datapoints.length === 1)).toBeTruthy();
+    });
+  });
+
+  describe('Annotation queries', () => {
+    let results;
+    beforeEach(() => {
+      results = [
+      {
+        timefield: 12345,
+        messagefield: "testmessage1",
+        timeendfield: 54321
+      },
+      {
+        timefield: 12345,
+        messagefield: "testmessage2",
+        timeendfield: 54321,
+        attributes: {
+          timefield: 11111,
+          messagefield: "wrong",
+          timeendfield: 22222,
+        }
+      },
+      {
+        timefield: 12345,
+        messagefield: "testmessage4",
+        timeendfield: 54321,
+        attributes: {
+          timefield2: 123456,
+          messagefield2: "testmessage5",
+          timeendfield2: 543211,
+        }
+      }
+      ];
+    });
+    it('Should create a query request', () => {
+      const request = datasource.createLogsQueryForAnnotation(annotationQueryOptions, variables);
+      expect(request.url).toBe('proxied/query');
+      expect(request.method).toBe('POST');
+      const requestBody = JSON.parse(request.data);
+      expect(requestBody.token).toBe('123');
+      expect(requestBody.queryType).toBe('log');
+      expect(requestBody.startTime).toBe(sixHoursAgo.toISOString());
+      expect(requestBody.endTime).toBe(now.toISOString());
+    });
+
+    it('Should transform standard query results to annotations', () => {
+      const transformedResults = GenericDatasource.transformAnnotationResults(results, "timefield", "timeendfield", "messagefield");
+      expect(transformedResults.length).toBe(3);
+      const resultEntry = transformedResults[0];
+      expect(resultEntry.text).toBe("testmessage1");
+      expect(resultEntry.time).toBe(0.012345);
+      expect(resultEntry.timeEnd).toBe(0.054321);
+    });
+
+    it('Should transform standard query results to annotations, falling back to attribute fields', () => {
+      const transformedResults = GenericDatasource.transformAnnotationResults(results, "timefield2", "timeendfield2", "messagefield2");
+      expect(transformedResults.length).toBe(1);
+      const resultEntry = transformedResults[0];
+      expect(resultEntry.text).toBe("testmessage5");
+      expect(resultEntry.time).toBe(0.123456);
+      expect(resultEntry.timeEnd).toBe(0.543211);
+    });
+
+    it('Should transform standard query results to annotations not from attributes first', () => {
+      const transformedResults = GenericDatasource.transformAnnotationResults(results, "timefield", "timeendfield", "messagefield");
+      expect(transformedResults.length).toBe(3);
+      const resultEntry = transformedResults[1];
+      expect(resultEntry.text).toBe("testmessage2");
+      expect(resultEntry.time).toBe(0.012345);
+      expect(resultEntry.timeEnd).toBe(0.054321);
+    });
+
+    it('Shouldn\'t transform standard query results to annotations with bad field names', () => {
+      const transformedResults = GenericDatasource.transformAnnotationResults(results, "missingField", null, null);
+      expect(transformedResults.length).toBe(0);
     });
   });
 
