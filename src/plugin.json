@@ -1,7 +1,7 @@
 {
   "type": "datasource",
   "metrics": true,
-  "annotations": false,
+  "annotations": true,
   "category": "logging",
   "name": "Scalyr",
   "id": "scalyr-datasource",
@@ -35,6 +35,11 @@
       "path": "powerQuery",
       "method": "POST",
       "url": "{{.JsonData.scalyrUrl}}/api/powerQuery"
+    },
+    {
+      "path": "query",
+      "method": "POST",
+      "url": "{{.JsonData.scalyrUrl}}/api/query"
     }
   ]
 }
