@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.0
+
+Support for annotation queries (#52) (Yan Shnayder)
+
 ## 2.0.0
 
 Support variable substitution (#29) (Yan Shnayder)
