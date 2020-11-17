@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.0
+
+Support variable substitution in Power Queries (#54) (Yan Shnayder)
+
 ## 2.1.0
 
 Support for annotation queries (#52) (Yan Shnayder)
