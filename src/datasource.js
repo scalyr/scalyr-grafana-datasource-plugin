@@ -317,7 +317,8 @@ export class GenericDatasource {
    * @param endTime end time
    * @returns {{url: string, method: string, headers: {"Content-Type": string}, data: string}}
    */
-  createPowerQuery(queryText, startTime, endTime) {
+  createPowerQuery(queryText, startTime, endTime, options) {
+    queryText = this.templateSrv.replace(queryText, options.scopedVars, GenericDatasource.interpolateVariable);
     const query = {
       token: this.apiKey,
       query: queryText,
@@ -339,7 +340,7 @@ export class GenericDatasource {
    */
   performPowerQuery(options, visualizationType) {
     const target = options.targets[0];
-    const query = this.createPowerQuery(target.queryText, options.range.from.valueOf(), options.range.to.valueOf());
+    const query = this.createPowerQuery(target.queryText, options.range.from.valueOf(), options.range.to.valueOf(), options);
     return this.backendSrv.datasourceRequest(query).then( (response) => {
       const data = response && response.data;
       return this.transformPowerQueryData(data, visualizationType);
