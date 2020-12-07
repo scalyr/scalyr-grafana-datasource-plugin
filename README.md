@@ -123,16 +123,16 @@ using Scalyr data.
 
     ![ScalyrPlugin](images/ScalyrPlugin.png)
 
-4. A query datasource consist of 4 parts:
+4. A 'Standard query' consist of 4 parts:
     * **Function**: You are given a list of the function that can be applied to
-    the Facet values.
+    the field values.
     Scalyr [graphFunctions documentation](https://www.scalyr.com/help/dashboards#graphFunctions)
     is a good resource to see the list of supported functions.
-    * **Facet**: The name of the event field to be graphed.
+    * **Field**: The name of the event field to be graphed.
     * **Conversion Factor**: (Optional) Value to multiply the values of the graph, useful for converting units.
     * **Label**: (Optional) Label for the query. This is displayed as the series title in the graph legend. Same value
     as the `Query` field by default.
-    * **Query**: Query filter to be used. This field supports [Scalyr query syntax](https://www.scalyr.com/help/query-language).
+    * **Filter**: Specifies which events to match. This field supports [Scalyr query syntax](https://www.scalyr.com/help/query-language).
     * **DataLink URL**: A read-only generated field, this link can be copied to a new DataLink (at the end of the Visualization
     section). This DataLink will go to the logs in the Scalyr used to create this graph.
 

@@ -105,7 +105,7 @@ export class GenericDatasource {
     }).catch((err) => {
       let message = "Cannot connect to Scalyr!";
       if (err && err.data && err.data.message) {
-        message = `${message} Scalyr repsponse - ${err.data.message}`;
+        message = `${message} Scalyr response - ${err.data.message}`;
       }
       return {
         status: "error",
@@ -182,17 +182,17 @@ export class GenericDatasource {
   createTimeSeriesQuery(options) {
     const queries = [];
     options.targets.forEach((target) => {
-      const queryText = this.templateSrv.replace(target.queryText, options.scopedVars, GenericDatasource.interpolateVariable);
-      let facetFunction = '';
-      if (target.facet) {
-        facetFunction = `${target.function || 'count'}(${target.facet})`;
+      const filterText = this.templateSrv.replace(target.filter, options.scopedVars, GenericDatasource.interpolateVariable);
+      let functionText = '';
+      if (target.field) {
+        functionText = `${target.function || 'count'}(${target.field})`;
       }
       const query = {
         startTime: options.range.from.valueOf(),
         endTime: options.range.to.valueOf(),
         buckets: GenericDatasource.getNumberOfBuckets(options),
-        filter: queryText,
-        function: facetFunction
+        filter: filterText,
+        function: functionText
       };
       queries.push(query);
     });
@@ -208,7 +208,7 @@ export class GenericDatasource {
   }
 
   createLogsQueryForAnnotation(options) {
-    const queryText = this.templateSrv.replace(options.annotation.queryText, options.scopedVars, GenericDatasource.interpolateVariable);
+    const filterText = this.templateSrv.replace(options.annotation.filter, options.scopedVars, GenericDatasource.interpolateVariable);
 
     return {
       url: this.url + '/query',
@@ -217,7 +217,7 @@ export class GenericDatasource {
       data: JSON.stringify({
         token: this.apiKey,
         queryType: "log",
-        filter: queryText,
+        filter: filterText,
         startTime: options.range.from.valueOf(),
         endTime: options.range.to.valueOf(),
         maxCount: 5000
@@ -263,7 +263,7 @@ export class GenericDatasource {
       const dataValues = result.values;
       const currentTarget = options.targets[index];
       const responseObject = {
-        target: currentTarget.label || currentTarget.queryText,
+        target: currentTarget.label || currentTarget.filter,
         datapoints: []
       };
       const conversionFactor = getValidConversionFactor(currentTarget.conversionFactor);
