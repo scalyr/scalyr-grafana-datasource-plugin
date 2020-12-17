@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.3.0
+
+Obscure the API key on the configuration page on subsequent visits (#62) (Yan Shnayder)
+Releases will now also be made in `.zip` format for use with `grafana-cli`
+
 ## 2.2.0
 
 Support variable substitution in Power Queries (#54) (Yan Shnayder)
