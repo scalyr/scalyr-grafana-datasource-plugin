@@ -29,6 +29,32 @@ can find documentation on API Keys [here](https://www.scalyr.com/help/api#scalyr
 
 ## Getting started
 
+### Installing with grafana-cli
+
+1. To install the stable version of the plugin using grafana-cli, run the following command:
+
+    ```bash
+    grafana-cli --pluginUrl https://github.com/scalyr/scalyr-grafana-datasource-plugin/releases/download/2.3.0/scalyr_grafana_plugin_86aaa50.zip plugins install scalyr-datasource
+    ```
+
+2. Adding plugins requires a restart of your grafana server.
+
+    For init.d based services you can use the command:
+
+    ```bash
+    sudo service grafana-server restart
+    ```
+
+    For systemd based services you can use the following:
+
+    ```bash
+    systemctl restart grafana-server
+    ```
+
+If you require the development version, use the manual installation instructions.
+
+### Installing manually
+
 1. If you want a stable version of plugin, download the desired version from
 [github releases](https://github.com/scalyr/scalyr-grafana-datasource-plugin/releases).
 If you want the `development` version of the plugin,
@@ -50,7 +76,7 @@ from GitHub.
     Stable version:
 
     ```bash
-    tar -xvf scalyr_grafana_plugin_fcf8a75.tar.gz
+    tar -xvf scalyr_grafana_plugin_86aaa50.tar.gz
     cp -rf dist/ /var/lib/grafana/plugins/scalyr/
     ```
 
