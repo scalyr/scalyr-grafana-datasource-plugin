@@ -50,7 +50,7 @@ from GitHub.
     Stable version:
 
     ```bash
-    tar -xvf scalyr_grafana_plugin_44eb7da.tar.gz
+    tar -xvf scalyr_grafana_plugin_fcf8a75.tar.gz
     cp -rf dist/ /var/lib/grafana/plugins/scalyr/
     ```
 
