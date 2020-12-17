@@ -33,9 +33,11 @@ can find documentation on API Keys [here](https://www.scalyr.com/help/api#scalyr
 
 1. To install the stable version of the plugin using grafana-cli, run the following command:
 
-    ```bash
-    grafana-cli --pluginUrl https://github.com/scalyr/scalyr-grafana-datasource-plugin/releases/download/2.3.0/scalyr_grafana_plugin_86aaa50.zip plugins install scalyr-datasource
-    ```
+   ```bash
+   grafana-cli --pluginUrl \
+   https://github.com/scalyr/scalyr-grafana-datasource-plugin/releases/download/2.3.0/scalyr_grafana_plugin_86aaa50.zip \
+   plugins install scalyr-datasource
+   ```
 
 2. Adding plugins requires a restart of your grafana server.
 
