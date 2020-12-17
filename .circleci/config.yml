@@ -49,10 +49,12 @@ jobs:
             cp -rf dist/ ~/artifacts/scalyr_plugin/
             echo Plugin git sha is ${GIT_SHA1}
             cd ~/artifacts/scalyr_plugin/ && tar -czvf scalyr_grafana_plugin_${GIT_SHA1}.tar.gz dist/ && mv scalyr_grafana_plugin_${GIT_SHA1}.tar.gz target/
+            zip -r scalyr_grafana_plugin_${GIT_SHA1}.zip dist/ && mv scalyr_grafana_plugin_${GIT_SHA1}.zip target/
       - persist_to_workspace:
           root: ~/artifacts/scalyr_plugin/target/
           paths:
             - scalyr_grafana_plugin_*.tar.gz
+            - scalyr_grafana_plugin_*.zip
       - store_artifacts:
           path: ~/artifacts/scalyr_plugin/target/
           destination: scalyr_grafana_plugin
