@@ -35,7 +35,8 @@ can find documentation on API Keys [here](https://www.scalyr.com/help/api#scalyr
 
    ```bash
    grafana-cli --pluginUrl \
-   https://github.com/scalyr/scalyr-grafana-datasource-plugin/releases/download/2.3.0/scalyr_grafana_plugin_86aaa50.zip \
+   https://github.com/scalyr/scalyr-grafana-datasource-plugin/releases/download/2.3.0/scalyr_grafana_plugin_d8e1e08.zip
+ \
    plugins install scalyr-datasource
    ```
 
@@ -78,7 +79,7 @@ from GitHub.
     Stable version:
 
     ```bash
-    tar -xvf scalyr_grafana_plugin_86aaa50.tar.gz
+    tar -xvf scalyr_grafana_plugin_d8e1e08.tar.gz
     cp -rf dist/ /var/lib/grafana/plugins/scalyr/
     ```
 
