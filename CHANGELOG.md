@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.1
+
+Align terminology with Scalyr API (#59) (Rein Achten)
+
 ## 2.3.0
 
 Obscure the API key on the configuration page on subsequent visits (#62) (Yan Shnayder)
