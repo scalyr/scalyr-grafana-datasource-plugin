@@ -38,11 +38,11 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
   }
 
   /**
-   * Return a list of available functions. The 'count' function is only available if a facet isn't selected.
+   * Return a list of available functions. The 'count' function is only available if no field is selected.
    */
-  getFacetFunctionOptions() {
+  getFunctionOptions() {
     let options = [];
-    if (!this.target.facet) {
+    if (!this.target.field) {
       options.push({
         text: 'count', value: 'count'
       });

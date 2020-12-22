@@ -19,9 +19,9 @@ describe('Scalyr datasource tests', () => {
       {
         conversionFactor: '10',
         label: 'Test',
-        queryText: '$foo=\'bar\'',
+        filter: '$foo=\'bar\'',
         queryType: queryTypes.STANDARD_QUERY,
-        facet: 'value',
+        field: 'value',
         function: 'mean'
       }
     ]
@@ -35,7 +35,7 @@ describe('Scalyr datasource tests', () => {
     interval: '5s',
     annotation: [
       {
-        queryText: '$foo=\'bar\'',
+        filter: '$foo=\'bar\'',
       }
     ]
   };
