@@ -38,7 +38,7 @@ export class GenericDatasource {
    */
   query(options) {
     // Migrate filters from versions 2.3.0 and older
-    for (var i = 0; i < options.targets.length; i++) {
+    for (let i = 0; i < options.targets.length; i += 1) {
       if (options.targets[i].queryText) {
         options.targets[i].filter = options.targets[i].queryText;
         options.targets[i].queryText = null;
