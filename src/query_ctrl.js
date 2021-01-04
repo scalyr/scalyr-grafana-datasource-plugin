@@ -22,6 +22,12 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
     this.target.dataLink = createDataLinkURL(this.target.queryText, this.getScalyrDatasourceUrl());
 
     this.target.copyText = "Copy";
+
+    // Migrate filters from versions 2.3.0 and older
+    if (this.target.queryText) {
+      this.target.filter = this.target.queryText;
+      this.target.queryText = null;
+    }
   }
 
   /**
