@@ -37,6 +37,14 @@ export class GenericDatasource {
    * @param {*} options - query settings/options https://grafana.com/docs/plugins/developing/datasources/#query
    */
   query(options) {
+    // Migrate filters from versions 2.3.0 and older
+    for (var i = 0; i < options.targets.length; i++) {
+      if (options.targets[i].queryText) {
+        options.targets[i].filter = options.targets[i].queryText;
+        options.targets[i].queryText = null;
+      }
+    }
+
     const queryType = options.targets[0].queryType;
     if (!options.targets.every(x => x.queryType === queryType)) {
       return {
