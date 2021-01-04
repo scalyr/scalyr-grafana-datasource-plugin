@@ -2,7 +2,7 @@
 
 ## 2.3.2
 
-Fix issue with migrating panels from versions 2.3.0 and older to version 2.3.1 (TBD) (Yan Shnayder)
+Fix issue with migrating panels from versions 2.3.0 and older to version 2.3.1 (#63) (Yan Shnayder)
 
 ## 2.3.1
 
