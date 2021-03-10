@@ -25,7 +25,7 @@
     "lodash": "^4.17.19",
     "webpack": "^4.35.3",
     "serialize-javascript": "^3.1.0",
-    "elliptic": "^6.5.3",
+    "elliptic": "^6.5.4",
     "papaparse": "^5.2.0",
     "acorn": "^7.1.1",
     "jquery": "^3.5.0",
