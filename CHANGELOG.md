@@ -2,7 +2,7 @@
 
 ## 2.3.3
 
-Fix issue with power queries not sending proper data in the request (TBD) (Yan Shnayder)
+Fix issue with power queries not sending proper data in the request (#65) (Yan Shnayder)
 
 ## 2.3.2
 
