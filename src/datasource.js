@@ -348,7 +348,7 @@ export class GenericDatasource {
    */
   performPowerQuery(options, visualizationType) {
     const target = options.targets[0];
-    const query = this.createPowerQuery(target.queryText, options.range.from.valueOf(), options.range.to.valueOf(), options);
+    const query = this.createPowerQuery(target.filter, options.range.from.valueOf(), options.range.to.valueOf(), options);
     return this.backendSrv.datasourceRequest(query).then( (response) => {
       const data = response && response.data;
       return this.transformPowerQueryData(data, visualizationType);

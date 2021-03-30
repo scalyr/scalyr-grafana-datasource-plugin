@@ -10,7 +10,7 @@
   <div class="gf-form-inline" ng-if="ctrl.target.queryType === ctrl.queryTypes.POWER_QUERY">
     <div class="gf-form">
       <span class="gf-form-label width-10">Query</span>
-      <textarea rows="5" cols="100" class="gf-form-input" ng-blur="ctrl.onChangeInternal()" ng-model="ctrl.target.queryText"></textarea>
+      <textarea rows="5" cols="100" class="gf-form-input" ng-blur="ctrl.onChangeInternal()" ng-model="ctrl.target.filter"></textarea>
     </div>
   </div>
   <div ng-if="ctrl.target.queryType === ctrl.queryTypes.STANDARD_QUERY">
