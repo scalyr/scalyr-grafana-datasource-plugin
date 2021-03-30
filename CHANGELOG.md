@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.3
+
+Fix issue with power queries not sending proper data in the request (TBD) (Yan Shnayder)
+
 ## 2.3.2
 
 Fix issue with migrating panels from versions 2.3.0 and older to version 2.3.1 (#63) (Yan Shnayder)
