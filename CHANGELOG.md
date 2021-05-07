@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.4
+
+Bump `ua-parser-js` dependency to version 0.7.28 (#68) (Dependabot)
+
 ## 2.3.3
 
 Fix issue with power queries not sending proper data in the request (#65) (Yan Shnayder)
