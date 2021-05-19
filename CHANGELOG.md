@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.3.5
+
+Have Datalink generation prepend "add." to EU hosts to avoid permissions issue. (#71) (Yan Shnayder)
+Bump a variety of dependencies to newer versions (Dependabot)
+
 ## 2.3.4
 
 Bump `ua-parser-js` dependency to version 0.7.28 (#68) (Dependabot)
