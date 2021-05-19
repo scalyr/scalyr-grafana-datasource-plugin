@@ -25,6 +25,9 @@ describe('Util - Build DataLink URL for Query', () => {
     it('Should %encode the query', () => {
       expect(createDataLinkURL("test : test", "test/")).toBe("test/v2/grafana-redirect?startTime=${__from}&endTime=${__to}&filter=test%20%3A%20test");
     });
+    it('Should prepend ".app" for EU domain', () => {
+      expect(createDataLinkURL("test : test", "https://eu.test/")).toBe("https://app.eu.test/v2/grafana-redirect?startTime=${__from}&endTime=${__to}&filter=test%20%3A%20test");
+    });
     it('Should not %encode variables', () => {
       expect(createDataLinkURL("${aaa}", "test/")).toBe("test/v2/grafana-redirect?startTime=${__from}&endTime=${__to}&filter=${aaa:lucene}");
     });

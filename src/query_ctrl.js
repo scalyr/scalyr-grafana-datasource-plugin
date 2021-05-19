@@ -19,7 +19,7 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
       this.target.queryType = this.queryTypes.STANDARD_QUERY;
     }
 
-    this.target.dataLink = createDataLinkURL(this.target.queryText, this.getScalyrDatasourceUrl());
+    this.target.dataLink = createDataLinkURL(this.target.filter, this.getScalyrDatasourceUrl());
 
     this.target.copyText = "Copy";
 
@@ -89,7 +89,7 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
     this.target.panelType = this.panel.type;
     if (GenericDatasourceQueryCtrl.isQueryValid(this.target)) {
       if (this.target.queryType === this.queryTypes.STANDARD_QUERY) {
-        this.target.dataLink = createDataLinkURL(this.target.queryText, this.getScalyrDatasourceUrl());
+        this.target.dataLink = createDataLinkURL(this.target.filter, this.getScalyrDatasourceUrl());
       }
       this.target.copyText = "Copy";
       this.panelCtrl.refresh(); // Asks the panel to refresh data.

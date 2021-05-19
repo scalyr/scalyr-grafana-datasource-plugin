@@ -104,5 +104,10 @@
       }
       dataLinkFilter = "&filter=" + filterText;
     }
-    return scalyrDatasourceUrl + "v2/grafana-redirect?startTime=${__from}&endTime=${__to}" + dataLinkFilter;
+
+    // Deal with grafana-redirect only working with "app." prefix in EU regions. This simple replacement should be
+    // safe as long as we don't plan on allowing custom domains running Scalyr that have "eu." somewhere in the middle.
+    const host = scalyrDatasourceUrl.replace("eu.","app.eu.");
+
+    return host + "v2/grafana-redirect?startTime=${__from}&endTime=${__to}" + dataLinkFilter;
   }
