@@ -39,7 +39,13 @@ can find documentation on API Keys [here](https://www.scalyr.com/help/api#scalyr
    plugins install scalyr-datasource
    ```
 
-2. Adding plugins requires a restart of your grafana server.
+2. Update your Grafana configuration in the `grafana.ini` file to allow this plugin by adding the following line:
+
+   ```bash
+   allow_loading_unsigned_plugins = scalyr-datasource
+   ```
+
+3. Adding plugins requires a restart of your grafana server.
 
     For init.d based services you can use the command:
 
