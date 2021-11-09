@@ -38,10 +38,10 @@ can find documentation on API Keys [here](https://www.scalyr.com/help/api#scalyr
    https://github.com/scalyr/scalyr-grafana-datasource-plugin/releases/download/2.3.5/scalyr_grafana_plugin_2a30795.zip \
    plugins install scalyr-datasource
    ```
-   
+
 2. Update your Grafana configuration in the `grafana.ini` file to allow this plugin by adding the following line:
 
-   ```
+   ```bash
    allow_loading_unsigned_plugins = scalyr-datasource
    ```
 
