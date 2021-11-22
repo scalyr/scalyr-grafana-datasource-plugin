@@ -120,10 +120,10 @@ from GitHub.
 
     ![SecondImage](images/DataSoureConfig.png)
 
-3. If you scroll down on the resulting page you should see “Scalyr Grafana
-   Datasource” show up in the “Others” section.
+3. If you enter "Scalyr" in the search bar on the resulting page you should see “Scalyr Grafana
+   Datasource” show up as an option.
 
-    ![otherPlugin](images/OthersPlugin.png)
+    ![otherPlugin](images/SearchForPlugin.png)
 
 4. Click on ***“Select”***. This will take you to a configuration page where you
    insert your API key mentioned in the prerequisite section.
