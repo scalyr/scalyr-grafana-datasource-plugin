@@ -35,11 +35,17 @@ can find documentation on API Keys [here](https://www.scalyr.com/help/api#scalyr
 
    ```bash
    grafana-cli --pluginUrl \
-   https://github.com/scalyr/scalyr-grafana-datasource-plugin/releases/download/2.3.4/scalyr_grafana_plugin_ce5325d.zip \
+   https://github.com/scalyr/scalyr-grafana-datasource-plugin/releases/download/2.3.5/scalyr_grafana_plugin_2a30795.zip \
    plugins install scalyr-datasource
    ```
 
-2. Adding plugins requires a restart of your grafana server.
+2. Update your Grafana configuration in the `grafana.ini` file to allow this plugin by adding the following line:
+
+   ```bash
+   allow_loading_unsigned_plugins = scalyr-datasource
+   ```
+
+3. Adding plugins requires a restart of your grafana server.
 
     For init.d based services you can use the command:
 
@@ -78,7 +84,7 @@ from GitHub.
     Stable version:
 
     ```bash
-    tar -xvf scalyr_grafana_plugin_ce5325d.tar.gz
+    tar -xvf scalyr_grafana_plugin_2a30795.tar.gz
     cp -rf dist/ /var/lib/grafana/plugins/scalyr/
     ```
 
@@ -114,10 +120,10 @@ from GitHub.
 
     ![SecondImage](images/DataSoureConfig.png)
 
-3. If you scroll down on the resulting page you should see “Scalyr Grafana
-   Datasource” show up in the “Others” section.
+3. If you enter "Scalyr" in the search bar on the resulting page you should see “Scalyr Grafana
+   Datasource” show up as an option.
 
-    ![otherPlugin](images/OthersPlugin.png)
+    ![otherPlugin](images/SearchForPlugin.png)
 
 4. Click on ***“Select”***. This will take you to a configuration page where you
    insert your API key mentioned in the prerequisite section.
