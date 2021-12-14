@@ -7,7 +7,7 @@ export class GenericDatasource {
   /**
    * Constructor
    * @param {*} instanceSettings 
-   * @param {*} $q 
+   * @param {*} $q query
    * @param {*} backendSrv 
    * @param {*} templateSrv 
    */
@@ -216,7 +216,7 @@ export class GenericDatasource {
   }
 
   createLogsQueryForAnnotation(options) {
-    const filterText = this.templateSrv.replace(options.annotation.filter, options.scopedVars, GenericDatasource.interpolateVariable);
+    const filterText = this.templateSrv.replace(options.annotation.queryText, options.scopedVars, GenericDatasource.interpolateVariable);
 
     return {
       url: this.url + '/query',
