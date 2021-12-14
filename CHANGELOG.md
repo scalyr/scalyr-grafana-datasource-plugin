@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.6
+
+Fix issue with annotations where configured query would be ignored. (#78) (Yan Shnayder)
+
 ## 2.3.5
 
 Have Datalink generation prepend "add." to EU hosts to avoid permissions issue. (#71) (Yan Shnayder)
