@@ -140,6 +140,29 @@ describe('Scalyr datasource tests', () => {
     });
   });
 
+  describe('Power queries timeseries', () => {
+    let results;
+    beforeEach(() => {
+      results = {
+        columns: [{name: 'col1'}, {name: 'col2'}, {name: 'timestamp'}],
+        warnings: [],
+        values: [['r1', 1, 1640732355000000000]]
+      };
+    });
+
+    it('Should transform power query results to table', () => {
+      const transformedResults = datasource.transformPowerQueryDataToTable(results).data;
+      expect(transformedResults.length).toBe(1);
+      const resultEntry = transformedResults[0];
+      expect(resultEntry.columns.length).toBe(3);
+      expect(resultEntry.columns.some(x => x.text === 'col1')).toBeTruthy();
+      expect(resultEntry.columns.some(x => x.text === 'time')).toBeTruthy();
+      expect(resultEntry.rows.length).toBe(results.values.length);
+      expect(resultEntry.rows.every(x => x.length === 3)).toBeTruthy();
+      expect(resultEntry.rows.some(x => x[2] === 1640732355000)).toBeTruthy();
+    });
+  });
+
   describe('Annotation queries', () => {
     let results;
     beforeEach(() => {

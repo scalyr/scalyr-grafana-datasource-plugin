@@ -364,6 +364,16 @@ export class GenericDatasource {
     const cloneData = _.clone(data);
     cloneData.columns.map((col) => {col.text = col.name; return col;});
 
+    cloneData.columns.forEach((col, index) => {
+      if (col.text === "timestamp") {
+        col.text = "time";
+        col.name = "time";
+        cloneData.values.forEach((value) => {
+          value[index] = Number(value[index]) / 1000000;
+        });
+      }
+    });
+
     return {
       data : [{
         type: this.visualizationType.TABLE,
