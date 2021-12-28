@@ -239,15 +239,10 @@ and variables are accepted in DataLinks but there are limitations due to a
 1. Breakdown graphs are currently not supported. These may be supported in the
    future.
 
-2. Power Queries is an experimental feature and requires the user to change the
-   visualization to a ***“table”*** inside Grafana. You can also attempt to graph
-   your results with a ***“graph”*** visualization, by setting the x-axis mode
-   to ***“series”***.
-
-3. Complex queries with multiple functions are currently not supported. These may
+2. Complex queries with multiple functions are currently not supported. These may
    be supported in the future.
 
-4. The DataLinks feature currently only works for queries without variables due to
+3. The DataLinks feature currently only works for queries without variables due to
    a [Grafana bug](https://github.com/grafana/grafana/issues/22183).
 
 ## Contributing

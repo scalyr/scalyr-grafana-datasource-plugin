@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.7
+
+Improve support for visualizing Power Query results on newer versions of Grafana.
+
 ## 2.3.6
 
 Fix issue with annotations where configured query would be ignored. (#78) (Yan Shnayder)

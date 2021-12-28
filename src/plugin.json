@@ -6,7 +6,7 @@
   "name": "Scalyr",
   "id": "scalyr-datasource",
   "info": {
-    "version": "2.3.6",
+    "version": "2.3.7",
     "description": "Scalyr Observability Platform",
     "author": {
       "name": "Scalyr",

@@ -1,6 +1,6 @@
 {
   "name": "scalyr-grafana-datasource-plugin",
-  "version": "2.3.6",
+  "version": "2.3.7",
   "description": "This grafana plugin allows Scalyr as a datasource for metrics and graphs",
   "main": "webpack.config.js",
   "scripts": {
