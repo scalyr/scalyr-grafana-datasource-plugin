@@ -361,30 +361,6 @@ export class GenericDatasource {
    */
   transformPowerQueryData(data, visualizationType) {
     return this.transformPowerQueryDataToTable(data);
-    // return GenericDatasource.transformPowerQueryDataToGraph(data);
-  }
-
-  /**
-   * Transform data returned by power query to a graph format.
-   * Each row is an individual series; this helps in looking at each value as bar in graphs.
-   * @param {*} data 
-   */
-  static transformPowerQueryDataToGraph(data) {
-    const result = [];
-    const values = data.values;
-    for (let i = 0; i < values.length; i += 1) {
-      const dataValue = values[i];
-      for (let j = 1; j < dataValue.length; j += 1) {
-        const responseObject = {
-          target: dataValue[0] + ": " + data.columns[j].name,
-          datapoints: [[dataValue[j], Date.now()]]
-        };
-        result.push(responseObject);
-      }
-    }
-    return {
-      data: result
-    };
   }
 
   /**
