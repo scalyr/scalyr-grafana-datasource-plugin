@@ -350,17 +350,8 @@ export class GenericDatasource {
     const query = this.createPowerQuery(target.filter, options.range.from.valueOf(), options.range.to.valueOf(), options);
     return this.backendSrv.datasourceRequest(query).then( (response) => {
       const data = response && response.data;
-      return this.transformPowerQueryData(data);
+      return this.transformPowerQueryDataToTable(data);
     });
-  }
-
-  /**
-   * Transform power query data based on the visualization type
-   * @param data data returned by the power query API
-   * @returns {{data: Object[]}} transformed data that can be used by Grafana
-   */
-  transformPowerQueryData(data, visualizationType) {
-    return this.transformPowerQueryDataToTable(data);
   }
 
   /**
