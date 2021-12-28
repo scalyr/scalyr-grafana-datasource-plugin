@@ -365,16 +365,14 @@ export class GenericDatasource {
     cloneData.columns.map((col) => {col.text = col.name; return col;});
 
     cloneData.columns.forEach((col, index) => {
-      if (col.text == "timestamp") {
+      if (col.text === "timestamp") {
         col.text = "time";
         col.name = "time";
         cloneData.values.forEach((value) => {
           try {
-            value[index] = value[index] / 1000000;
+            value[index] /= 1000000;
           }
-          catch(err) {
-            console.log(err)
-          }
+          catch(err) { }
         });
       }
     });
