@@ -55,8 +55,7 @@ export class GenericDatasource {
 
     if (queryType === this.queryTypes.POWER_QUERY) {
       if (options.targets.length === 1) {
-        const panelType = options.targets[0].panelType;
-        return this.performPowerQuery(options, panelType);
+        return this.performPowerQuery(options);
       } 
       return {
         status: "error",
@@ -346,12 +345,12 @@ export class GenericDatasource {
    * @param options
    * @returns {Promise<{data: *[]}> | *}
    */
-  performPowerQuery(options, visualizationType) {
+  performPowerQuery(options) {
     const target = options.targets[0];
     const query = this.createPowerQuery(target.filter, options.range.from.valueOf(), options.range.to.valueOf(), options);
     return this.backendSrv.datasourceRequest(query).then( (response) => {
       const data = response && response.data;
-      return this.transformPowerQueryData(data, visualizationType);
+      return this.transformPowerQueryData(data);
     });
   }
 
@@ -361,10 +360,8 @@ export class GenericDatasource {
    * @returns {{data: Object[]}} transformed data that can be used by Grafana
    */
   transformPowerQueryData(data, visualizationType) {
-    if (visualizationType === this.visualizationType.TABLE) {
-      return this.transformPowerQueryDataToTable(data);
-    }
-    return GenericDatasource.transformPowerQueryDataToGraph(data);
+    return this.transformPowerQueryDataToTable(data);
+    // return GenericDatasource.transformPowerQueryDataToGraph(data);
   }
 
   /**
