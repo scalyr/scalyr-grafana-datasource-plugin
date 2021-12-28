@@ -369,10 +369,7 @@ export class GenericDatasource {
         col.text = "time";
         col.name = "time";
         cloneData.values.forEach((value) => {
-          try {
-            value[index] /= 1000000;
-          }
-          catch(err) { }
+          value[index] = Number(value[index]) / 1000000;
         });
       }
     });
