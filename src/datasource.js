@@ -55,8 +55,7 @@ export class GenericDatasource {
 
     if (queryType === this.queryTypes.POWER_QUERY) {
       if (options.targets.length === 1) {
-        const panelType = options.targets[0].panelType;
-        return this.performPowerQuery(options, panelType);
+        return this.performPowerQuery(options);
       } 
       return {
         status: "error",
@@ -346,48 +345,13 @@ export class GenericDatasource {
    * @param options
    * @returns {Promise<{data: *[]}> | *}
    */
-  performPowerQuery(options, visualizationType) {
+  performPowerQuery(options) {
     const target = options.targets[0];
     const query = this.createPowerQuery(target.filter, options.range.from.valueOf(), options.range.to.valueOf(), options);
     return this.backendSrv.datasourceRequest(query).then( (response) => {
       const data = response && response.data;
-      return this.transformPowerQueryData(data, visualizationType);
-    });
-  }
-
-  /**
-   * Transform power query data based on the visualization type
-   * @param data data returned by the power query API
-   * @returns {{data: Object[]}} transformed data that can be used by Grafana
-   */
-  transformPowerQueryData(data, visualizationType) {
-    if (visualizationType === this.visualizationType.TABLE) {
       return this.transformPowerQueryDataToTable(data);
-    }
-    return GenericDatasource.transformPowerQueryDataToGraph(data);
-  }
-
-  /**
-   * Transform data returned by power query to a graph format.
-   * Each row is an individual series; this helps in looking at each value as bar in graphs.
-   * @param {*} data 
-   */
-  static transformPowerQueryDataToGraph(data) {
-    const result = [];
-    const values = data.values;
-    for (let i = 0; i < values.length; i += 1) {
-      const dataValue = values[i];
-      for (let j = 1; j < dataValue.length; j += 1) {
-        const responseObject = {
-          target: dataValue[0] + ": " + data.columns[j].name,
-          datapoints: [[dataValue[j], Date.now()]]
-        };
-        result.push(responseObject);
-      }
-    }
-    return {
-      data: result
-    };
+    });
   }
 
   /**
