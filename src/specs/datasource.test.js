@@ -138,14 +138,6 @@ describe('Scalyr datasource tests', () => {
       expect(resultEntry.rows.every(x => x.length === 3)).toBeTruthy();
       expect(resultEntry.rows.some(x => x[0] === 'r12')).toBeTruthy();
     });
-
-    it('Should transform power query results to graph series', () => {
-      const transformedResults = GenericDatasource.transformPowerQueryDataToGraph(results).data;
-      expect(transformedResults.length).toBe(26);
-      expect(transformedResults.some(x => x.target === 'r1: col2')).toBeTruthy();
-      expect(transformedResults.some(x => x.target === 'r1: col3')).toBeTruthy();
-      expect(transformedResults.every(x => x.datapoints.length === 1)).toBeTruthy();
-    });
   });
 
   describe('Annotation queries', () => {
