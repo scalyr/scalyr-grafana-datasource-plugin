@@ -44,24 +44,23 @@ module.exports = {
 
       {
         test: /\.tsx?$/,
-        loaders: [
-          {
-            loader: 'babel-loader',
-            options: { presets: ['@babel/env'] },
-          },
-          'ts-loader',
-        ],
+        loader:  'babel-loader',
+            options: {
+              presets: ['@babel/env']
+            },
         exclude: /(node_modules)/,
       },
     ],
   },
 
   plugins: [
-    new CopyWebpackPlugin([
-      { from: 'plugin.json', to: '.' },
-      { from: 'partials', to: 'partials'},
-      { from: '../README.md', to: '.'},
-      { from: '../src/img/**', to: '.'}
-    ])
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'plugin.json', to: '.' },
+        { from: 'partials', to: 'partials'},
+        { from: '../README.md', to: '.'},
+        { from: '../src/img/**', to: '.'}
+      ]
+    })
   ],
 }
