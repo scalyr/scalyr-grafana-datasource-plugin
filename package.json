@@ -37,7 +37,7 @@
     "@babel/preset-env": "^7.6.2",
     "@babel/preset-react": "^7.0.0",
     "@grafana/ui": "^8.3.2",
-    "babel-eslint": "^10.0.2",
+    "@babel/eslint-parser": "^7.5.4",
     "eslint": "^8.6.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.3.0",

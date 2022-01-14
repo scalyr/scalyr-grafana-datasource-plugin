@@ -1,6 +1,9 @@
 {
     "extends": ["airbnb", "prettier", "plugin:jest/recommended"],
     "plugins": ["prettier", "jest"],
+    "parserOptions": {
+      "requireConfigFile": false
+    },
     "rules": {
  
       "react/prop-types": 0,
@@ -18,5 +21,5 @@
       "jest": true
     },
  
-    "parser": "babel-eslint"
+    "parser": "@babel/eslint-parser"
 }
