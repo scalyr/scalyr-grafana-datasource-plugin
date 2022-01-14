@@ -142,13 +142,11 @@ export class GenericDatasource {
       method: 'POST'
     }).then((response) => {
       const values = _.get(response, 'data.values', []);
-      return values.map(value => 
-        {
-          return {
+      return values.map(value =>
+        ({
             text: value.value,
             value: value.value
-          };
-        }
+          })
       );
     });
   }
