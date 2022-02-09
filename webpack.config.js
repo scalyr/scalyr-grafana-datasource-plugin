@@ -64,3 +64,8 @@ module.exports = {
     })
   ],
 }
+
+module.exports.getWebpackConfig = (config, options) => ({
+  ...config,
+  plugins: config.plugins,
+});

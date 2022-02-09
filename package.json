@@ -4,10 +4,10 @@
   "description": "This grafana plugin allows Scalyr as a datasource for metrics and graphs",
   "main": "webpack.config.js",
   "scripts": {
-    "build": "webpack --mode=development",
-    "watch": "webpack --mode=development --watch",
-    "test": "jest",
-    "lint": "eslint src/ "
+    "build": "grafana-toolkit plugin:build",
+    "test": "grafana-toolkit plugin:test",
+    "dev": "grafana-toolkit plugin:dev",
+    "watch": "grafana-toolkit plugin:dev --watch"
   },
   "author": "",
   "repository": {
@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.5.5",
+    "@grafana/toolkit": "^8.3.6",
     "acorn": "^8.7.0",
     "babel-loader": "^8.0.6",
     "copy-webpack-plugin": "^10.2.0",
@@ -34,10 +35,10 @@
     "yargs-parser": "^21.0.0"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.5.4",
     "@babel/preset-env": "^7.6.2",
     "@babel/preset-react": "^7.0.0",
     "@grafana/ui": "^8.3.2",
-    "@babel/eslint-parser": "^7.5.4",
     "eslint": "^8.6.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.3.0",

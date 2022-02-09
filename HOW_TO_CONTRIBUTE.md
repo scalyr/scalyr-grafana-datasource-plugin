@@ -15,6 +15,9 @@ We welcome and appreciate contributions of any kind (code, tests, documentation,
 
 ## Plugin development
 
+Note: Running these `yarn` commands may fail you do not set the environment variable 
+`NODE_OPTIONS=--openssl-legacy-provider`.
+
 1. Install dependencies
 
     ```bash

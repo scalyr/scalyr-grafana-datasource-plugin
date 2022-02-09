@@ -253,4 +253,4 @@ See [How to contribute?](/HOW_TO_CONTRIBUTE.md) for developer documentation.
 
 The Scalyr Grafana plugin is licensed under
 [Apache License](https://www.apache.org/licenses), version 2.0. More information
-is available in the [LICENSE](./LICENSE.txt) file.
+is available in the [LICENSE](LICENSE) file.
