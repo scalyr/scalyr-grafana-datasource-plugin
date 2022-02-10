@@ -9,7 +9,7 @@ when you want to monitor many feeds on a single dashboard.
 
 ![SystemDashboard](images/SystemDashboard.png)
 
-With the Scalyr plugin, you will be able to create and visualize your log-based
+With the Scalyr plugin, you are be able to create and visualize your log-based
 metrics along side all of your other data sources. It's a great way to have a
 single pane of glass for today's complex systems. You can leverage Grafana alerts
 based on Scalyr data to notify you when there are possible issues. More
@@ -108,15 +108,15 @@ from GitHub.
     systemctl restart grafana-server
     ```
 
-### Verify the Plugin was Installed
+### Verify the plugin was installed
 
 1. In order to verify proper installation you must log in to your grafana instance
    and navigate to **Configuration Settings -> Data Sources**.
 
     ![FirstImage](images/ConfigDataSource.png)
 
-2. This will take you into the configuration page. If you already have other data
-   sources installed, you will see them show up here. Click on the **Add data source** button:
+2. This takes you into the configuration page. If you already have other data
+   sources installed, you can see them show up here. Click on the **Add data source** button:
 
     ![SecondImage](images/DataSoureConfig.png)
 
@@ -125,7 +125,7 @@ from GitHub.
 
     ![otherPlugin](images/SearchForPlugin.png)
 
-4. Click on ***“Select”***. This will take you to a configuration page where you
+4. Click on ***“Select”***. This takes you to a configuration page where you
    insert your API key mentioned in the prerequisite section.
 
     ![PluginConfig](images/PluginConfig.png)
@@ -139,7 +139,7 @@ from GitHub.
 
 6. Click ***Save & Test*** to verify these settings are correct.
 
-## Using the Scalyr Datasource
+## Using the Scalyr data source
 
 Now that you’ve completed installing and configuring the Scalyr data source plugin,
 lets go through an example of how you can start using it to create a dashboard
@@ -160,15 +160,15 @@ using Scalyr data.
 4. A 'Standard query' consist of 4 parts:
     * **Function**: You are given a list of the function that can be applied to
     the field values.
-    Scalyr [graphFunctions documentation](https://www.scalyr.com/help/dashboards#graphFunctions)
-    is a good resource to see the list of supported functions.
+    Refer to the Scalyr [graphFunctions documentation](https://www.scalyr.com/help/dashboards#graphFunctions)
+    for a list of supported functions.
     * **Field**: The name of the event field to be graphed.
     * **Conversion Factor**: (Optional) Value to multiply the values of the graph, useful for converting units.
-    * **Label**: (Optional) Label for the query. This is displayed as the series title in the graph legend. Same value
+    * **Label**: (Optional) Label for the query. The graph legend displays this value as the series title. Same value
     as the `Query` field by default.
     * **Filter**: Specifies which events to match. This field supports [Scalyr query syntax](https://www.scalyr.com/help/query-language).
     * **DataLink URL**: A read-only generated field, this link can be copied to a new DataLink (at the end of the Visualization
-    section). This DataLink will go to the logs in the Scalyr used to create this graph.
+    section). This DataLink goes to the logs in Scalyr used to create this graph.
 
 5. Fill out all the fields and click the save button. In the image below, we’ve
    added a query to graph CPU Utilization. In general, if you have used graphs and
@@ -179,11 +179,11 @@ using Scalyr data.
 
 You’ve successfully installed, configured and created a graph in Grafana using Scalyr data!
 
-Note: you can add multiple queries to a visualization to plot multiple series on the same graph.
+> **Note**: You can add multiple queries to a visualization to plot multiple series on the same graph.
 
 ## Variables
 
-For general information on Grafana variables see the [Grafana documentation](https://grafana.com/docs/grafana/latest/reference/templating/)
+For general information on Grafana variables refer to the [Grafana documentation](https://grafana.com/docs/grafana/latest/reference/templating/)
 
 Queries support all Grafana variable substitution syntaxes, for example:
 
@@ -193,7 +193,7 @@ $varname
 ${varname:option}
 ```
 
-For multi-value variables there is a custom default substitution method, the values will be quoted and separated with
+For multi-value variables there is a custom default substitution method, the values are quoted and separated with
 commas, for example:
 
 ```bash
@@ -208,8 +208,8 @@ $serverHost=($host)
 
 ## DataLinks
 
-Your queries will automatically generate a URL you can use as a DataLink in Grafana,
-this link will take you to the logs used to generate your graph in the Scalyr UI
+Your queries automatically generate a URL you can use as a DataLink in Grafana,
+this link takes you to the logs used to generate your graph in the Scalyr UI
 
    ![GeneratedDataLink](images/QueryWithDataLink.png)
 
@@ -225,16 +225,16 @@ Click `Add link`, give it an appropriate title, and paste your URL into the `URL
 
    ![ExampleDataLink](images/ExampleDataLink.png)
 
-Your Data Link is now ready! If you now go to your graph and click on the line you will
-have a new option, this will take you to Scalyr and show the logs your graph represents
+Your Data Link is now ready! If you now go to your graph and click on the line you 
+are shown new option, this takes you to Scalyr and show the logs your graph represents
 
    ![DataLinkDropdown](images/DataLinkDropdown.png)
 
-Note: You will need to already be logged in to Scalyr for the DataLink to reach the UI,
+> **Note**: You need to already be logged in to Scalyr for the DataLink to reach the UI,
 and variables are accepted in DataLinks but there are limitations due to a
 [Grafana bug](https://github.com/grafana/grafana/issues/22183)
 
-## Limitations and Future Improvements
+## Limitations and future improvements
 
 1. Breakdown graphs are currently not supported. These may be supported in the
    future.
@@ -247,7 +247,7 @@ and variables are accepted in DataLinks but there are limitations due to a
 
 ## Contributing
 
-See [How to contribute?](/HOW_TO_CONTRIBUTE.md) for developer documentation.
+Refer to [How to contribute?](/HOW_TO_CONTRIBUTE.md) for developer documentation.
 
 ## License
 
