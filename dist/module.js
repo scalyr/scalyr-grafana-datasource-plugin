@@ -1,22 +1,140 @@
-/*
- * ATTENTION: The "eval" devtool has been used (maybe by default in mode: "development").
- * This devtool is neither made for production nor for readable output files.
- * It uses "eval()" calls to create a separate source file in the browser devtools.
- * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
- * or disable the default devtool with "devtool: false".
- * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
- */
-define(["lodash","app/plugins/sdk"], (__WEBPACK_EXTERNAL_MODULE_lodash__, __WEBPACK_EXTERNAL_MODULE_grafana_app_plugins_sdk__) => { return /******/ (() => { // webpackBootstrap
-/******/ 	"use strict";
-/******/ 	var __webpack_modules__ = ({
+define(["app/plugins/sdk","lodash"], function(__WEBPACK_EXTERNAL_MODULE_grafana_app_plugins_sdk__, __WEBPACK_EXTERNAL_MODULE_lodash__) { return /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "/";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = "./module.js");
+/******/ })
+/************************************************************************/
+/******/ ({
 
 /***/ "./config_ctrl.js":
 /*!************************!*\
   !*** ./config_ctrl.js ***!
   \************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/*! exports provided: GenericConfigCtrl */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"GenericConfigCtrl\": () => (/* binding */ GenericConfigCtrl)\n/* harmony export */ });\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nfunction _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }\n\nfunction _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, \"prototype\", { writable: false }); return Constructor; }\n\nvar GenericConfigCtrl = /*#__PURE__*/function () {\n  function GenericConfigCtrl($scope) {\n    _classCallCheck(this, GenericConfigCtrl);\n\n    this.showKey = true;\n    this.scope = $scope;\n\n    if (!this.current.jsonData.scalyrUrl) {\n      this.current.jsonData.scalyrUrl = 'https://www.scalyr.com';\n    }\n\n    if (this.current.jsonData.scalyrApiKey) {\n      this.showKey = false;\n    }\n  }\n\n  _createClass(GenericConfigCtrl, [{\n    key: \"onChangeKey\",\n    value: function onChangeKey() {\n      this.current.jsonData.scalyrApiKey = this.current.jsonData.scalyrApiKeyView;\n    }\n  }, {\n    key: \"resetKey\",\n    value: function resetKey() {\n      this.current.jsonData.scalyrApiKey = \"\";\n      this.current.jsonData.scalyrApiKeyView = \"\";\n      this.showKey = true;\n    }\n  }]);\n\n  return GenericConfigCtrl;\n}();\nGenericConfigCtrl.templateUrl = 'partials/config.html';\n\n//# sourceURL=webpack:///./config_ctrl.js?");
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GenericConfigCtrl", function() { return GenericConfigCtrl; });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+var GenericConfigCtrl = /*#__PURE__*/function () {
+  function GenericConfigCtrl($scope) {
+    _classCallCheck(this, GenericConfigCtrl);
+
+    this.showKey = true;
+    this.scope = $scope;
+
+    if (!this.current.jsonData.scalyrUrl) {
+      this.current.jsonData.scalyrUrl = 'https://www.scalyr.com';
+    }
+
+    if (this.current.jsonData.scalyrApiKey) {
+      this.showKey = false;
+    }
+  }
+
+  _createClass(GenericConfigCtrl, [{
+    key: "onChangeKey",
+    value: function onChangeKey() {
+      this.current.jsonData.scalyrApiKey = this.current.jsonData.scalyrApiKeyView;
+    }
+  }, {
+    key: "resetKey",
+    value: function resetKey() {
+      this.current.jsonData.scalyrApiKey = "";
+      this.current.jsonData.scalyrApiKeyView = "";
+      this.showKey = true;
+    }
+  }]);
+
+  return GenericConfigCtrl;
+}();
+GenericConfigCtrl.templateUrl = 'partials/config.html';
 
 /***/ }),
 
@@ -24,9 +142,452 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /*!***********************!*\
   !*** ./datasource.js ***!
   \***********************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/*! exports provided: GenericDatasource */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"GenericDatasource\": () => (/* binding */ GenericDatasource)\n/* harmony export */ });\n/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ \"lodash\");\n/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util */ \"./util.js\");\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nfunction _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }\n\nfunction _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, \"prototype\", { writable: false }); return Constructor; }\n\n\n\nvar GenericDatasource = /*#__PURE__*/function () {\n  /**\n   * Constructor\n   * @param {*} instanceSettings \n   * @param {*} $q query\n   * @param {*} backendSrv \n   * @param {*} templateSrv \n   */\n  function GenericDatasource(instanceSettings, $q, backendSrv, templateSrv) {\n    _classCallCheck(this, GenericDatasource);\n\n    this.type = instanceSettings.type;\n    this.url = instanceSettings.url;\n    this.name = instanceSettings.name;\n    this.apiKey = instanceSettings.jsonData.scalyrApiKey;\n    this.scalyrUrl = instanceSettings.jsonData.scalyrUrl;\n    this.backendSrv = backendSrv;\n    this.q = $q;\n    this.templateSrv = templateSrv;\n    this.headers = {\n      'Content-Type': 'application/json'\n    };\n    this.queryTypes = {\n      POWER_QUERY: 'Power Query',\n      STANDARD_QUERY: 'Standard Query'\n    };\n    this.visualizationType = {\n      GRAPH: 'graph',\n      TABLE: 'table'\n    };\n  }\n  /**\n   * Grafana uses this function to initiate all queries\n   * @param {*} options - query settings/options https://grafana.com/docs/plugins/developing/datasources/#query\n   */\n\n\n  _createClass(GenericDatasource, [{\n    key: \"query\",\n    value: function query(options) {\n      // Migrate filters from versions 2.3.0 and older\n      for (var i = 0; i < options.targets.length; i += 1) {\n        if (options.targets[i].queryText) {\n          options.targets[i].filter = options.targets[i].queryText;\n          options.targets[i].queryText = null;\n        }\n      }\n\n      var queryType = options.targets[0].queryType;\n\n      if (!options.targets.every(function (x) {\n        return x.queryType === queryType;\n      })) {\n        return {\n          status: \"error\",\n          message: \"All queries should have the same query type.\"\n        };\n      }\n\n      if (queryType === this.queryTypes.POWER_QUERY) {\n        if (options.targets.length === 1) {\n          return this.performPowerQuery(options);\n        }\n\n        return {\n          status: \"error\",\n          message: \"You can only have one power query per panel.\"\n        };\n      }\n\n      return this.performTimeseriesQuery(options);\n    }\n  }, {\n    key: \"annotationQuery\",\n    value: function annotationQuery(options) {\n      var query = this.createLogsQueryForAnnotation(options);\n      return this.backendSrv.datasourceRequest(query).then(function (response) {\n        var data = response.data;\n        var timeField = options.annotation.timeField || \"timestamp\";\n        var timeEndField = options.annotation.timeEndField || null;\n        var textField = options.annotation.textField || \"message\";\n        return GenericDatasource.transformAnnotationResults(data.matches, timeField, timeEndField, textField);\n      });\n    }\n    /**\n     * Grafana uses this function to test data source settings. \n     * This verifies API key using the facet query API. \n     * The endpoint returns 401 if the token is invalid.\n     */\n\n  }, {\n    key: \"testDatasource\",\n    value: function testDatasource() {\n      return this.backendSrv.datasourceRequest({\n        url: this.url + '/facetQuery',\n        data: JSON.stringify({\n          token: this.apiKey,\n          queryType: 'facet',\n          filter: '',\n          startTime: new Date().getTime(),\n          endTime: new Date().getTime(),\n          field: 'XYZ'\n        }),\n        method: 'POST'\n      }).then(function (response) {\n        if (response && response.status && response.status === 200) {\n          return {\n            status: \"success\",\n            message: \"Successfully connected to Scalyr!\"\n          };\n        } // We will never hit this but eslint complains about lack of return\n\n\n        return {\n          status: \"error\",\n          message: \"Scalyr returned HTTP code \".concat(response.status)\n        };\n      })[\"catch\"](function (err) {\n        var message = \"Cannot connect to Scalyr!\";\n\n        if (err && err.data && err.data.message) {\n          message = \"\".concat(message, \" Scalyr response - \").concat(err.data.message);\n        }\n\n        return {\n          status: \"error\",\n          message: message\n        };\n      });\n    }\n    /**\n     * Grafana uses this function to load metric values. \n     * @param {*} query - query options\n     */\n\n  }, {\n    key: \"metricFindQuery\",\n    value: function metricFindQuery(query) {\n      var d = new Date();\n      d.setHours(d.getHours() - 6);\n      return this.backendSrv.datasourceRequest({\n        url: this.url + '/facetQuery',\n        data: JSON.stringify({\n          token: this.apiKey,\n          queryType: 'facet',\n          filter: '',\n          startTime: d.getTime(),\n          endTime: new Date().getTime(),\n          field: query\n        }),\n        method: 'POST'\n      }).then(function (response) {\n        var values = lodash__WEBPACK_IMPORTED_MODULE_0___default().get(response, 'data.values', []);\n\n        return values.map(function (value) {\n          return {\n            text: value.value,\n            value: value.value\n          };\n        });\n      });\n    }\n    /**\n     * Default interpolator for Grafana variables for this datasource\n     *\n     * @param value The value of this variable\n     * @param variable The Grafana variable information\n     * @returns {string}\n     */\n\n  }, {\n    key: \"createTimeSeriesQuery\",\n    value:\n    /**\n     * Create a request to the scalyr time series endpoint.\n     * @param {*} options \n     */\n    function createTimeSeriesQuery(options) {\n      var _this = this;\n\n      var queries = [];\n      options.targets.forEach(function (target) {\n        var filterText = _this.templateSrv.replace(target.filter, options.scopedVars, GenericDatasource.interpolateVariable);\n\n        var functionText = '';\n\n        if (target.field) {\n          functionText = \"\".concat(target[\"function\"] || 'count', \"(\").concat(target.field, \")\");\n        }\n\n        var query = {\n          startTime: options.range.from.valueOf(),\n          endTime: options.range.to.valueOf(),\n          buckets: GenericDatasource.getNumberOfBuckets(options),\n          filter: filterText,\n          \"function\": functionText\n        };\n        queries.push(query);\n      });\n      return {\n        url: this.url + '/timeSeriesApi',\n        method: 'POST',\n        headers: this.headers,\n        data: JSON.stringify({\n          token: this.apiKey,\n          queries: queries\n        })\n      };\n    }\n  }, {\n    key: \"createLogsQueryForAnnotation\",\n    value: function createLogsQueryForAnnotation(options) {\n      var filterText = this.templateSrv.replace(options.annotation.queryText, options.scopedVars, GenericDatasource.interpolateVariable);\n      return {\n        url: this.url + '/query',\n        method: 'POST',\n        headers: this.headers,\n        data: JSON.stringify({\n          token: this.apiKey,\n          queryType: \"log\",\n          filter: filterText,\n          startTime: options.range.from.valueOf(),\n          endTime: options.range.to.valueOf(),\n          maxCount: 5000\n        })\n      };\n    }\n    /**\n     * Get how many buckets to return based on the query time range\n     * @param {*} options \n     */\n\n  }, {\n    key: \"performTimeseriesQuery\",\n    value:\n    /**\n     * Perform the timeseries query using the Grafana proxy.\n     * @param {*} options \n     */\n    function performTimeseriesQuery(options) {\n      var query = this.createTimeSeriesQuery(options);\n      return this.backendSrv.datasourceRequest(query).then(function (response) {\n        var data = response.data;\n        return GenericDatasource.transformTimeSeriesResults(data.results, options);\n      });\n    }\n    /**\n     * Transform data returned by time series query into Grafana timeseries format.\n     * https://grafana.com/docs/plugins/developing/datasources/#query\n     * @param results\n     * @param conversionFactor conversion factor to be applied to each data point. This can be used to for example convert bytes to MB.\n     * @returns {{data: Array}}\n     */\n\n  }, {\n    key: \"createPowerQuery\",\n    value:\n    /**\n     * Create powerquery query to pass to Grafana proxy.\n     * @param queryText text of the query\n     * @param startTime start time\n     * @param endTime end time\n     * @returns {{url: string, method: string, headers: {\"Content-Type\": string}, data: string}}\n     */\n    function createPowerQuery(queryText, startTime, endTime, options) {\n      queryText = this.templateSrv.replace(queryText, options.scopedVars, GenericDatasource.interpolateVariable);\n      var query = {\n        token: this.apiKey,\n        query: queryText,\n        startTime: startTime,\n        endTime: endTime\n      };\n      return {\n        url: this.url + '/powerQuery',\n        method: 'POST',\n        headers: this.headers,\n        data: JSON.stringify(query)\n      };\n    }\n    /**\n     * Perform the powerquery using Grafana proxy.\n     * @param options\n     * @returns {Promise<{data: *[]}> | *}\n     */\n\n  }, {\n    key: \"performPowerQuery\",\n    value: function performPowerQuery(options) {\n      var _this2 = this;\n\n      var target = options.targets[0];\n      var query = this.createPowerQuery(target.filter, options.range.from.valueOf(), options.range.to.valueOf(), options);\n      return this.backendSrv.datasourceRequest(query).then(function (response) {\n        var data = response && response.data;\n        return _this2.transformPowerQueryDataToTable(data);\n      });\n    }\n    /**\n     * Transform Power Query Data in table format that Grafana needs.\n     * https://grafana.com/docs/plugins/developing/datasources/#query\n     * @param data\n     * @returns {{data: *[]}}\n     */\n\n  }, {\n    key: \"transformPowerQueryDataToTable\",\n    value: function transformPowerQueryDataToTable(data) {\n      var cloneData = lodash__WEBPACK_IMPORTED_MODULE_0___default().clone(data);\n\n      cloneData.columns.map(function (col) {\n        col.text = col.name;\n        return col;\n      });\n      cloneData.columns.forEach(function (col, index) {\n        if (col.text === \"timestamp\") {\n          col.text = \"time\";\n          col.name = \"time\";\n          cloneData.values.forEach(function (value) {\n            value[index] = Number(value[index]) / 1000000;\n          });\n        }\n      });\n      return {\n        data: [{\n          type: this.visualizationType.TABLE,\n          columns: cloneData.columns,\n          rows: cloneData.values\n        }]\n      };\n    }\n  }], [{\n    key: \"interpolateVariable\",\n    value: function interpolateVariable(value, variable) {\n      if (typeof value === 'string') {\n        if (variable.multi || variable.includeAll) {\n          return \"'\" + value.replace(/'/g, \"''\") + \"'\";\n        }\n\n        return value;\n      }\n\n      if (typeof value === 'number') {\n        return value;\n      }\n\n      var quotedValues = lodash__WEBPACK_IMPORTED_MODULE_0___default().map(value, function (val) {\n        if (typeof value === 'number') {\n          return value;\n        }\n\n        return \"'\" + val.replace(/'/g, \"''\") + \"'\";\n      });\n\n      return quotedValues.join(',');\n    }\n  }, {\n    key: \"getNumberOfBuckets\",\n    value: function getNumberOfBuckets(options) {\n      return Math.floor((options.range.to.valueOf() - options.range.from.valueOf()) / options.intervalMs);\n    }\n  }, {\n    key: \"transformTimeSeriesResults\",\n    value: function transformTimeSeriesResults(results, options) {\n      var graphs = {\n        data: []\n      };\n      results.forEach(function (result, index) {\n        var timeStamp = options.range.from.valueOf();\n        var dataValues = result.values;\n        var currentTarget = options.targets[index];\n        var responseObject = {\n          target: currentTarget.label || currentTarget.filter,\n          datapoints: []\n        };\n        var conversionFactor = (0,_util__WEBPACK_IMPORTED_MODULE_1__.getValidConversionFactor)(currentTarget.conversionFactor);\n\n        for (var i = 0; i < dataValues.length; i += 1) {\n          var dataValue = dataValues[i] * conversionFactor;\n          responseObject.datapoints.push([dataValue, timeStamp]);\n          timeStamp += options.intervalMs;\n        }\n\n        graphs.data.push(responseObject);\n      });\n      return graphs;\n    }\n    /**\n     * Transform data returned by time series query into Grafana annotation format.\n     * @param results\n     * @param options\n     * @returns Array\n     */\n\n  }, {\n    key: \"transformAnnotationResults\",\n    value: function transformAnnotationResults(results, timeField, timeEndField, textField) {\n      var annotations = [];\n      results.forEach(function (result) {\n        var responseObject = {};\n        responseObject.time = Number(result[timeField]) / 1000000;\n\n        if (!responseObject.time && result.attributes) {\n          responseObject.time = Number(result.attributes[timeField]) / 1000000;\n        }\n\n        responseObject.text = result[textField];\n\n        if (!responseObject.text && result.attributes) {\n          responseObject.text = result.attributes[textField];\n        }\n\n        if (timeEndField) {\n          responseObject.timeEnd = Number(result[timeEndField]) / 1000000;\n\n          if (!responseObject.timeEnd && result.attributes) {\n            responseObject.timeEnd = Number(result.attributes[timeEndField]) / 1000000;\n          }\n        }\n\n        if (responseObject.time) {\n          annotations.push(responseObject);\n        }\n      });\n      return annotations;\n    }\n  }]);\n\n  return GenericDatasource;\n}();\n\n//# sourceURL=webpack:///./datasource.js?");
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GenericDatasource", function() { return GenericDatasource; });
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ "lodash");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util */ "./util.js");
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+
+
+var GenericDatasource = /*#__PURE__*/function () {
+  /**
+   * Constructor
+   * @param {*} instanceSettings 
+   * @param {*} $q query
+   * @param {*} backendSrv 
+   * @param {*} templateSrv 
+   */
+  function GenericDatasource(instanceSettings, $q, backendSrv, templateSrv) {
+    _classCallCheck(this, GenericDatasource);
+
+    this.type = instanceSettings.type;
+    this.url = instanceSettings.url;
+    this.name = instanceSettings.name;
+    this.apiKey = instanceSettings.jsonData.scalyrApiKey;
+    this.scalyrUrl = instanceSettings.jsonData.scalyrUrl;
+    this.backendSrv = backendSrv;
+    this.q = $q;
+    this.templateSrv = templateSrv;
+    this.headers = {
+      'Content-Type': 'application/json'
+    };
+    this.queryTypes = {
+      POWER_QUERY: 'Power Query',
+      STANDARD_QUERY: 'Standard Query'
+    };
+    this.visualizationType = {
+      GRAPH: 'graph',
+      TABLE: 'table'
+    };
+  }
+  /**
+   * Grafana uses this function to initiate all queries
+   * @param {*} options - query settings/options https://grafana.com/docs/plugins/developing/datasources/#query
+   */
+
+
+  _createClass(GenericDatasource, [{
+    key: "query",
+    value: function query(options) {
+      // Migrate filters from versions 2.3.0 and older
+      for (var i = 0; i < options.targets.length; i += 1) {
+        if (options.targets[i].queryText) {
+          options.targets[i].filter = options.targets[i].queryText;
+          options.targets[i].queryText = null;
+        }
+      }
+
+      var queryType = options.targets[0].queryType;
+
+      if (!options.targets.every(function (x) {
+        return x.queryType === queryType;
+      })) {
+        return {
+          status: "error",
+          message: "All queries should have the same query type."
+        };
+      }
+
+      if (queryType === this.queryTypes.POWER_QUERY) {
+        if (options.targets.length === 1) {
+          return this.performPowerQuery(options);
+        }
+
+        return {
+          status: "error",
+          message: "You can only have one power query per panel."
+        };
+      }
+
+      return this.performTimeseriesQuery(options);
+    }
+  }, {
+    key: "annotationQuery",
+    value: function annotationQuery(options) {
+      var query = this.createLogsQueryForAnnotation(options);
+      return this.backendSrv.datasourceRequest(query).then(function (response) {
+        var data = response.data;
+        var timeField = options.annotation.timeField || "timestamp";
+        var timeEndField = options.annotation.timeEndField || null;
+        var textField = options.annotation.textField || "message";
+        return GenericDatasource.transformAnnotationResults(data.matches, timeField, timeEndField, textField);
+      });
+    }
+    /**
+     * Grafana uses this function to test data source settings. 
+     * This verifies API key using the facet query API. 
+     * The endpoint returns 401 if the token is invalid.
+     */
+
+  }, {
+    key: "testDatasource",
+    value: function testDatasource() {
+      return this.backendSrv.datasourceRequest({
+        url: this.url + '/facetQuery',
+        data: JSON.stringify({
+          token: this.apiKey,
+          queryType: 'facet',
+          filter: '',
+          startTime: new Date().getTime(),
+          endTime: new Date().getTime(),
+          field: 'XYZ'
+        }),
+        method: 'POST'
+      }).then(function (response) {
+        if (response && response.status && response.status === 200) {
+          return {
+            status: "success",
+            message: "Successfully connected to Scalyr!"
+          };
+        } // We will never hit this but eslint complains about lack of return
+
+
+        return {
+          status: "error",
+          message: "Scalyr returned HTTP code ".concat(response.status)
+        };
+      })["catch"](function (err) {
+        var message = "Cannot connect to Scalyr!";
+
+        if (err && err.data && err.data.message) {
+          message = "".concat(message, " Scalyr response - ").concat(err.data.message);
+        }
+
+        return {
+          status: "error",
+          message: message
+        };
+      });
+    }
+    /**
+     * Grafana uses this function to load metric values. 
+     * @param {*} query - query options
+     */
+
+  }, {
+    key: "metricFindQuery",
+    value: function metricFindQuery(query) {
+      var d = new Date();
+      d.setHours(d.getHours() - 6);
+      return this.backendSrv.datasourceRequest({
+        url: this.url + '/facetQuery',
+        data: JSON.stringify({
+          token: this.apiKey,
+          queryType: 'facet',
+          filter: '',
+          startTime: d.getTime(),
+          endTime: new Date().getTime(),
+          field: query
+        }),
+        method: 'POST'
+      }).then(function (response) {
+        var values = lodash__WEBPACK_IMPORTED_MODULE_0___default.a.get(response, 'data.values', []);
+
+        return values.map(function (value) {
+          return {
+            text: value.value,
+            value: value.value
+          };
+        });
+      });
+    }
+    /**
+     * Default interpolator for Grafana variables for this datasource
+     *
+     * @param value The value of this variable
+     * @param variable The Grafana variable information
+     * @returns {string}
+     */
+
+  }, {
+    key: "createTimeSeriesQuery",
+    value:
+    /**
+     * Create a request to the scalyr time series endpoint.
+     * @param {*} options 
+     */
+    function createTimeSeriesQuery(options) {
+      var _this = this;
+
+      var queries = [];
+      options.targets.forEach(function (target) {
+        var filterText = _this.templateSrv.replace(target.filter, options.scopedVars, GenericDatasource.interpolateVariable);
+
+        var functionText = '';
+
+        if (target.field) {
+          functionText = "".concat(target["function"] || 'count', "(").concat(target.field, ")");
+        }
+
+        var query = {
+          startTime: options.range.from.valueOf(),
+          endTime: options.range.to.valueOf(),
+          buckets: GenericDatasource.getNumberOfBuckets(options),
+          filter: filterText,
+          "function": functionText
+        };
+        queries.push(query);
+      });
+      return {
+        url: this.url + '/timeSeriesApi',
+        method: 'POST',
+        headers: this.headers,
+        data: JSON.stringify({
+          token: this.apiKey,
+          queries: queries
+        })
+      };
+    }
+  }, {
+    key: "createLogsQueryForAnnotation",
+    value: function createLogsQueryForAnnotation(options) {
+      var filterText = this.templateSrv.replace(options.annotation.queryText, options.scopedVars, GenericDatasource.interpolateVariable);
+      return {
+        url: this.url + '/query',
+        method: 'POST',
+        headers: this.headers,
+        data: JSON.stringify({
+          token: this.apiKey,
+          queryType: "log",
+          filter: filterText,
+          startTime: options.range.from.valueOf(),
+          endTime: options.range.to.valueOf(),
+          maxCount: 5000
+        })
+      };
+    }
+    /**
+     * Get how many buckets to return based on the query time range
+     * @param {*} options 
+     */
+
+  }, {
+    key: "performTimeseriesQuery",
+    value:
+    /**
+     * Perform the timeseries query using the Grafana proxy.
+     * @param {*} options 
+     */
+    function performTimeseriesQuery(options) {
+      var query = this.createTimeSeriesQuery(options);
+      return this.backendSrv.datasourceRequest(query).then(function (response) {
+        var data = response.data;
+        return GenericDatasource.transformTimeSeriesResults(data.results, options);
+      });
+    }
+    /**
+     * Transform data returned by time series query into Grafana timeseries format.
+     * https://grafana.com/docs/plugins/developing/datasources/#query
+     * @param results
+     * @param conversionFactor conversion factor to be applied to each data point. This can be used to for example convert bytes to MB.
+     * @returns {{data: Array}}
+     */
+
+  }, {
+    key: "createPowerQuery",
+    value:
+    /**
+     * Create powerquery query to pass to Grafana proxy.
+     * @param queryText text of the query
+     * @param startTime start time
+     * @param endTime end time
+     * @returns {{url: string, method: string, headers: {"Content-Type": string}, data: string}}
+     */
+    function createPowerQuery(queryText, startTime, endTime, options) {
+      queryText = this.templateSrv.replace(queryText, options.scopedVars, GenericDatasource.interpolateVariable);
+      var query = {
+        token: this.apiKey,
+        query: queryText,
+        startTime: startTime,
+        endTime: endTime
+      };
+      return {
+        url: this.url + '/powerQuery',
+        method: 'POST',
+        headers: this.headers,
+        data: JSON.stringify(query)
+      };
+    }
+    /**
+     * Perform the powerquery using Grafana proxy.
+     * @param options
+     * @returns {Promise<{data: *[]}> | *}
+     */
+
+  }, {
+    key: "performPowerQuery",
+    value: function performPowerQuery(options) {
+      var _this2 = this;
+
+      var target = options.targets[0];
+      var query = this.createPowerQuery(target.filter, options.range.from.valueOf(), options.range.to.valueOf(), options);
+      return this.backendSrv.datasourceRequest(query).then(function (response) {
+        var data = response && response.data;
+        return _this2.transformPowerQueryDataToTable(data);
+      });
+    }
+    /**
+     * Transform Power Query Data in table format that Grafana needs.
+     * https://grafana.com/docs/plugins/developing/datasources/#query
+     * @param data
+     * @returns {{data: *[]}}
+     */
+
+  }, {
+    key: "transformPowerQueryDataToTable",
+    value: function transformPowerQueryDataToTable(data) {
+      var cloneData = lodash__WEBPACK_IMPORTED_MODULE_0___default.a.clone(data);
+
+      cloneData.columns.map(function (col) {
+        col.text = col.name;
+        return col;
+      });
+      cloneData.columns.forEach(function (col, index) {
+        if (col.text === "timestamp") {
+          col.text = "time";
+          col.name = "time";
+          cloneData.values.forEach(function (value) {
+            value[index] = Number(value[index]) / 1000000;
+          });
+        }
+      });
+      return {
+        data: [{
+          type: this.visualizationType.TABLE,
+          columns: cloneData.columns,
+          rows: cloneData.values
+        }]
+      };
+    }
+  }], [{
+    key: "interpolateVariable",
+    value: function interpolateVariable(value, variable) {
+      if (typeof value === 'string') {
+        if (variable.multi || variable.includeAll) {
+          return "'" + value.replace(/'/g, "''") + "'";
+        }
+
+        return value;
+      }
+
+      if (typeof value === 'number') {
+        return value;
+      }
+
+      var quotedValues = lodash__WEBPACK_IMPORTED_MODULE_0___default.a.map(value, function (val) {
+        if (typeof value === 'number') {
+          return value;
+        }
+
+        return "'" + val.replace(/'/g, "''") + "'";
+      });
+
+      return quotedValues.join(',');
+    }
+  }, {
+    key: "getNumberOfBuckets",
+    value: function getNumberOfBuckets(options) {
+      return Math.floor((options.range.to.valueOf() - options.range.from.valueOf()) / options.intervalMs);
+    }
+  }, {
+    key: "transformTimeSeriesResults",
+    value: function transformTimeSeriesResults(results, options) {
+      var graphs = {
+        data: []
+      };
+      results.forEach(function (result, index) {
+        var timeStamp = options.range.from.valueOf();
+        var dataValues = result.values;
+        var currentTarget = options.targets[index];
+        var responseObject = {
+          target: currentTarget.label || currentTarget.filter,
+          datapoints: []
+        };
+        var conversionFactor = Object(_util__WEBPACK_IMPORTED_MODULE_1__["getValidConversionFactor"])(currentTarget.conversionFactor);
+
+        for (var i = 0; i < dataValues.length; i += 1) {
+          var dataValue = dataValues[i] * conversionFactor;
+          responseObject.datapoints.push([dataValue, timeStamp]);
+          timeStamp += options.intervalMs;
+        }
+
+        graphs.data.push(responseObject);
+      });
+      return graphs;
+    }
+    /**
+     * Transform data returned by time series query into Grafana annotation format.
+     * @param results
+     * @param options
+     * @returns Array
+     */
+
+  }, {
+    key: "transformAnnotationResults",
+    value: function transformAnnotationResults(results, timeField, timeEndField, textField) {
+      var annotations = [];
+      results.forEach(function (result) {
+        var responseObject = {};
+        responseObject.time = Number(result[timeField]) / 1000000;
+
+        if (!responseObject.time && result.attributes) {
+          responseObject.time = Number(result.attributes[timeField]) / 1000000;
+        }
+
+        responseObject.text = result[textField];
+
+        if (!responseObject.text && result.attributes) {
+          responseObject.text = result.attributes[textField];
+        }
+
+        if (timeEndField) {
+          responseObject.timeEnd = Number(result[timeEndField]) / 1000000;
+
+          if (!responseObject.timeEnd && result.attributes) {
+            responseObject.timeEnd = Number(result.attributes[timeEndField]) / 1000000;
+          }
+        }
+
+        if (responseObject.time) {
+          annotations.push(responseObject);
+        }
+      });
+      return annotations;
+    }
+  }]);
+
+  return GenericDatasource;
+}();
 
 /***/ }),
 
@@ -34,9 +595,45 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /*!*******************!*\
   !*** ./module.js ***!
   \*******************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/*! exports provided: Datasource, QueryCtrl, ConfigCtrl, QueryOptionsCtrl, AnnotationsQueryCtrl */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Datasource\": () => (/* reexport safe */ _datasource__WEBPACK_IMPORTED_MODULE_0__.GenericDatasource),\n/* harmony export */   \"QueryCtrl\": () => (/* reexport safe */ _query_ctrl__WEBPACK_IMPORTED_MODULE_1__.GenericDatasourceQueryCtrl),\n/* harmony export */   \"ConfigCtrl\": () => (/* reexport safe */ _config_ctrl__WEBPACK_IMPORTED_MODULE_2__.GenericConfigCtrl),\n/* harmony export */   \"QueryOptionsCtrl\": () => (/* binding */ GenericQueryOptionsCtrl),\n/* harmony export */   \"AnnotationsQueryCtrl\": () => (/* binding */ GenericAnnotationsQueryCtrl)\n/* harmony export */ });\n/* harmony import */ var _datasource__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./datasource */ \"./datasource.js\");\n/* harmony import */ var _query_ctrl__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./query_ctrl */ \"./query_ctrl.js\");\n/* harmony import */ var _config_ctrl__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./config_ctrl */ \"./config_ctrl.js\");\nfunction _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }\n\nfunction _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, \"prototype\", { writable: false }); return Constructor; }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\n/* eslint-disable max-classes-per-file */\n\n\n\n\nvar GenericQueryOptionsCtrl = /*#__PURE__*/_createClass(function GenericQueryOptionsCtrl() {\n  _classCallCheck(this, GenericQueryOptionsCtrl);\n});\n\nGenericQueryOptionsCtrl.templateUrl = 'partials/query.options.html';\n\nvar GenericAnnotationsQueryCtrl = /*#__PURE__*/_createClass(function GenericAnnotationsQueryCtrl() {\n  _classCallCheck(this, GenericAnnotationsQueryCtrl);\n});\n\nGenericAnnotationsQueryCtrl.templateUrl = 'partials/annotations.editor.html';\n\n\n//# sourceURL=webpack:///./module.js?");
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "QueryOptionsCtrl", function() { return GenericQueryOptionsCtrl; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AnnotationsQueryCtrl", function() { return GenericAnnotationsQueryCtrl; });
+/* harmony import */ var _datasource__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./datasource */ "./datasource.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Datasource", function() { return _datasource__WEBPACK_IMPORTED_MODULE_0__["GenericDatasource"]; });
+
+/* harmony import */ var _query_ctrl__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./query_ctrl */ "./query_ctrl.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "QueryCtrl", function() { return _query_ctrl__WEBPACK_IMPORTED_MODULE_1__["GenericDatasourceQueryCtrl"]; });
+
+/* harmony import */ var _config_ctrl__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./config_ctrl */ "./config_ctrl.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ConfigCtrl", function() { return _config_ctrl__WEBPACK_IMPORTED_MODULE_2__["GenericConfigCtrl"]; });
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/* eslint-disable max-classes-per-file */
+
+
+
+
+var GenericQueryOptionsCtrl = /*#__PURE__*/_createClass(function GenericQueryOptionsCtrl() {
+  _classCallCheck(this, GenericQueryOptionsCtrl);
+});
+
+GenericQueryOptionsCtrl.templateUrl = 'partials/query.options.html';
+
+var GenericAnnotationsQueryCtrl = /*#__PURE__*/_createClass(function GenericAnnotationsQueryCtrl() {
+  _classCallCheck(this, GenericAnnotationsQueryCtrl);
+});
+
+GenericAnnotationsQueryCtrl.templateUrl = 'partials/annotations.editor.html';
+
 
 /***/ }),
 
@@ -44,9 +641,211 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /*!***********************!*\
   !*** ./query_ctrl.js ***!
   \***********************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/*! exports provided: GenericDatasourceQueryCtrl */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"GenericDatasourceQueryCtrl\": () => (/* binding */ GenericDatasourceQueryCtrl)\n/* harmony export */ });\n/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ \"lodash\");\n/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var grafana_app_plugins_sdk__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! grafana/app/plugins/sdk */ \"grafana/app/plugins/sdk\");\n/* harmony import */ var grafana_app_plugins_sdk__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(grafana_app_plugins_sdk__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./util */ \"./util.js\");\nfunction _typeof(obj) { \"@babel/helpers - typeof\"; return _typeof = \"function\" == typeof Symbol && \"symbol\" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && \"function\" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? \"symbol\" : typeof obj; }, _typeof(obj); }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nfunction _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }\n\nfunction _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, \"prototype\", { writable: false }); return Constructor; }\n\nfunction _inherits(subClass, superClass) { if (typeof superClass !== \"function\" && superClass !== null) { throw new TypeError(\"Super expression must either be null or a function\"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, \"prototype\", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }\n\nfunction _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }\n\nfunction _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }\n\nfunction _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === \"object\" || typeof call === \"function\")) { return call; } else if (call !== void 0) { throw new TypeError(\"Derived constructors may only return object or undefined\"); } return _assertThisInitialized(self); }\n\nfunction _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError(\"this hasn't been initialised - super() hasn't been called\"); } return self; }\n\nfunction _isNativeReflectConstruct() { if (typeof Reflect === \"undefined\" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === \"function\") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }\n\nfunction _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }\n\n\n\n\nvar GenericDatasourceQueryCtrl = /*#__PURE__*/function (_QueryCtrl) {\n  _inherits(GenericDatasourceQueryCtrl, _QueryCtrl);\n\n  var _super = _createSuper(GenericDatasourceQueryCtrl);\n\n  function GenericDatasourceQueryCtrl($scope, $injector) {\n    var _this;\n\n    _classCallCheck(this, GenericDatasourceQueryCtrl);\n\n    _this = _super.call(this, $scope, $injector);\n    _this.scope = $scope;\n    _this.queryTypes = {\n      POWER_QUERY: 'Power Query',\n      STANDARD_QUERY: 'Standard Query'\n    }; // Default to standard query.\n\n    if (!_this.target.queryType) {\n      _this.target.queryType = _this.queryTypes.STANDARD_QUERY;\n    }\n\n    _this.target.dataLink = (0,_util__WEBPACK_IMPORTED_MODULE_2__.createDataLinkURL)(_this.target.filter, _this.getScalyrDatasourceUrl());\n    _this.target.copyText = \"Copy\"; // Migrate filters from versions 2.3.0 and older\n\n    if (_this.target.queryText) {\n      _this.target.filter = _this.target.queryText;\n      _this.target.queryText = null;\n    }\n\n    return _this;\n  }\n  /**\n   * Put the current DataLink into the user's clipboard\n   */\n\n\n  _createClass(GenericDatasourceQueryCtrl, [{\n    key: \"copyDataLink\",\n    value: function copyDataLink() {\n      var _this2 = this;\n\n      /* eslint-disable no-undef */\n      navigator.clipboard.writeText(this.target.dataLink).then(function () {\n        _this2.target.copyText = \"Copied\";\n      }, function () {\n        _this2.target.copyText = \"FAILED\";\n      });\n      /* eslint-enable no-undef */\n    }\n    /**\n     * Return a list of available functions. The 'count' function is only available if no field is selected.\n     */\n\n  }, {\n    key: \"getFunctionOptions\",\n    value: function getFunctionOptions() {\n      var options = [];\n\n      if (!this.target.field) {\n        options.push({\n          text: 'count',\n          value: 'count'\n        });\n      }\n\n      options = options.concat([{\n        text: 'mean',\n        value: 'mean'\n      }, {\n        text: 'min',\n        value: 'min'\n      }, {\n        text: 'max',\n        value: 'max'\n      }, {\n        text: 'sumPerSec',\n        value: 'sumPerSec'\n      }, {\n        text: '10th %ile',\n        value: 'p10'\n      }, {\n        text: '50th %ile',\n        value: 'p50'\n      }, {\n        text: '90th %ile',\n        value: 'p90'\n      }, {\n        text: '95th %ile',\n        value: 'p95'\n      }, {\n        text: '99th %ile',\n        value: 'p99'\n      }, {\n        text: '99.9th %ile',\n        value: 'p999'\n      }]);\n      return options;\n    }\n    /**\n     * Get list of query type options. Only two options are power query or standard query.\n     * @returns {*[]}\n     */\n\n  }, {\n    key: \"getQueryTypeOptions\",\n    value: function getQueryTypeOptions() {\n      return [{\n        text: this.queryTypes.POWER_QUERY,\n        value: this.queryTypes.POWER_QUERY\n      }, {\n        text: this.queryTypes.STANDARD_QUERY,\n        value: this.queryTypes.STANDARD_QUERY\n      }];\n    }\n  }, {\n    key: \"toggleEditorMode\",\n    value: function toggleEditorMode() {\n      this.target.rawQuery = !this.target.rawQuery;\n    }\n  }, {\n    key: \"onChangeInternal\",\n    value: function onChangeInternal() {\n      this.target.panelType = this.panel.type;\n\n      if (GenericDatasourceQueryCtrl.isQueryValid(this.target)) {\n        if (this.target.queryType === this.queryTypes.STANDARD_QUERY) {\n          this.target.dataLink = (0,_util__WEBPACK_IMPORTED_MODULE_2__.createDataLinkURL)(this.target.filter, this.getScalyrDatasourceUrl());\n        }\n\n        this.target.copyText = \"Copy\";\n        this.panelCtrl.refresh(); // Asks the panel to refresh data.\n      }\n    }\n  }, {\n    key: \"getScalyrDatasourceUrl\",\n    value: function getScalyrDatasourceUrl() {\n      var str = this.panelCtrl.datasource.scalyrUrl;\n\n      if (str.charAt(str.length - 1) !== \"/\") {\n        return str + \"/\";\n      }\n\n      return str;\n    }\n    /**\n     * Check if the current query target is valid.\n     * @param target\n     * @returns {boolean}\n     */\n\n  }], [{\n    key: \"isQueryValid\",\n    value: function isQueryValid(target) {\n      if (target.conversionFactor) {\n        try {\n          var value = (0,_util__WEBPACK_IMPORTED_MODULE_2__.getValidConversionFactor)(target.conversionFactor);\n          return lodash__WEBPACK_IMPORTED_MODULE_0___default().isFinite(value);\n        } catch (e) {\n          return false;\n        }\n      }\n\n      return true;\n    }\n  }]);\n\n  return GenericDatasourceQueryCtrl;\n}(grafana_app_plugins_sdk__WEBPACK_IMPORTED_MODULE_1__.QueryCtrl);\nGenericDatasourceQueryCtrl.templateUrl = 'partials/query.editor.html';\n\n//# sourceURL=webpack:///./query_ctrl.js?");
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GenericDatasourceQueryCtrl", function() { return GenericDatasourceQueryCtrl; });
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ "lodash");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var grafana_app_plugins_sdk__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! grafana/app/plugins/sdk */ "grafana/app/plugins/sdk");
+/* harmony import */ var grafana_app_plugins_sdk__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(grafana_app_plugins_sdk__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./util */ "./util.js");
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+
+
+
+var GenericDatasourceQueryCtrl = /*#__PURE__*/function (_QueryCtrl) {
+  _inherits(GenericDatasourceQueryCtrl, _QueryCtrl);
+
+  var _super = _createSuper(GenericDatasourceQueryCtrl);
+
+  function GenericDatasourceQueryCtrl($scope, $injector) {
+    var _this;
+
+    _classCallCheck(this, GenericDatasourceQueryCtrl);
+
+    _this = _super.call(this, $scope, $injector);
+    _this.scope = $scope;
+    _this.queryTypes = {
+      POWER_QUERY: 'Power Query',
+      STANDARD_QUERY: 'Standard Query'
+    }; // Default to standard query.
+
+    if (!_this.target.queryType) {
+      _this.target.queryType = _this.queryTypes.STANDARD_QUERY;
+    }
+
+    _this.target.dataLink = Object(_util__WEBPACK_IMPORTED_MODULE_2__["createDataLinkURL"])(_this.target.filter, _this.getScalyrDatasourceUrl());
+    _this.target.copyText = "Copy"; // Migrate filters from versions 2.3.0 and older
+
+    if (_this.target.queryText) {
+      _this.target.filter = _this.target.queryText;
+      _this.target.queryText = null;
+    }
+
+    return _this;
+  }
+  /**
+   * Put the current DataLink into the user's clipboard
+   */
+
+
+  _createClass(GenericDatasourceQueryCtrl, [{
+    key: "copyDataLink",
+    value: function copyDataLink() {
+      var _this2 = this;
+
+      /* eslint-disable no-undef */
+      navigator.clipboard.writeText(this.target.dataLink).then(function () {
+        _this2.target.copyText = "Copied";
+      }, function () {
+        _this2.target.copyText = "FAILED";
+      });
+      /* eslint-enable no-undef */
+    }
+    /**
+     * Return a list of available functions. The 'count' function is only available if no field is selected.
+     */
+
+  }, {
+    key: "getFunctionOptions",
+    value: function getFunctionOptions() {
+      var options = [];
+
+      if (!this.target.field) {
+        options.push({
+          text: 'count',
+          value: 'count'
+        });
+      }
+
+      options = options.concat([{
+        text: 'mean',
+        value: 'mean'
+      }, {
+        text: 'min',
+        value: 'min'
+      }, {
+        text: 'max',
+        value: 'max'
+      }, {
+        text: 'sumPerSec',
+        value: 'sumPerSec'
+      }, {
+        text: '10th %ile',
+        value: 'p10'
+      }, {
+        text: '50th %ile',
+        value: 'p50'
+      }, {
+        text: '90th %ile',
+        value: 'p90'
+      }, {
+        text: '95th %ile',
+        value: 'p95'
+      }, {
+        text: '99th %ile',
+        value: 'p99'
+      }, {
+        text: '99.9th %ile',
+        value: 'p999'
+      }]);
+      return options;
+    }
+    /**
+     * Get list of query type options. Only two options are power query or standard query.
+     * @returns {*[]}
+     */
+
+  }, {
+    key: "getQueryTypeOptions",
+    value: function getQueryTypeOptions() {
+      return [{
+        text: this.queryTypes.POWER_QUERY,
+        value: this.queryTypes.POWER_QUERY
+      }, {
+        text: this.queryTypes.STANDARD_QUERY,
+        value: this.queryTypes.STANDARD_QUERY
+      }];
+    }
+  }, {
+    key: "toggleEditorMode",
+    value: function toggleEditorMode() {
+      this.target.rawQuery = !this.target.rawQuery;
+    }
+  }, {
+    key: "onChangeInternal",
+    value: function onChangeInternal() {
+      this.target.panelType = this.panel.type;
+
+      if (GenericDatasourceQueryCtrl.isQueryValid(this.target)) {
+        if (this.target.queryType === this.queryTypes.STANDARD_QUERY) {
+          this.target.dataLink = Object(_util__WEBPACK_IMPORTED_MODULE_2__["createDataLinkURL"])(this.target.filter, this.getScalyrDatasourceUrl());
+        }
+
+        this.target.copyText = "Copy";
+        this.panelCtrl.refresh(); // Asks the panel to refresh data.
+      }
+    }
+  }, {
+    key: "getScalyrDatasourceUrl",
+    value: function getScalyrDatasourceUrl() {
+      var str = this.panelCtrl.datasource.scalyrUrl;
+
+      if (str.charAt(str.length - 1) !== "/") {
+        return str + "/";
+      }
+
+      return str;
+    }
+    /**
+     * Check if the current query target is valid.
+     * @param target
+     * @returns {boolean}
+     */
+
+  }], [{
+    key: "isQueryValid",
+    value: function isQueryValid(target) {
+      if (target.conversionFactor) {
+        try {
+          var value = Object(_util__WEBPACK_IMPORTED_MODULE_2__["getValidConversionFactor"])(target.conversionFactor);
+          return lodash__WEBPACK_IMPORTED_MODULE_0___default.a.isFinite(value);
+        } catch (e) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+  }]);
+
+  return GenericDatasourceQueryCtrl;
+}(grafana_app_plugins_sdk__WEBPACK_IMPORTED_MODULE_1__["QueryCtrl"]);
+GenericDatasourceQueryCtrl.templateUrl = 'partials/query.editor.html';
 
 /***/ }),
 
@@ -54,9 +853,142 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /*!*****************!*\
   !*** ./util.js ***!
   \*****************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/*! exports provided: getValidConversionFactor, splitOnArrayElements, createDataLinkURL */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"getValidConversionFactor\": () => (/* binding */ getValidConversionFactor),\n/* harmony export */   \"splitOnArrayElements\": () => (/* binding */ splitOnArrayElements),\n/* harmony export */   \"createDataLinkURL\": () => (/* binding */ createDataLinkURL)\n/* harmony export */ });\n/* eslint-disable no-template-curly-in-string */\n\n/**\n * Convert the user entered conversion factor to a number. \n * User entered conversion factor can be expressed as fractions as well. \n * E.g. 1/4\n * \n * @param conversionFactor conversion factor.\n * @returns {*|number}\n */\nfunction getValidConversionFactor(conversionFactor) {\n  try {\n    // https://gist.github.com/drifterz28/6971440\n    var result;\n\n    if (conversionFactor.search('/') >= 0) {\n      var frac;\n      var deci;\n      var wholeNum = 0;\n\n      if (conversionFactor.search('-') >= 0) {\n        wholeNum = conversionFactor.split('-');\n        conversionFactor = wholeNum[1];\n        wholeNum = parseInt(wholeNum[0], 10);\n      } else {\n        frac = conversionFactor;\n      }\n\n      if (conversionFactor.search('/') >= 0) {\n        frac = frac.split('/');\n        deci = parseInt(frac[0], 10) / parseInt(frac[1], 10);\n      }\n\n      result = wholeNum + deci;\n    } else {\n      result = conversionFactor;\n    }\n\n    return parseFloat(result) || 1.0;\n  } catch (e) {\n    return 1.0;\n  }\n}\n/**\n * Split a given string on multiple separators given in a list\n *\n * @param str String to split\n * @param splitters List of values to split the string on\n * @returns {string[]}\n */\n\nfunction splitOnArrayElements(str, splitters) {\n  var result = [str];\n\n  if (splitters) {\n    for (var i = 0; i < splitters.length; i += 1) {\n      var subresult = [];\n\n      for (var j = 0; j < result.length; j += 1) {\n        subresult = subresult.concat(result[j].split(splitters[i]));\n      }\n\n      result = subresult;\n    }\n  }\n\n  return result;\n}\n/**\n * Create a DataLink URL for a given query and datasource destination\n *\n * @param queryText Query for this DataLink\n * @param scalyrDatasourceUrl Scalyr server URL this datasource is pointed to\n * @returns {string}\n */\n\nfunction createDataLinkURL(queryText, scalyrDatasourceUrl) {\n  var dataLinkFilter = \"\";\n\n  if (queryText) {\n    // This regex should be the same one that Grafana uses to find variables, at time of writing it is here:\n    // https://github.com/grafana/grafana/blob/cf2cc713933599e7646416a56a665282c9d9e3bb/public/app/features/templating/variable.ts#L11\n    var varRegex = /\\$(\\w+)|\\[\\[([\\s\\S]+?)(?::(\\w+))?\\]\\]|\\${(\\w+)(?:\\.([^:^}]+))?(?::(\\w+))?}/g;\n    var extractedVars = [];\n    var extractedVarNames = [];\n    var match = varRegex.exec(queryText);\n\n    while (match != null) {\n      extractedVars.push(match[0]);\n\n      for (var i = 1; i < match.length; i += 1) {\n        if (match[i]) {\n          extractedVarNames.push(match[i]);\n          break;\n        }\n      }\n\n      match = varRegex.exec(queryText);\n    }\n\n    var queryWithoutVars = splitOnArrayElements(queryText, extractedVars);\n\n    for (var _i = 0; _i < queryWithoutVars.length; _i += 1) {\n      queryWithoutVars[_i] = encodeURIComponent(queryWithoutVars[_i]);\n    }\n\n    var filterText = \"\";\n\n    if (extractedVars) {\n      filterText = queryWithoutVars.reduce(function (arr, v, i) {\n        if (extractedVarNames[i]) {\n          return arr.concat(v, \"${\" + extractedVarNames[i] + \":lucene}\");\n        }\n\n        return arr.concat(v, extractedVarNames[i]);\n      }, []).join(\"\");\n    } else {\n      filterText = '\"' + queryWithoutVars[0] + '\"';\n    }\n\n    dataLinkFilter = \"&filter=\" + filterText;\n  } // Deal with grafana-redirect only working with \"app.\" prefix in EU regions. This simple replacement should be\n  // safe as long as we don't plan on allowing custom domains running Scalyr that have \"eu.\" somewhere in the middle.\n\n\n  var host = scalyrDatasourceUrl.replace(\"eu.\", \"app.eu.\");\n  return host + \"v2/grafana-redirect?startTime=${__from}&endTime=${__to}\" + dataLinkFilter;\n}\n\n//# sourceURL=webpack:///./util.js?");
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getValidConversionFactor", function() { return getValidConversionFactor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "splitOnArrayElements", function() { return splitOnArrayElements; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createDataLinkURL", function() { return createDataLinkURL; });
+/* eslint-disable no-template-curly-in-string */
+
+/**
+ * Convert the user entered conversion factor to a number. 
+ * User entered conversion factor can be expressed as fractions as well. 
+ * E.g. 1/4
+ * 
+ * @param conversionFactor conversion factor.
+ * @returns {*|number}
+ */
+function getValidConversionFactor(conversionFactor) {
+  try {
+    // https://gist.github.com/drifterz28/6971440
+    var result;
+
+    if (conversionFactor.search('/') >= 0) {
+      var frac;
+      var deci;
+      var wholeNum = 0;
+
+      if (conversionFactor.search('-') >= 0) {
+        wholeNum = conversionFactor.split('-');
+        conversionFactor = wholeNum[1];
+        wholeNum = parseInt(wholeNum[0], 10);
+      } else {
+        frac = conversionFactor;
+      }
+
+      if (conversionFactor.search('/') >= 0) {
+        frac = frac.split('/');
+        deci = parseInt(frac[0], 10) / parseInt(frac[1], 10);
+      }
+
+      result = wholeNum + deci;
+    } else {
+      result = conversionFactor;
+    }
+
+    return parseFloat(result) || 1.0;
+  } catch (e) {
+    return 1.0;
+  }
+}
+/**
+ * Split a given string on multiple separators given in a list
+ *
+ * @param str String to split
+ * @param splitters List of values to split the string on
+ * @returns {string[]}
+ */
+
+function splitOnArrayElements(str, splitters) {
+  var result = [str];
+
+  if (splitters) {
+    for (var i = 0; i < splitters.length; i += 1) {
+      var subresult = [];
+
+      for (var j = 0; j < result.length; j += 1) {
+        subresult = subresult.concat(result[j].split(splitters[i]));
+      }
+
+      result = subresult;
+    }
+  }
+
+  return result;
+}
+/**
+ * Create a DataLink URL for a given query and datasource destination
+ *
+ * @param queryText Query for this DataLink
+ * @param scalyrDatasourceUrl Scalyr server URL this datasource is pointed to
+ * @returns {string}
+ */
+
+function createDataLinkURL(queryText, scalyrDatasourceUrl) {
+  var dataLinkFilter = "";
+
+  if (queryText) {
+    // This regex should be the same one that Grafana uses to find variables, at time of writing it is here:
+    // https://github.com/grafana/grafana/blob/cf2cc713933599e7646416a56a665282c9d9e3bb/public/app/features/templating/variable.ts#L11
+    var varRegex = /\$(\w+)|\[\[([\s\S]+?)(?::(\w+))?\]\]|\${(\w+)(?:\.([^:^}]+))?(?::(\w+))?}/g;
+    var extractedVars = [];
+    var extractedVarNames = [];
+    var match = varRegex.exec(queryText);
+
+    while (match != null) {
+      extractedVars.push(match[0]);
+
+      for (var i = 1; i < match.length; i += 1) {
+        if (match[i]) {
+          extractedVarNames.push(match[i]);
+          break;
+        }
+      }
+
+      match = varRegex.exec(queryText);
+    }
+
+    var queryWithoutVars = splitOnArrayElements(queryText, extractedVars);
+
+    for (var _i = 0; _i < queryWithoutVars.length; _i += 1) {
+      queryWithoutVars[_i] = encodeURIComponent(queryWithoutVars[_i]);
+    }
+
+    var filterText = "";
+
+    if (extractedVars) {
+      filterText = queryWithoutVars.reduce(function (arr, v, i) {
+        if (extractedVarNames[i]) {
+          return arr.concat(v, "${" + extractedVarNames[i] + ":lucene}");
+        }
+
+        return arr.concat(v, extractedVarNames[i]);
+      }, []).join("");
+    } else {
+      filterText = '"' + queryWithoutVars[0] + '"';
+    }
+
+    dataLinkFilter = "&filter=" + filterText;
+  } // Deal with grafana-redirect only working with "app." prefix in EU regions. This simple replacement should be
+  // safe as long as we don't plan on allowing custom domains running Scalyr that have "eu." somewhere in the middle.
+
+
+  var host = scalyrDatasourceUrl.replace("eu.", "app.eu.");
+  return host + "v2/grafana-redirect?startTime=${__from}&endTime=${__to}" + dataLinkFilter;
+}
 
 /***/ }),
 
@@ -64,7 +996,8 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /*!**********************************!*\
   !*** external "app/plugins/sdk" ***!
   \**********************************/
-/***/ ((module) => {
+/*! no static exports found */
+/***/ (function(module, exports) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE_grafana_app_plugins_sdk__;
 
@@ -74,87 +1007,12 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_grafana_app_plugins_sdk__;
 /*!*************************!*\
   !*** external "lodash" ***!
   \*************************/
-/***/ ((module) => {
+/*! no static exports found */
+/***/ (function(module, exports) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE_lodash__;
 
 /***/ })
 
-/******/ 	});
-/************************************************************************/
-/******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
-/******/ 	
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/ 		// Check if module is in cache
-/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
-/******/ 		if (cachedModule !== undefined) {
-/******/ 			return cachedModule.exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
-/******/ 			// no module.loaded needed
-/******/ 			exports: {}
-/******/ 		};
-/******/ 	
-/******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/ 	
-/************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__webpack_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module can't be inlined because the eval devtool is used.
-/******/ 	var __webpack_exports__ = __webpack_require__("./module.js");
-/******/ 	
-/******/ 	return __webpack_exports__;
-/******/ })()
-;
-});;
+/******/ })});;
+//# sourceMappingURL=module.js.map
