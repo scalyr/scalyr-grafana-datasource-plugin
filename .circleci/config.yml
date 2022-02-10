@@ -8,6 +8,8 @@ jobs:
     docker:
       - image: cimg/node:17.3.1
     working_directory: ~/repo
+    environment:
+      NODE_OPTIONS: --openssl-legacy-provider
     steps:
       - checkout
       - restore_cache:
