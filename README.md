@@ -225,7 +225,7 @@ Click `Add link`, give it an appropriate title, and paste your URL into the `URL
 
    ![ExampleDataLink](images/ExampleDataLink.png)
 
-Your Data Link is now ready! If you now go to your graph and click on the line you 
+Your Data Link is now ready! If you now go to your graph and click on the line you
 are shown new option, this takes you to Scalyr and show the logs your graph represents
 
    ![DataLinkDropdown](images/DataLinkDropdown.png)
