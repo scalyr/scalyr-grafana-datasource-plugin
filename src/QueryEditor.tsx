@@ -1,57 +1,56 @@
 import { defaults } from 'lodash';
 
-import React, { ChangeEvent, PureComponent, SyntheticEvent } from 'react';
-import { LegacyForms } from '@grafana/ui';
-import { QueryEditorProps } from '@grafana/data';
+import React, { ChangeEvent, PureComponent } from 'react';
+import { LegacyForms, Select, InlineField } from '@grafana/ui';
+import { QueryEditorProps, SelectableValue } from '@grafana/data';
 import { DataSource } from './datasource';
 import { defaultQuery, MyDataSourceOptions, MyQuery } from './types';
 
-const { FormField, Switch } = LegacyForms;
+const { FormField } = LegacyForms;
+const functionOptions = [
+  { label: 'count', value: 'count' },
+  { label: 'mean', value: 'mean' },
+  { label: 'min', value: 'min' },
+  { label: 'max', value: 'max' },
+  { label: 'sum', value: 'sum' },
+  { label: 'sumPerSecond', value: 'sumPerSecond' },
+  { label: 'median', value: 'median' },
+  { label: 'p10', value: 'p10' },
+  { label: 'p50', value: 'p50' },
+  { label: 'p90', value: 'p90' },
+  { label: 'p95', value: 'p95' },
+  { label: 'p99', value: 'p99' },
+  { label: 'p999', value: 'p999' },
+  { label: 'fraction', value: 'fraction' },
+];
 
 type Props = QueryEditorProps<DataSource, MyQuery, MyDataSourceOptions>;
 
 export class QueryEditor extends PureComponent<Props> {
-  onQueryTextChange = (event: ChangeEvent<HTMLInputElement>) => {
+  onFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { onChange, query } = this.props;
-    onChange({ ...query, queryText: event.target.value });
+    onChange({ ...query, filter: event.target.value });
   };
 
-  onConstantChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { onChange, query, onRunQuery } = this.props;
-    onChange({ ...query, constant: parseFloat(event.target.value) });
-    // executes the query
-    onRunQuery();
-  };
-
-  onWithStreamingChange = (event: SyntheticEvent<HTMLInputElement>) => {
-    const { onChange, query, onRunQuery } = this.props;
-    onChange({ ...query, withStreaming: event.currentTarget.checked });
-    // executes the query
-    onRunQuery();
+  onFunctionChange = (selectable: SelectableValue<string>) => {
+    if (!selectable?.value) {
+      return;
+    }
+    const { onChange, query } = this.props;
+    onChange({ ...query, func: selectable.value });
   };
 
   render() {
     const query = defaults(this.props.query, defaultQuery);
-    const { queryText, constant, withStreaming } = query;
+    const filter = query.filter;
+    const func = query.func;
 
     return (
       <div className="gf-form">
-        <FormField
-          width={4}
-          value={constant}
-          onChange={this.onConstantChange}
-          label="Constant"
-          type="number"
-          step="0.1"
-        />
-        <FormField
-          labelWidth={8}
-          value={queryText || ''}
-          onChange={this.onQueryTextChange}
-          label="Query Text"
-          tooltip="Not used yet"
-        />
-        <Switch checked={withStreaming || false} label="Enable streaming (v8+)" onChange={this.onWithStreamingChange} />
+        <FormField labelWidth={8} value={filter || ''} onChange={this.onFilterChange} label="Filter" />
+        <InlineField label="Function" grow>
+          <Select options={functionOptions} value={func} onChange={this.onFunctionChange} />
+        </InlineField>
       </div>
     );
   }

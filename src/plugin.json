@@ -1,18 +1,18 @@
 {
   "$schema": "https://raw.githubusercontent.com/grafana/grafana/master/docs/sources/developers/plugins/plugin.schema.json",
   "type": "datasource",
-  "name": "scalyr-grafana-datasource-plugin",
-  "id": "sentinelone-scalyr-grafana-datasource-plugin",
+  "name": "scalyr-datasource",
+  "id": "sentinelone-scalyr-datasource",
   "metrics": true,
   "backend": true,
   "executable": "gpx_scalyr-grafana-datasource-plugin",
   "info": {
     "description": "Scalyr Observability Platform",
     "author": {
-      "name": false,
+      "name": "Yan Shnayder",
       "url": "https://www.scalyr.com/home"
     },
-    "keywords": [],
+    "keywords": ["database"],
     "logos": {
       "small": "img/logo.svg",
       "large": "img/logo.svg"
@@ -28,8 +28,8 @@
       }
     ],
     "screenshots": [],
-    "version": "%VERSION%",
-    "updated": "%TODAY%"
+    "version": "1.0.0",
+    "updated": "2022-02-16"
   },
   "dependencies": {
     "grafanaDependency": ">=7.0.0",
