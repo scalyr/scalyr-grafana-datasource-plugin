@@ -5,6 +5,7 @@
   "id": "sentinelone-scalyr-datasource",
   "metrics": true,
   "backend": true,
+  "alerting": true,
   "executable": "gpx_scalyr-grafana-datasource-plugin",
   "info": {
     "description": "Scalyr Observability Platform",
