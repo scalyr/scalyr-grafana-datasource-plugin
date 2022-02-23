@@ -6,18 +6,10 @@ import (
     "io"
     "bytes"
     "encoding/json"
+    "fmt"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 )
-
-const TIMESERIES = 0
-const FACET = 1
-
-type ClientRequest struct { //This approach better matches the LRQ API which I want to switch to, sorta...
-    RequestType int
-    FacetRequest FacetRequest
-    TimeseriesRequest TimeseriesRequest
-}
 
 type FacetRequest struct {
     QueryType string `json:"queryType"`
@@ -25,27 +17,6 @@ type FacetRequest struct {
     StartTime int64 `json:"startTime"`
     EndTime int64 `json:"endTime"`
     Field string `json:"field"`
-}
-
-type TimeseriesRequest struct {
-    Queries []TimeseriesQuery `json:"queries"`
-}
-
-type TimeseriesQuery struct {
-    Filter string `json:"filter"`
-    Function string `json:"function"`
-    StartTime int64 `json:"startTime"`
-    EndTime int64 `json:"endTime"`
-    Buckets int64 `json:"buckets"`
-}
-
-type ClientResult struct {
-    ResultType int
-    Timeseries TimeseriesResult
-}
-
-type TimeseriesResult struct {
-    Values []float64 `json:"values"`
 }
 
 type DataSetClient struct {
@@ -66,23 +37,71 @@ func NewDataSetClient(dataSetUrl string, apiKey string) (*DataSetClient) {
     }
 }
 
-func (d *DataSetClient) Do(path string, req ClientRequest) (ClientResult, int) {
+func (d *DataSetClient) DoLRQRequest(req LRQRequest) (LRQResult, error){
     var body []byte
-    switch req.RequestType {
-    case TIMESERIES:
-        body, _ = json.Marshal(req.TimeseriesRequest)
-    case FACET:
-        body, _ = json.Marshal(req.FacetRequest)
+    body, _ = json.Marshal(req)
+
+    request, err := http.NewRequest("POST", d.dataSetUrl + "/v2/api/queries", bytes.NewBuffer(body))
+    if err != nil {
+        log.DefaultLogger.Warn("error constructing request to DataSet", "err", err)
+        return LRQResult{}, err
+    }
+    request.Header.Set("Authorization", "Bearer " + d.apiKey)
+    request.Header.Set("Content-Type", "application/json")
+
+    var responseBody LRQResult
+    stepsComplete, stepsTotal := 0, 1
+    // Repeat ping requests for our query until we get a result with all steps steps complete
+    // TODO: A timeout or some other way of escaping besides an error
+    for stepsComplete < stepsTotal {
+        resp, err := d.netClient.Do(request)
+        if err != nil {
+            log.DefaultLogger.Warn("error sending request to DataSet", "err", err)
+            return LRQResult{}, err
+        }
+        defer resp.Body.Close()
+
+        responseBytes, err := io.ReadAll(resp.Body)
+        if err != nil {
+            log.DefaultLogger.Warn("error reading response from DataSet", "err", err)
+            return LRQResult{}, err
+        }
+
+        responseBody = LRQResult{}
+        err = json.Unmarshal(responseBytes, &responseBody)
+        if err != nil {
+            log.DefaultLogger.Warn("error unmarshaling response from DataSet", "err", err)
+            return LRQResult{}, err
+        }
+
+        stepsTotal = responseBody.StepsTotal
+        stepsComplete = responseBody.StepsCompleted
+
+        // Build next ping request (which we might not use)
+        request, err = http.NewRequest("GET", fmt.Sprintf("%s/v2/api/queries/%s?lastStepSeen=%d", d.dataSetUrl, responseBody.Id, responseBody.StepsCompleted), nil)
+        if err != nil {
+            log.DefaultLogger.Warn("error constructing request to DataSet", "err", err)
+            return LRQResult{}, err
+        }
+        request.Header.Set("Authorization", "Bearer " + d.apiKey)
+        request.Header.Set("Content-Type", "application/json")
     }
 
-    request, err := http.NewRequest("POST", d.dataSetUrl + path, bytes.NewBuffer(body))
+    return responseBody, nil
+}
+
+func (d *DataSetClient) DoFacetRequest(req FacetRequest) (int) {
+    var body []byte
+    body, _ = json.Marshal(req)
+
+    request, err := http.NewRequest("POST", d.dataSetUrl + "/api/facetQuery", bytes.NewBuffer(body))
     request.Header.Set("Authorization", "Bearer " + d.apiKey)
     request.Header.Set("Content-Type", "application/json")
 
     resp, err := d.netClient.Do(request)
     if err != nil {
         log.DefaultLogger.Warn("error sending request to DataSet", "err", err)
-        return ClientResult{}, 0
+        return 0
     }
     defer resp.Body.Close()
 
@@ -91,21 +110,7 @@ func (d *DataSetClient) Do(path string, req ClientRequest) (ClientResult, int) {
         log.DefaultLogger.Warn("error reading response from DataSet", "err", err)
     }
     responseString := string(responseBytes)
-    log.DefaultLogger.Info("Result of request to " + path, "body", responseString)
+    log.DefaultLogger.Info("Result of request to facet", "body", responseString)
 
-    type jsonData struct {
-        Results []TimeseriesResult `json:"results"`
-    }
-    var jsonResult jsonData
-    err = json.Unmarshal(responseBytes, &jsonResult)
-    if err != nil {
-        log.DefaultLogger.Warn("error marshalling", "err", err)
-        return ClientResult{}, 0
-    }
-
-    //For now just work with Timeseries
-    return ClientResult {
-        ResultType: TIMESERIES,
-        Timeseries: jsonResult.Results[0],
-    }, resp.StatusCode
+    return resp.StatusCode
 }

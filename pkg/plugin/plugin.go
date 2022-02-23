@@ -84,8 +84,7 @@ func (d *DataSetDatasource) QueryData(ctx context.Context, req *backend.QueryDat
 }
 
 type queryModel struct {
-    Filter string `json:"filter"`
-    Function string `json:"func"`
+    Expression string `json:"expression"`
 }
 
 func (d *DataSetDatasource) query(_ context.Context, pCtx backend.PluginContext, query backend.DataQuery) backend.DataResponse {
@@ -105,32 +104,31 @@ func (d *DataSetDatasource) query(_ context.Context, pCtx backend.PluginContext,
         buckets = 1
     }
 
-    request := ClientRequest {
-        RequestType: TIMESERIES,
-        TimeseriesRequest: TimeseriesRequest {
-            Queries: []TimeseriesQuery {
-                TimeseriesQuery {
-                    Filter: qm.Filter,
-                    Function: qm.Function,
-                    StartTime: query.TimeRange.From.UnixNano(),
-                    EndTime: query.TimeRange.To.UnixNano(),
-                    Buckets: buckets,
-                },
-            },
+    request := LRQRequest {
+        QueryType: PLOT,
+        StartTime: query.TimeRange.From.Unix(),
+        EndTime: query.TimeRange.To.Unix(),
+        AccountEmails: []string{"cloudtech-testing@scalyr.com"},
+        Plot: &PlotOptions {
+            Expression: qm.Expression,
+            Slices: buckets,
+            Frequency: HIGH,
+            AutoAlign: true,
         },
     }
-    result, _ := d.dataSetClient.Do("/api/timeseriesQuery", request)
-
+    result, _ := d.dataSetClient.DoLRQRequest(request)
+    if len(result.Data.Plots) < 1 {
+        // No usable data
+        return response
+    }
 	// create data frame response.
 	frame := data.NewFrame("response")
 
-    times := make([]time.Time, len(result.Timeseries.Values))
-    values := make([]float64, len(result.Timeseries.Values))
-    datapointTime := query.TimeRange.From
-	for index, value := range result.Timeseries.Values {
-        values[index] = value
-        times[index] = datapointTime
-        datapointTime = datapointTime.Add(query.Interval)
+    times := make([]time.Time, len(result.Data.XAxis))
+    values := make([]float64, len(result.Data.XAxis))
+	for index, value := range result.Data.XAxis {
+        values[index] = result.Data.Plots[0].Samples[index] // TODO: handle multiple PlotData objects for Breakdown graphs
+        times[index] = time.Unix(value / 1000, 0) // TODO: we lose the precision of milliseconds here, is this fine?
 	}
 
 	// add fields.
@@ -151,17 +149,14 @@ func (d *DataSetDatasource) query(_ context.Context, pCtx backend.PluginContext,
 // a datasource is working as expected.
 func (d *DataSetDatasource) CheckHealth(_ context.Context, req *backend.CheckHealthRequest) (*backend.CheckHealthResult, error) {
     currentTime := time.Now().UnixNano()
-    request := ClientRequest {
-        RequestType: FACET,
-        FacetRequest: FacetRequest {
-            QueryType: "facet",
-            MaxCount: 1,
-            StartTime: currentTime,
-            EndTime: currentTime,
-            Field: "test",
-        },
+    request := FacetRequest {
+        QueryType: "facet",
+        MaxCount: 1,
+        StartTime: currentTime,
+        EndTime: currentTime,
+        Field: "test",
     }
-    _, statusCode := d.dataSetClient.Do("/api/facetQuery", request)
+    statusCode := d.dataSetClient.DoFacetRequest(request)
 
     if statusCode != 200 {
       return &backend.CheckHealthResult{
