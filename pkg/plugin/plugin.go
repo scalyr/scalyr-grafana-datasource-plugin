@@ -117,17 +117,23 @@ func (d *DataSetDatasource) query(_ context.Context, pCtx backend.PluginContext,
         },
     }
     result, _ := d.dataSetClient.DoLRQRequest(request)
-    if len(result.Data.Plots) < 1 {
+    resultData := PlotResultData{}
+    err := json.Unmarshal(result.Data, &resultData)
+    if err != nil {
+        log.DefaultLogger.Warn("error unmarshaling response from DataSet", "err", err)
+        return response
+    }
+    if len(resultData.Plots) < 1 {
         // No usable data
         return response
     }
 	// create data frame response.
 	frame := data.NewFrame("response")
 
-    times := make([]time.Time, len(result.Data.XAxis))
-    values := make([]float64, len(result.Data.XAxis))
-	for index, value := range result.Data.XAxis {
-        values[index] = result.Data.Plots[0].Samples[index] // TODO: handle multiple PlotData objects for Breakdown graphs
+    times := make([]time.Time, len(resultData.XAxis))
+    values := make([]float64, len(resultData.XAxis))
+	for index, value := range resultData.XAxis {
+        values[index] = resultData.Plots[0].Samples[index] // TODO: handle multiple PlotData objects for Breakdown graphs
         times[index] = time.Unix(value / 1000, 0) // TODO: we lose the precision of milliseconds here, is this fine?
 	}
 

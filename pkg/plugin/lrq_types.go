@@ -1,5 +1,9 @@
 package plugin
 
+import (
+    "encoding/json"
+)
+
 // Possible values for the request "type"
 const LOG = "LOG"
 const TOP_FACETS = "TOP_FACETS"
@@ -87,6 +91,6 @@ type LRQResult struct {
     Id string `json:"id"`
     StepsCompleted int `json:"stepsCompleted"`
     StepsTotal int `json:"stepsTotal"`
-    Data PlotResultData `json:"data"` // TODO: handle the different `data` types (how?)
+    Data json.RawMessage `json:"data"` // Depending on expected response, need to unmarshal to different structs
     Error *LRQError `json:"error"`
 }
