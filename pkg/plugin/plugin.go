@@ -108,7 +108,6 @@ func (d *DataSetDatasource) query(_ context.Context, pCtx backend.PluginContext,
         QueryType: PLOT,
         StartTime: query.TimeRange.From.Unix(),
         EndTime: query.TimeRange.To.Unix(),
-        AccountEmails: []string{"cloudtech-testing@scalyr.com"},
         Plot: &PlotOptions {
             Expression: qm.Expression,
             Slices: buckets,
