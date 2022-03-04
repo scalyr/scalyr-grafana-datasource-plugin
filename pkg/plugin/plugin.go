@@ -3,9 +3,9 @@ package plugin
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"strings"
 	"time"
-    "strings"
-    "fmt"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/instancemgmt"
@@ -29,29 +29,29 @@ var (
 )
 
 func NewDataSetDatasource(settings backend.DataSourceInstanceSettings) (instancemgmt.Instance, error) {
-    type jsonData struct {
-        ScalyrUrl string `json:"scalyrUrl"`
-    }
-    var unsecure jsonData
-    err := json.Unmarshal(settings.JSONData, &unsecure)
-    if err != nil {
-        log.DefaultLogger.Warn("error marshalling", "err", err)
-        return nil, err
-    }
-    url := unsecure.ScalyrUrl
-    if strings.HasSuffix(url, "/") {
-        url = url[:len(url)-1]
-    }
+	type jsonData struct {
+		ScalyrUrl string `json:"scalyrUrl"`
+	}
+	var unsecure jsonData
+	err := json.Unmarshal(settings.JSONData, &unsecure)
+	if err != nil {
+		log.DefaultLogger.Warn("error marshalling", "err", err)
+		return nil, err
+	}
+	url := unsecure.ScalyrUrl
+	if strings.HasSuffix(url, "/") {
+		url = url[:len(url)-1]
+	}
 
-    secure := settings.DecryptedSecureJSONData
+	secure := settings.DecryptedSecureJSONData
 
 	return &DataSetDatasource{
-	    dataSetClient: NewDataSetClient(url, secure["apiKey"]),
+		dataSetClient: NewDataSetClient(url, secure["apiKey"]),
 	}, nil
 }
 
 type DataSetDatasource struct {
-    dataSetClient *DataSetClient
+	dataSetClient *DataSetClient
 }
 
 // Dispose here tells plugin SDK that plugin wants to clean up resources when a new instance
@@ -84,56 +84,56 @@ func (d *DataSetDatasource) QueryData(ctx context.Context, req *backend.QueryDat
 }
 
 type queryModel struct {
-    Expression string `json:"expression"`
+	Expression string `json:"expression"`
+	QueryType  string `json:"queryType"`
 }
 
 func (d *DataSetDatasource) query(_ context.Context, pCtx backend.PluginContext, query backend.DataQuery) backend.DataResponse {
-    // Unmarshal the JSON into our queryModel.
+	// Unmarshal the JSON into our queryModel.
 	var qm queryModel
-    response := backend.DataResponse{}
+	response := backend.DataResponse{}
 
 	response.Error = json.Unmarshal(query.JSON, &qm)
 	if response.Error != nil {
 		return response
 	}
-    buckets := int64(float64(query.TimeRange.To.Unix() - query.TimeRange.From.Unix()) / (query.Interval.Seconds()))
-    if buckets > 5000 {
-        buckets = 5000
-    }
-    if buckets < 1 {
-        buckets = 1
-    }
-
-    request := LRQRequest {
-        QueryType: PLOT,
-        StartTime: query.TimeRange.From.Unix(),
-        EndTime: query.TimeRange.To.Unix(),
-        Plot: &PlotOptions {
-            Expression: qm.Expression,
-            Slices: buckets,
-            Frequency: HIGH,
-            AutoAlign: true,
-        },
-    }
-    result, _ := d.dataSetClient.DoLRQRequest(request)
-    resultData := PlotResultData{}
-    err := json.Unmarshal(result.Data, &resultData)
-    if err != nil {
-        log.DefaultLogger.Warn("error unmarshaling response from DataSet", "err", err)
-        return response
-    }
-    if len(resultData.Plots) < 1 {
-        // No usable data
-        return response
-    }
+	buckets := int64(float64(query.TimeRange.To.Unix()-query.TimeRange.From.Unix()) / (query.Interval.Seconds()))
+	if buckets > 5000 {
+		buckets = 5000
+	}
+	if buckets < 1 {
+		buckets = 1
+	}
+	request := LRQRequest{
+		QueryType: PLOT,
+		StartTime: query.TimeRange.From.Unix(),
+		EndTime:   query.TimeRange.To.Unix(),
+		Plot: &PlotOptions{
+			Expression: qm.Expression,
+			Slices:     buckets,
+			Frequency:  HIGH,
+			AutoAlign:  true,
+		},
+	}
+	result, _ := d.dataSetClient.DoLRQRequest(request)
+	resultData := PlotResultData{}
+	err := json.Unmarshal(result.Data, &resultData)
+	if err != nil {
+		log.DefaultLogger.Warn("error unmarshaling response from DataSet", "err", err)
+		return response
+	}
+	if len(resultData.Plots) < 1 {
+		// No usable data
+		return response
+	}
 	// create data frame response.
 	frame := data.NewFrame("response")
 
-    times := make([]time.Time, len(resultData.XAxis))
-    values := make([]float64, len(resultData.XAxis))
+	times := make([]time.Time, len(resultData.XAxis))
+	values := make([]float64, len(resultData.XAxis))
 	for index, value := range resultData.XAxis {
-        values[index] = resultData.Plots[0].Samples[index] // TODO: handle multiple PlotData objects for Breakdown graphs
-        times[index] = time.Unix(value / 1000, 0) // TODO: we lose the precision of milliseconds here, is this fine?
+		values[index] = resultData.Plots[0].Samples[index] // TODO: handle multiple PlotData objects for Breakdown graphs
+		times[index] = time.Unix(value/1000, 0)            // TODO: we lose the precision of milliseconds here, is this fine?
 	}
 
 	// add fields.
@@ -153,22 +153,22 @@ func (d *DataSetDatasource) query(_ context.Context, pCtx backend.PluginContext,
 // datasource configuration page which allows users to verify that
 // a datasource is working as expected.
 func (d *DataSetDatasource) CheckHealth(_ context.Context, req *backend.CheckHealthRequest) (*backend.CheckHealthResult, error) {
-    currentTime := time.Now().UnixNano()
-    request := FacetRequest {
-        QueryType: "facet",
-        MaxCount: 1,
-        StartTime: currentTime,
-        EndTime: currentTime,
-        Field: "test",
-    }
-    statusCode := d.dataSetClient.DoFacetRequest(request)
+	currentTime := time.Now().UnixNano()
+	request := FacetRequest{
+		QueryType: "facet",
+		MaxCount:  1,
+		StartTime: currentTime,
+		EndTime:   currentTime,
+		Field:     "test",
+	}
+	statusCode := d.dataSetClient.DoFacetRequest(request)
 
-    if statusCode != 200 {
-      return &backend.CheckHealthResult{
-          Status:  backend.HealthStatusError,
-          Message: fmt.Sprintf("DataSet returned response code %d", statusCode),
-      }, nil
-    }
+	if statusCode != 200 {
+		return &backend.CheckHealthResult{
+			Status:  backend.HealthStatusError,
+			Message: fmt.Sprintf("DataSet returned response code %d", statusCode),
+		}, nil
+	}
 
 	return &backend.CheckHealthResult{
 		Status:  backend.HealthStatusOk,
