@@ -1,10 +1,10 @@
 import { defaults } from 'lodash';
 
 import React, { ChangeEvent, PureComponent } from 'react';
-import { InlineField, InlineFieldRow, Input } from '@grafana/ui';
-import { QueryEditorProps } from '@grafana/data';
+import { ActionMeta, InlineField, InlineFieldRow, Input, Select, TextArea } from '@grafana/ui';
+import { QueryEditorProps, SelectableValue } from '@grafana/data';
 import { DataSource } from './datasource';
-import { defaultQuery, MyDataSourceOptions, MyQuery } from './types';
+import { defaultQuery, MyDataSourceOptions, MyQuery, queryTypes } from './types';
 
 type Props = QueryEditorProps<DataSource, MyQuery, MyDataSourceOptions>;
 
@@ -13,17 +13,48 @@ export class QueryEditor extends PureComponent<Props> {
     const { onChange, query } = this.props;
     onChange({ ...query, expression: event.target.value });
   };
+  onPQExpressionChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    console.log('expression:  ', event.target.value);
+    const { onChange, query } = this.props;
+    onChange({ ...query, expression: event.target.value });
+  };
+  onQueryTypeChange = (value: SelectableValue<string>, actionMeta: ActionMeta) => {
+    const { onChange, query } = this.props;
+    onChange({ ...query, queryType: value.value, expression: '' });
+  };
+
+  onBlur = () => {
+    const { onRunQuery } = this.props;
+    onRunQuery();
+  };
 
   render() {
     const query = defaults(this.props.query, defaultQuery);
     const expression = query.expression;
-
+    const value = query.queryType;
     return (
-      <InlineFieldRow>
-        <InlineField label="Expression" grow>
-          <Input type="text" value={expression || ''} onChange={this.onExpressionChange} />
-        </InlineField>
-      </InlineFieldRow>
+      <>
+        <InlineFieldRow>
+          <InlineField label="Query Type" grow>
+            <Select
+              options={queryTypes}
+              value={value}
+              allowCustomValue
+              onChange={this.onQueryTypeChange}
+              defaultValue={value}
+            />
+          </InlineField>
+        </InlineFieldRow>
+        <InlineFieldRow>
+          <InlineField label="Expression" grow>
+            {value === 'Standard' ? (
+              <Input type="text" value={expression || ''} onChange={this.onExpressionChange} onBlur={this.onBlur} />
+            ) : (
+              <TextArea value={expression || ''} cols={4} onChange={this.onPQExpressionChange} onBlur={this.onBlur} />
+            )}
+          </InlineField>
+        </InlineFieldRow>
+      </>
     );
   }
 }
