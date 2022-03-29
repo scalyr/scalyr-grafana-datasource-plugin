@@ -15,13 +15,12 @@ export class DataSource extends DataSourceWithBackend<MyQuery, MyDataSourceOptio
       queryType: query.queryType ? templateSrv.replace(query.queryType) : '',
     };
   }
-  // async metricFindQuery(query: string, options?: any) {
-  //   // Retrieve DataQueryResponse based on query.
-  //   const response = await this.postResource('facet-query', { query: query, test: 'val' });
+  async metricFindQuery(query: string, options?: any) {
+    // Retrieve DataQueryResponse based on query.
+    const response = await this.postResource('facet-query', { queryVariable: query });
+    // Convert query results to a MetricFindValue[]
+    const values = response?.value.map((frame: string) => ({ text: frame }));
 
-  //   // Convert query results to a MetricFindValue[]
-  //   const values = response?.data.map((frame: { name: any }) => ({ text: frame.name }));
-
-  //   return values;
-  // }
+    return values;
+  }
 }

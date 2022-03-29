@@ -86,38 +86,48 @@ func (d *DataSetDatasource) QueryData(ctx context.Context, req *backend.QueryDat
 }
 
 type filterModal struct {
-	query string `json:"query"`
+	QueryVariable string `json:"queryVariable"`
 }
 
 func (d *DataSetDatasource) CallResource(ctx context.Context, req *backend.CallResourceRequest, sender backend.CallResourceResponseSender) error {
 	var fm filterModal
-	err1 := json.Unmarshal(req.Body, &fm)
-	if err1 != nil {
-		log.DefaultLogger.Warn("error unmarshalling JSON", "err", err1)
+	err := json.Unmarshal(req.Body, &fm)
+	if err != nil {
 		return sender.Send(&backend.CallResourceResponse{
-			Status: http.StatusNotFound,
+			Status: http.StatusBadRequest,
 		})
 	}
-	log.DefaultLogger.Warn("fm:  ", "body", fm)
 	switch req.Path {
 	case "facet-query":
-		// request := LRQRequest{
-		// 	QueryType: "FACET_VALUES",
-		// 	Facet: &FacetOptions{
-		// 		Name:      "tag",
-		// 		MaxValues: "100",
-		// 	},
-		// }
-		// result, _ := d.dataSetClient.DoLRQRequest(request)
-		// log.DefaultLogger.Warn("error unmarshalling JSON", "err", result)
+		request := FacetQuery{
+			QueryType: "FACET_VALUES",
+			FacetValues: &FacetOptions{
+				Name:      fm.QueryVariable,
+				MaxValues: "100",
+			},
+		}
+		result, _ := d.dataSetClient.DoFacetValuesRequest(request)
+		facetResultData := FacetList{}
+		err := json.Unmarshal(result.Data, &facetResultData)
+		if err != nil {
+			log.DefaultLogger.Warn("error unmarshaling response from DataSet", "err", err)
+			return sender.Send(&backend.CallResourceResponse{
+				Status: http.StatusNotFound,
+			})
+		}
+		finalResponse := make([]string, len(facetResultData.Facet.Values))
+		for i, val := range facetResultData.Facet.Values {
+			log.DefaultLogger.Warn("facetResultData", val.Value, val.Value)
+			finalResponse[i] = val.Value
+		}
+		pb := &FacetResponse{Value: finalResponse}
+		jsonStr, err := json.Marshal(pb)
+		if err != nil {
+			log.DefaultLogger.Warn("could not marshal JSON: %s", err)
+		}
 		return sender.Send(&backend.CallResourceResponse{
 			Status: http.StatusOK,
-			Body:   []byte(`{ namespaces: ["ns-1", "ns-2"] }`),
-		})
-	case "projects":
-		return sender.Send(&backend.CallResourceResponse{
-			Status: http.StatusOK,
-			Body:   []byte(`{ projects: ["project-1", "project-2"] }`),
+			Body:   jsonStr,
 		})
 	default:
 		return sender.Send(&backend.CallResourceResponse{
@@ -200,14 +210,18 @@ func displayPlotData(result LRQResult, response backend.DataResponse) backend.Da
 	values := make([]float64, len(resultData.XAxis))
 	for index, value := range resultData.XAxis {
 		values[index] = resultData.Plots[0].Samples[index] // TODO: handle multiple PlotData objects for Breakdown graphs
-		times[index] = time.Unix(value/1000, 0)            // TODO: we lose the precision of milliseconds here, is this fine?
+		log.DefaultLogger.Warn("value:   ", "value", value)
+		times[index] = time.Unix(value/1000, 0) // TODO: we lose the precision of milliseconds here, is this fine?
+		log.DefaultLogger.Warn("times[index]:   ", "times[index]", times[index])
 	}
 
 	// add fields.
+	log.DefaultLogger.Warn("values:  ", "values", values)
 	frame.Fields = append(frame.Fields,
 		data.NewField("time", nil, times),
 		data.NewField("values", nil, values),
 	)
+
 	// add the frames to the response.
 	response.Frames = append(response.Frames, frame)
 	return response
@@ -225,59 +239,78 @@ func displayPQData(result LRQResult, response backend.DataResponse) backend.Data
 	}
 	frame := data.NewFrame("response")
 
-	for i, y := range resultData.Columns {
-		if y.Type == "TIMESTAMP" {
-			tmp := make([]int64, len(resultData.Values))
+	for idx, col := range resultData.Columns {
+		switch val := col.Type; {
+		case val == "TIMESTAMP":
+			tmp := make([]time.Time, len(resultData.Values))
 			for j, b := range resultData.Values {
-				tmp[j] = int64(b[i].(float64))
+				timeInInt := int64(b[idx].(float64))
+				tmp[j] = time.Unix(timeInInt/1000000000, 0)
 			}
 			frame.Fields = append(frame.Fields,
-				data.NewField(y.Name, nil, tmp),
+				data.NewField(col.Name, nil, tmp),
 			)
-		} else if y.Type == "PERCENTAGE" {
+			break
+		case val == "PERCENTAGE":
 			tmp := make([]string, len(resultData.Values))
 			for j, b := range resultData.Values {
-				tmp[j] = strconv.Itoa(b[i].(int))
+				tmp[j] = strconv.Itoa(b[idx].(int))
 			}
 			frame.Fields = append(frame.Fields,
-				data.NewField(y.Name, nil, tmp),
+				data.NewField(col.Name, nil, tmp),
 			)
-		} else if y.Type == "NUMBER" {
-			tmp := make([]int64, len(resultData.Values))
-
+			break
+		case val == "NUMBER" && col.DecimalPlaces > 0:
+			tmp := make([]float64, len(resultData.Values))
 			for j, b := range resultData.Values {
-				switch b[i].(type) {
-				case int:
-					tmp[j] = int64(b[i].(int))
-					break
-				case int16:
-					tmp[j] = int64(b[i].(int16))
-					break
-				case int32:
-					tmp[j] = int64(b[i].(int32))
-					break
+				switch b[idx].(type) {
 				case float32:
-					tmp[j] = int64(b[i].(float32))
-					break
-				case float64:
-					tmp[j] = int64(b[i].(float64))
+					tmp[j] = float64(b[idx].(float32))
 					break
 				default:
-					tmp[j] = b[i].(int64)
+					tmp[j] = b[idx].(float64)
 				}
 			}
 			frame.Fields = append(frame.Fields,
-				data.NewField(y.Name, nil, tmp),
+				data.NewField(col.Name, nil, tmp),
 			)
-		} else {
+			break
+		case val == "NUMBER" && col.DecimalPlaces <= 0:
+			tmp := make([]int64, len(resultData.Values))
+			for j, b := range resultData.Values {
+				switch b[idx].(type) {
+				case int:
+					tmp[j] = int64(b[idx].(int))
+					break
+				case int16:
+					tmp[j] = int64(b[idx].(int16))
+					break
+				case int32:
+					tmp[j] = int64(b[idx].(int32))
+					break
+				case float32:
+					tmp[j] = int64(b[idx].(float32))
+					break
+				case float64:
+					tmp[j] = int64(b[idx].(float64))
+					break
+				default:
+					tmp[j] = b[idx].(int64)
+				}
+			}
+			frame.Fields = append(frame.Fields,
+				data.NewField(col.Name, nil, tmp),
+			)
+			break
+		default:
 			tmp := make([]string, len(resultData.Values))
 			for j, b := range resultData.Values {
-				switch b[i].(type) {
+				switch b[idx].(type) {
 				case string:
-					tmp[j] = b[i].(string)
+					tmp[j] = b[idx].(string)
 					break
 				case bool:
-					if w, ok := b[i].(bool); ok {
+					if w, ok := b[idx].(bool); ok {
 						tmp[j] = strconv.FormatBool(w)
 					}
 					break
@@ -286,11 +319,10 @@ func displayPQData(result LRQResult, response backend.DataResponse) backend.Data
 				}
 			}
 			frame.Fields = append(frame.Fields,
-				data.NewField(y.Name, nil, tmp),
+				data.NewField(col.Name, nil, tmp),
 			)
 		}
 	}
-
 	response.Frames = append(response.Frames, frame)
 	return response
 }
@@ -327,62 +359,3 @@ func (d *DataSetDatasource) CollectMetrics(_ context.Context, req *backend.Colle
 		PrometheusMetrics: prometheusMetrics,
 	}, nil
 }
-
-// func getTypeArray(typ string) interface{} {
-// 	switch t := typ; t {
-// 	case "TIMESTAMP":
-// 		return []int64{}
-// 	case "bigint", "int":
-// 		return []int64{}
-// 	case "smallint":
-// 		return []int16{}
-// 	case "boolean":
-// 		return []bool{}
-// 	case "double", "varint", "decimal":
-// 		return []float64{}
-// 	case "float":
-// 		return []float32{}
-// 	case "tinyint":
-// 		return []int8{}
-// 	default:
-// 		return []string{}
-// 	}
-// }
-
-// func toValue(val interface{}) interface{} {
-// 	if val == nil {
-// 		return nil
-// 	}
-// 	switch t := val.(type) {
-// 	case float32:
-// 		return t
-// 	case time.Time:
-// 		return t
-// 	case string:
-// 		return t
-// 	case int64:
-// 		return t
-// 	case bool:
-// 		return t
-// 	case int16:
-// 		return t
-// 	case int8:
-// 		return t
-// 	case int:
-// 		return int64(t)
-// 	case float64:
-// 		return int64(t)
-// 	case *big.Int:
-// 		if s, err := strconv.ParseFloat(t.String(), 64); err == nil {
-// 			return s
-// 		}
-// 		return 0
-// 	default:
-// 		log.DefaultLogger.Info("4444444")
-// 		r, err := json.Marshal(val)
-// 		if err != nil {
-// 			log.DefaultLogger.Info("Marshalling failed ", "err", err)
-// 		}
-// 		return string(r)
-// 	}
-// }

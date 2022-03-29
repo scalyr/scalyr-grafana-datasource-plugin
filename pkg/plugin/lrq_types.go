@@ -36,7 +36,6 @@ type LogOptions struct {
 }
 
 type FacetOptions struct {
-	Filter    string `json:"filter"`
 	Name      string `json:"name"`
 	MaxValues string `json:"maxValues"`
 }
@@ -95,8 +94,9 @@ type TableResultData struct {
 }
 
 type Column struct {
-	Name string `json:"name"`
-	Type string `json:"cellType"`
+	Name          string `json:"name"`
+	Type          string `json:"cellType"`
+	DecimalPlaces int    `json:"decimalPlaces"`
 }
 
 type Values struct {
@@ -115,4 +115,25 @@ type LRQResult struct {
 	StepsTotal     int             `json:"totalSteps"`
 	Data           json.RawMessage `json:"data"` // Depending on expected response, need to unmarshal to different structs
 	Error          *LRQError       `json:"error"`
+}
+
+type FacetQuery struct {
+	QueryType   string        `json:"queryType"`
+	FacetValues *FacetOptions `json:"facetValues"`
+}
+
+type FacetList struct {
+	Facet Facet `json:"facet"`
+}
+
+type Facet struct {
+	Values []FacetValue `json:"values"`
+}
+
+type FacetValue struct {
+	Value string `json:"value"`
+}
+
+type FacetResponse struct {
+	Value []string `json:"value"`
 }
