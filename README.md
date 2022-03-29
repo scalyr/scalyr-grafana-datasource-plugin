@@ -63,7 +63,7 @@ If you require the development version, use the manual installation instructions
 1. If you want a stable version of plugin, download the desired version from
 [github releases](https://github.com/scalyr/scalyr-grafana-datasource-plugin/releases).
 If you want the `development` version of the plugin,
-clone the [plugin repository](https://github.com/scalyr/scalyr-grafana-datasource)
+clone the [plugin repository](https://github.com/scalyr/scalyr-grafana-datasource-plugin)
 from GitHub. Switch to branch `go-rewrite-v2`
 
     ```bash
@@ -109,21 +109,21 @@ from GitHub. Switch to branch `go-rewrite-v2`
 1. In order to verify proper installation you must log in to your grafana instance
    and navigate to **Configuration Settings -> Data Sources**.
 
-    ![FirstImage](images/ConfigDataSource.png)
+    ![ConfigDataSource](https://github.com/scalyr/scalyr-grafana-datasource-plugin/blob/go-rewrite-v2/src/img/ConfigDataSource.png)
 
 2. This will take you into the configuration page. If you already have other data
    sources installed, you will see them show up here. Click on the **Add data source** button:
 
-    ![SecondImage](images/DataSoureConfig.png)
+    ![DatasetConfig](https://github.com/scalyr/scalyr-grafana-datasource-plugin/blob/go-rewrite-v2/src/img/DatasetConfig.png)
 
 3. If you enter "Dataset" in the search bar on the resulting page you should see "Dataset" grafana plugin show up as an option.
 
-    ![otherPlugin](images/SearchForPlugin.png)
+    ![SearchForPlugin](https://github.com/scalyr/scalyr-grafana-datasource-plugin/blob/go-rewrite-v2/src/img/SearchForPlugin.png)
 
 4. Click on ***“Select”***. This will take you to a configuration page where you
    insert your API key mentioned in the prerequisite section.
 
-    ![PluginConfig](images/PluginConfig.png)
+    ![PluginConfig](https://github.com/scalyr/scalyr-grafana-datasource-plugin/blob/go-rewrite-v2/src/img/PluginConfig.png)
 
 5. Enter these settings:
 
@@ -141,19 +141,18 @@ using Scalyr data.
 
 1. Create a new dashboard by click Create > dashboard
 
-    ![CreateDashboard](images/CreateDashboard.png)
+    ![CreateDashboard](https://github.com/scalyr/scalyr-grafana-datasource-plugin/blob/go-rewrite-v2/src/img/CreateDashboard.png)
 
 2. In the **“New dashboard”** box, select the **“Add a new panel** icon
 
-    ![AddQuery](images/AddQuery.png)
-
 3. From the Data source dropdown, select **"Dataset"**.
 
-    ![ScalyrPlugin](images/ScalyrPlugin.png)
+    ![DataSetPlugin](https://github.com/scalyr/scalyr-grafana-datasource-plugin/blob/go-rewrite-v2/src/img/DatasetPlugin.png)
 
 4. A 'Query Type' field allows to choose the type of query you wanted to search for
 
-    ![QueryType](images/QueryType.png)
+    ![QueryType](https://github.com/scalyr/scalyr-grafana-datasource-plugin/blob/go-rewrite-v2/src/img/QueryType.png)
+
 5. 'Standard Query' - A standard query allows to search on Graph view, 
     You can enter Graph Functions into the expression box and visualize the results. You can even enter and visualize Complex Expressions
     Dataset [graphFunctions documentation](https://www.scalyr.com/help/dashboards#graphFunctions)
@@ -161,15 +160,13 @@ using Scalyr data.
     Enter expression and click the save button. In the image below, we've added a query to graph visualized the 
     number of log messages that contain the word "error"
 
-     ![StandardQuery](images/StandardQuery.png)
-
+     ![StandardQuery](https://github.com/scalyr/scalyr-grafana-datasource-plugin/blob/go-rewrite-v2/src/img/StandardQuery.png)
 
 6. 'Power Query' - Works similar to PQ search in Dataset app. You can enter rich set of commands for transforming
     and manipulating data. Data can be viewed in Table format
     Visit [this documentation](https://app.scalyr.com/help/power-queries) for more information on building Power Queries
 
-    ![PowerQuery](images/PowerQuery.png)
-
+     ![PowerQuery](https://github.com/scalyr/scalyr-grafana-datasource-plugin/blob/go-rewrite-v2/src/img/PowerQuery.png)
 
 You’ve successfully installed, configured and created a graph in Grafana using Dataset data!
 
