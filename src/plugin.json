@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/grafana/grafana/master/docs/sources/developers/plugins/plugin.schema.json",
   "type": "datasource",
-  "name": "Dataset",
+  "name": "dataset-datasource",
   "id": "sentinelone-dataset-datasource",
   "metrics": true,
   "backend": true,
@@ -29,7 +29,20 @@
         "url": "https://github.com/grafana/grafana-starter-datasource-backend/blob/master/LICENSE"
       }
     ],
-    "screenshots": [],
+    "screenshots": [
+      {
+      "name": "CreateDashboard",
+      "path": "img/CreateDashboard.png"
+      },
+      {
+        "name": "ConfigDataSource",
+        "path": "img/ConfigDataSource.png"
+      },
+      {
+        "name": "DatasetConfig",
+        "path": "img/DatasetConfig.png"
+      }
+    ],
     "version": "1.0.0",
     "updated": "2022-02-16"
   },
