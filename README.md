@@ -116,8 +116,7 @@ from GitHub. Switch to branch `go-rewrite-v2`
 
     ![SecondImage](images/DataSoureConfig.png)
 
-3. If you enter "Scalyr" in the search bar on the resulting page you should see “Scalyr Grafana
-   Datasource” show up as an option.
+3. If you enter "Dataset" in the search bar on the resulting page you should see "Dataset" grafana plugin show up as an option.
 
     ![otherPlugin](images/SearchForPlugin.png)
 
@@ -130,7 +129,74 @@ from GitHub. Switch to branch `go-rewrite-v2`
 
     |Field Name | Value|
     | --- | --- |
-    |Scalyr API Key | Your Scalyr Read Logs API Key|
-    |Scalyr URL | `https://www.scalyr.com` or `https://eu.scalyr.com` for EU users.|
+    |Dataset API Key | Your Scalyr Read Logs API Key|
+    |Dataset URL | `https://www.scalyr.com` or `https://eu.scalyr.com` for EU users.|
 
 6. Click ***Save & Test*** to verify these settings are correct.
+## Using the Dataset Datasource
+
+Now that you’ve completed installing and configuring the Dataset data source plugin,
+lets go through an example of how you can start using it to create a dashboard
+using Scalyr data.
+
+1. Create a new dashboard by click Create > dashboard
+
+    ![CreateDashboard](images/CreateDashboard.png)
+
+2. In the **“New dashboard”** box, select the **“Add a new panel** icon
+
+    ![AddQuery](images/AddQuery.png)
+
+3. From the Data source dropdown, select **"Dataset"**.
+
+    ![ScalyrPlugin](images/ScalyrPlugin.png)
+
+4. A 'Query Type' field allows to choose the type of query you wanted to search for
+
+    ![QueryType](images/QueryType.png)
+5. 'Standard Query' - A standard query allows to search on Graph view, 
+    You can enter Graph Functions into the expression box and visualize the results. You can even enter and visualize Complex Expressions
+    Dataset [graphFunctions documentation](https://www.scalyr.com/help/dashboards#graphFunctions)
+    is a good resource to see the list of supported functions.
+    Enter expression and click the save button. In the image below, we've added a query to graph visualized the 
+    number of log messages that contain the word "error"
+
+     ![StandardQuery](images/StandardQuery.png)
+
+
+6. 'Power Query' - Works similar to PQ search in Dataset app. You can enter rich set of commands for transforming
+    and manipulating data. Data can be viewed in Table format
+    Visit [this documentation](https://app.scalyr.com/help/power-queries) for more information on building Power Queries
+
+    ![PowerQuery](images/PowerQuery.png)
+
+
+You’ve successfully installed, configured and created a graph in Grafana using Dataset data!
+
+Note: you can add multiple queries to a visualization to plot multiple series on the same graph.
+
+## Variables
+
+For general information on Grafana variables see the [Grafana documentation](https://grafana.com/docs/grafana/latest/reference/templating/)
+
+Queries support all Grafana variable substitution syntaxes, for example:
+
+```bash
+$varname
+[[varname]]
+${varname:option}
+```
+
+For multi-value variables there is a custom default substitution method, the values will be quoted and separated with
+commas, for example:
+
+```bash
+"value1","value2","value3"
+```
+
+The expected use of multi-value variables is for `in` queries, for example:
+
+```bash
+$serverHost=($host)
+```
+

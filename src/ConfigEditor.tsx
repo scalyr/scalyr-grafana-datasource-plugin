@@ -58,9 +58,9 @@ export class ConfigEditor extends PureComponent<Props, State> {
             <SecretFormField
               isConfigured={(secureJsonFields && secureJsonFields.apiKey) as boolean}
               value={secureJsonData.apiKey || ''}
-              label="Scalyr API Key"
+              label="Dataset API Key"
               placeholder="secure json field (backend only)"
-              labelWidth={6}
+              labelWidth={8}
               inputWidth={20}
               onReset={this.onResetAPIKey}
               onChange={this.onAPIKeyChange}
@@ -71,11 +71,11 @@ export class ConfigEditor extends PureComponent<Props, State> {
         <div className="gf-form-inline">
           <div className="gf-form">
             <FormField
-              label="Scalyr URL"
-              labelWidth={6}
+              label="Dataset URL"
+              labelWidth={8}
               inputWidth={20}
               onChange={this.onURLChange}
-              value={jsonData.scalyrUrl || 'https://www.scalyr.com'}
+              value={jsonData.scalyrUrl || 'https://www.scalyr.com/'}
               placeholder="Scalyr server URL"
             />
           </div>
