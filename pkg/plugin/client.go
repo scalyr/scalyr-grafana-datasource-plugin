@@ -101,7 +101,6 @@ func (d *DataSetClient) DoFacetValuesRequest(req FacetQuery) (LRQResult, error) 
 	// Repeat ping requests for our query until we get a result with all steps steps complete
 	// TODO: A timeout or some other way of escaping besides an error
 	for stepsComplete < stepsTotal {
-		log.DefaultLogger.Warn(" request", request)
 		resp, err := d.netClient.Do(request)
 		if err != nil {
 			log.DefaultLogger.Warn("error sending request to DataSet", "err", err)

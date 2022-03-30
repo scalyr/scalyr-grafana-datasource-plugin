@@ -5,7 +5,7 @@ and dashboards in Grafana using data in Dataset. You may want to use this plugin
 to allow you to visualize Dataset data next to other data sources, for instance
 when you want to monitor many feeds on a single dashboard.
 
-![SystemDashboard](images/SystemDashboard.png)
+![SystemDashboard](https://github.com/scalyr/scalyr-grafana-datasource-plugin/blob/go-rewrite-v2/src/img/SystemDashboard.png)
 
 With the Dataset plugin, you will be able to create and visualize your log-based
 metrics along side all of your other data sources. It's a great way to have a

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"math"
 	"net/http"
 	"strconv"
 	"strings"
@@ -38,7 +39,6 @@ func NewDataSetDatasource(settings backend.DataSourceInstanceSettings) (instance
 	var unsecure jsonData
 	err := json.Unmarshal(settings.JSONData, &unsecure)
 	if err != nil {
-		log.DefaultLogger.Warn("error marshalling", "err", err)
 		return nil, err
 	}
 	url := unsecure.ScalyrUrl
@@ -117,7 +117,6 @@ func (d *DataSetDatasource) CallResource(ctx context.Context, req *backend.CallR
 		}
 		finalResponse := make([]string, len(facetResultData.Facet.Values))
 		for i, val := range facetResultData.Facet.Values {
-			log.DefaultLogger.Warn("facetResultData", val.Value, val.Value)
 			finalResponse[i] = val.Value
 		}
 		pb := &FacetResponse{Value: finalResponse}
@@ -210,13 +209,10 @@ func displayPlotData(result LRQResult, response backend.DataResponse) backend.Da
 	values := make([]float64, len(resultData.XAxis))
 	for index, value := range resultData.XAxis {
 		values[index] = resultData.Plots[0].Samples[index] // TODO: handle multiple PlotData objects for Breakdown graphs
-		log.DefaultLogger.Warn("value:   ", "value", value)
-		times[index] = time.Unix(value/1000, 0) // TODO: we lose the precision of milliseconds here, is this fine?
-		log.DefaultLogger.Warn("times[index]:   ", "times[index]", times[index])
+		times[index] = time.Unix(value/1000, 0)            // TODO: we lose the precision of milliseconds here, is this fine?
 	}
 
 	// add fields.
-	log.DefaultLogger.Warn("values:  ", "values", values)
 	frame.Fields = append(frame.Fields,
 		data.NewField("time", nil, times),
 		data.NewField("values", nil, values),
@@ -229,89 +225,99 @@ func displayPlotData(result LRQResult, response backend.DataResponse) backend.Da
 
 func displayPQData(result LRQResult, response backend.DataResponse) backend.DataResponse {
 	resultData := TableResultData{}
-
 	err := json.Unmarshal(result.Data, &resultData)
 	if err != nil {
 		return response
 	}
-	if len(resultData.Columns) < 1 {
+	if len(resultData.Values) < 1 {
 		return response
 	}
 	frame := data.NewFrame("response")
-
+	// Iterate over the data to modify the result into dataframe acceptable format
 	for idx, col := range resultData.Columns {
-		switch val := col.Type; {
-		case val == "TIMESTAMP":
-			tmp := make([]time.Time, len(resultData.Values))
-			for j, b := range resultData.Values {
-				timeInInt := int64(b[idx].(float64))
-				tmp[j] = time.Unix(timeInInt/1000000000, 0)
+		switch cellType := col.Type; {
+		case cellType == TIMESTAMP:
+			res := make([]time.Time, len(resultData.Values))
+			for i, val := range resultData.Values {
+				timeInInt := int64(val[idx].(float64))
+				res[i] = time.Unix(timeInInt/1000000000, 0) // convert nanoseconds to Time.time format
 			}
 			frame.Fields = append(frame.Fields,
-				data.NewField(col.Name, nil, tmp),
+				data.NewField(col.Name, nil, res),
 			)
 			break
-		case val == "PERCENTAGE":
-			tmp := make([]string, len(resultData.Values))
-			for j, b := range resultData.Values {
-				tmp[j] = strconv.Itoa(b[idx].(int))
-			}
-			frame.Fields = append(frame.Fields,
-				data.NewField(col.Name, nil, tmp),
-			)
-			break
-		case val == "NUMBER" && col.DecimalPlaces > 0:
-			tmp := make([]float64, len(resultData.Values))
-			for j, b := range resultData.Values {
-				switch b[idx].(type) {
-				case float32:
-					tmp[j] = float64(b[idx].(float32))
-					break
-				default:
-					tmp[j] = b[idx].(float64)
+		case cellType == PERCENTAGE:
+			res := make([]string, len(resultData.Values))
+			for i, val := range resultData.Values {
+				if w, ok := val[idx].(int); ok {
+					res[i] = strconv.FormatInt(int64(w), 10) + "%"
 				}
 			}
 			frame.Fields = append(frame.Fields,
-				data.NewField(col.Name, nil, tmp),
+				data.NewField(col.Name, nil, res),
 			)
 			break
-		case val == "NUMBER" && col.DecimalPlaces <= 0:
-			tmp := make([]int64, len(resultData.Values))
-			for j, b := range resultData.Values {
-				switch b[idx].(type) {
+		case cellType == NUMBER && col.DecimalPlaces > 0:
+			res := make([]float64, len(resultData.Values))
+			for i, val := range resultData.Values {
+				switch val[idx].(type) {
+				case float32:
+					res[i] = float64(val[idx].(float32))
+					break
+				case string:
+					if val[idx] == "Infinity" {
+						res[i] = math.Inf(1)
+					} else if val[idx] == "-Infinity" {
+						res[i] = math.Inf(-1)
+					} else if val[idx] == "NaN" {
+						res[i] = math.NaN()
+					}
+					break
+				default:
+					res[i] = val[idx].(float64)
+				}
+			}
+			frame.Fields = append(frame.Fields,
+				data.NewField(col.Name, nil, res),
+			)
+			break
+		case cellType == NUMBER && col.DecimalPlaces <= 0:
+			res := make([]int64, len(resultData.Values))
+			for i, val := range resultData.Values {
+				switch val[idx].(type) {
 				case int:
-					tmp[j] = int64(b[idx].(int))
+					res[i] = int64(val[idx].(int))
 					break
 				case int16:
-					tmp[j] = int64(b[idx].(int16))
+					res[i] = int64(val[idx].(int16))
 					break
 				case int32:
-					tmp[j] = int64(b[idx].(int32))
+					res[i] = int64(val[idx].(int32))
 					break
 				case float32:
-					tmp[j] = int64(b[idx].(float32))
+					res[i] = int64(val[idx].(float32))
 					break
 				case float64:
-					tmp[j] = int64(b[idx].(float64))
+					res[i] = int64(val[idx].(float64))
 					break
 				default:
-					tmp[j] = b[idx].(int64)
+					res[i] = val[idx].(int64)
 				}
 			}
 			frame.Fields = append(frame.Fields,
-				data.NewField(col.Name, nil, tmp),
+				data.NewField(col.Name, nil, res),
 			)
 			break
 		default:
-			tmp := make([]string, len(resultData.Values))
-			for j, b := range resultData.Values {
-				switch b[idx].(type) {
+			res := make([]string, len(resultData.Values))
+			for i, val := range resultData.Values {
+				switch val[idx].(type) {
 				case string:
-					tmp[j] = b[idx].(string)
+					res[i] = val[idx].(string)
 					break
 				case bool:
-					if w, ok := b[idx].(bool); ok {
-						tmp[j] = strconv.FormatBool(w)
+					if w, ok := val[idx].(bool); ok {
+						res[i] = strconv.FormatBool(w)
 					}
 					break
 				default:
@@ -319,7 +325,7 @@ func displayPQData(result LRQResult, response backend.DataResponse) backend.Data
 				}
 			}
 			frame.Fields = append(frame.Fields,
-				data.NewField(col.Name, nil, tmp),
+				data.NewField(col.Name, nil, res),
 			)
 		}
 	}
@@ -332,7 +338,6 @@ func displayPQData(result LRQResult, response backend.DataResponse) backend.Data
 // datasource configuration page which allows users to verify that
 // a datasource is working as expected.
 func (d *DataSetDatasource) CheckHealth(_ context.Context, req *backend.CheckHealthRequest) (*backend.CheckHealthResult, error) {
-	// currentTime := time.Now().UnixNano()
 	request := FacetRequest{
 		QueryType: "facet",
 		MaxCount:  1,

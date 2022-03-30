@@ -28,6 +28,12 @@ const OK = "OK"
 const TIMEOUT = "TIMEOUT"
 const ERROR = "ERROR"
 
+const (
+	PERCENTAGE string = "PERCENTAGE"
+	NUMBER     string = "NUMBER"
+	TIMESTAMP  string = "TIMESTAMP"
+)
+
 type LogOptions struct {
 	Filter    string `json:"filter"`
 	Ascending bool   `json:"ascending"`
