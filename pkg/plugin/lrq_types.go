@@ -46,6 +46,12 @@ type FacetOptions struct {
 	MaxValues string `json:"maxValues"`
 }
 
+type TopFacetOptions struct {
+	NumFacetsToReturn int    `json:"numFacetsToReturn"`
+	DetermineNumeric  bool   `json:"determineNumeric"`
+	Filter            string `json:"filter"`
+}
+
 type PQOptions struct {
 	Query      string `json:"query"`
 	ResultType string `json:"resultType"`
@@ -73,7 +79,7 @@ type LRQRequest struct {
 	AccountEmails []string             `json:"accountEmails"`
 	Log           *LogOptions          `json:"log"`
 	Facet         *FacetOptions        `json:"facetValues"`
-	TopFacet      *FacetOptions        `json:"topFacets"`
+	TopFacet      *TopFacetOptions     `json:"topFacets"`
 	Pq            *PQOptions           `json:"pq"`
 	Plot          *PlotOptions         `json:"plot"`
 	Distribution  *DistributionOptions `json:"distribution"`
@@ -142,4 +148,17 @@ type FacetValue struct {
 
 type FacetResponse struct {
 	Value []string `json:"value"`
+}
+
+type TopFacetRequest struct {
+	QueryType string           `json:"queryType"`
+	TopFacet  *TopFacetOptions `json:"topFacets"`
+}
+
+type TopFacets struct {
+	Facets []Facets `json:"facets"`
+}
+
+type Facets struct {
+	Name string `json:"name"`
 }

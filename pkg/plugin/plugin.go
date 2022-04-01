@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
-	"net/http"
 	"strconv"
 	"strings"
 	"time"
@@ -85,67 +84,17 @@ func (d *DataSetDatasource) QueryData(ctx context.Context, req *backend.QueryDat
 	return response, nil
 }
 
-type filterModal struct {
-	QueryVariable string `json:"queryVariable"`
-}
-
-func (d *DataSetDatasource) CallResource(ctx context.Context, req *backend.CallResourceRequest, sender backend.CallResourceResponseSender) error {
-	var fm filterModal
-	err := json.Unmarshal(req.Body, &fm)
-	if err != nil {
-		return sender.Send(&backend.CallResourceResponse{
-			Status: http.StatusBadRequest,
-		})
-	}
-	switch req.Path {
-	case "facet-query":
-		request := FacetQuery{
-			QueryType: "FACET_VALUES",
-			FacetValues: &FacetOptions{
-				Name:      fm.QueryVariable,
-				MaxValues: "100",
-			},
-		}
-		result, _ := d.dataSetClient.DoFacetValuesRequest(request)
-		facetResultData := FacetList{}
-		err := json.Unmarshal(result.Data, &facetResultData)
-		if err != nil {
-			log.DefaultLogger.Warn("error unmarshaling response from DataSet", "err", err)
-			return sender.Send(&backend.CallResourceResponse{
-				Status: http.StatusNotFound,
-			})
-		}
-		finalResponse := make([]string, len(facetResultData.Facet.Values))
-		for i, val := range facetResultData.Facet.Values {
-			finalResponse[i] = val.Value
-		}
-		pb := &FacetResponse{Value: finalResponse}
-		jsonStr, err := json.Marshal(pb)
-		if err != nil {
-			log.DefaultLogger.Warn("could not marshal JSON: %s", err)
-		}
-		return sender.Send(&backend.CallResourceResponse{
-			Status: http.StatusOK,
-			Body:   jsonStr,
-		})
-	default:
-		return sender.Send(&backend.CallResourceResponse{
-			Status: http.StatusNotFound,
-		})
-	}
-}
-
 type queryModel struct {
-	Expression string `json:"expression"`
-	QueryType  string `json:"queryType"`
-	Format     string `json:"format"`
+	Expression          string  `json:"expression"`
+	QueryType           string  `json:"queryType"`
+	Format              string  `json:"format"`
+	BreakDownFacetValue *string `json:"breakDownFacetValue"`
 }
 
 func (d *DataSetDatasource) query(_ context.Context, pCtx backend.PluginContext, query backend.DataQuery) backend.DataResponse {
 	// Unmarshal the JSON into our queryModel.
 	var qm queryModel
 	response := backend.DataResponse{}
-	log.DefaultLogger.Warn("error unmarshaling response from DataSet", query.JSON)
 	response.Error = json.Unmarshal(query.JSON, &qm)
 	if response.Error != nil {
 		return response
@@ -169,16 +118,31 @@ func (d *DataSetDatasource) query(_ context.Context, pCtx backend.PluginContext,
 			},
 		}
 	} else {
-		request = LRQRequest{
-			QueryType: PLOT,
-			StartTime: query.TimeRange.From.Unix(),
-			EndTime:   query.TimeRange.To.Unix(),
-			Plot: &PlotOptions{
-				Expression: qm.Expression,
-				Slices:     buckets,
-				Frequency:  HIGH,
-				AutoAlign:  true,
-			},
+		if len(qm.Expression) > 0 {
+			request = LRQRequest{
+				QueryType: PLOT,
+				StartTime: query.TimeRange.From.Unix(),
+				EndTime:   query.TimeRange.To.Unix(),
+				Plot: &PlotOptions{
+					Expression:     qm.Expression,
+					Slices:         buckets,
+					Frequency:      HIGH,
+					AutoAlign:      true,
+					BreakdownFacet: qm.BreakDownFacetValue,
+				},
+			}
+		} else {
+			request = LRQRequest{
+				QueryType: PLOT,
+				StartTime: query.TimeRange.From.Unix(),
+				EndTime:   query.TimeRange.To.Unix(),
+				Plot: &PlotOptions{
+					Expression: qm.Expression,
+					Slices:     buckets,
+					Frequency:  HIGH,
+					AutoAlign:  true,
+				},
+			}
 		}
 	}
 
@@ -188,12 +152,12 @@ func (d *DataSetDatasource) query(_ context.Context, pCtx backend.PluginContext,
 	} else {
 		return displayPlotData(result, response)
 	}
-	// return response
 }
 
 func displayPlotData(result LRQResult, response backend.DataResponse) backend.DataResponse {
 	resultData := PlotResultData{}
 	err := json.Unmarshal(result.Data, &resultData)
+
 	if err != nil {
 		log.DefaultLogger.Warn("error unmarshaling response from DataSet", "err", err)
 		return response
@@ -205,18 +169,23 @@ func displayPlotData(result LRQResult, response backend.DataResponse) backend.Da
 	// create data frame response.
 	frame := data.NewFrame("response")
 
-	times := make([]time.Time, len(resultData.XAxis))
-	values := make([]float64, len(resultData.XAxis))
-	for index, value := range resultData.XAxis {
-		values[index] = resultData.Plots[0].Samples[index] // TODO: handle multiple PlotData objects for Breakdown graphs
-		times[index] = time.Unix(value/1000, 0)            // TODO: we lose the precision of milliseconds here, is this fine?
+	for i, plot := range resultData.Plots {
+		if i == 0 {
+			frame.Fields = append(frame.Fields,
+				data.NewField("time", nil, make([]time.Time, len(resultData.XAxis))),
+			)
+		}
+		frame.Fields = append(frame.Fields,
+			data.NewField("", map[string]string{"app": plot.Label}, make([]float64, len(resultData.XAxis))),
+		)
+		for pIdx, point := range plot.Samples {
+			if i == 0 {
+				times := time.Unix((resultData.XAxis[pIdx])/1000, 0)
+				frame.Set(i, pIdx, times)
+			}
+			frame.Set(i+1, pIdx, point)
+		}
 	}
-
-	// add fields.
-	frame.Fields = append(frame.Fields,
-		data.NewField("time", nil, times),
-		data.NewField("values", nil, values),
-	)
 
 	// add the frames to the response.
 	response.Frames = append(response.Frames, frame)
