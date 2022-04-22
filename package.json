@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.5.5",
-    "@grafana/toolkit": "^8.3.6",
+    "@grafana/toolkit": "^8.5.0",
     "acorn": "^8.7.0",
     "babel-loader": "^8.0.6",
     "copy-webpack-plugin": "^10.2.0",
