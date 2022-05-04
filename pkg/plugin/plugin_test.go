@@ -5,7 +5,8 @@ import (
 	"testing"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
-	"github.com/grafana/grafana-starter-datasource-backend/pkg/plugin"
+
+	"github.com/scalyr/scalyr-grafana-datasource-plugin/pkg/plugin"
 )
 
 // This is where the tests for the datasource backend live.

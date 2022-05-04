@@ -5,7 +5,8 @@ import (
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend/datasource"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
-	"github.com/grafana/grafana-starter-datasource-backend/pkg/plugin"
+
+	"github.com/scalyr/scalyr-grafana-datasource-plugin/pkg/plugin"
 )
 
 func main() {
@@ -17,7 +18,7 @@ func main() {
 	// from Grafana to create different instances of DataSetDatasource (per datasource
 	// ID). When datasource configuration changed Dispose method will be called and
 	// new datasource instance created using NewDataSetDatasource factory.
-	if err := datasource.Manage("myorgid-simple-backend-datasource", plugin.NewDataSetDatasource, datasource.ManageOpts{}); err != nil {
+	if err := datasource.Manage("sentinelone-dataset-datasource", plugin.NewDataSetDatasource, datasource.ManageOpts{}); err != nil {
 		log.DefaultLogger.Error(err.Error())
 		os.Exit(1)
 	}

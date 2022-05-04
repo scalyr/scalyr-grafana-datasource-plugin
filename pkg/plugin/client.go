@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
@@ -36,173 +37,105 @@ func NewDataSetClient(dataSetUrl string, apiKey string) *DataSetClient {
 	}
 }
 
-func (d *DataSetClient) DoLRQRequest(req LRQRequest) (LRQResult, error) {
-	var body []byte
-	body, _ = json.Marshal(req)
+func (d *DataSetClient) doPingRequest(req interface{}) (*LRQResult, error) {
+	body, err := json.Marshal(req)
+	if err != nil {
+		log.DefaultLogger.Warn("error marshalling request to DataSet", "err", err)
+		return nil, err
+	}
 
 	request, err := http.NewRequest("POST", d.dataSetUrl+"/v2/api/queries", bytes.NewBuffer(body))
 	if err != nil {
 		log.DefaultLogger.Warn("error constructing request to DataSet", "err", err)
-		return LRQResult{}, err
+		return nil, err
 	}
 	request.Header.Set("Authorization", "Bearer "+d.apiKey)
 	request.Header.Set("Content-Type", "application/json")
 
 	var responseBody LRQResult
 	stepsComplete, stepsTotal := 0, 1
+
 	// Repeat ping requests for our query until we get a result with all steps steps complete
-	// TODO: A timeout or some other way of escaping besides an error
 	for stepsComplete < stepsTotal {
 		resp, err := d.netClient.Do(request)
 		if err != nil {
-			return LRQResult{}, err
+			if e, ok := err.(*url.Error); ok && e.Timeout() {
+				log.DefaultLogger.Warn("request to DataSet timed out")
+				return nil, e
+			} else {
+				return nil, err
+			}
 		}
-		defer resp.Body.Close()
+
 		responseBytes, err := io.ReadAll(resp.Body)
+		resp.Body.Close()
 		if err != nil {
 			log.DefaultLogger.Warn("error reading response from DataSet", "err", err)
-			return LRQResult{}, err
+			return nil, err
 		}
-		responseBody = LRQResult{}
-		err = json.Unmarshal(responseBytes, &responseBody)
-		if err != nil {
+
+		if err = json.Unmarshal(responseBytes, &responseBody); err != nil {
 			log.DefaultLogger.Warn(" error unmarshaling response from DataSet", "err", err)
-			return LRQResult{}, err
+			return nil, err
 		}
+
 		stepsTotal = responseBody.StepsTotal
 		stepsComplete = responseBody.StepsCompleted
+
 		// Build next ping request (which we might not use)
-		request, err = http.NewRequest("GET", fmt.Sprintf("%s/v2/api/queries/%s?lastStepSeen=%d", d.dataSetUrl, responseBody.Id, responseBody.StepsCompleted), nil)
+		url := fmt.Sprintf("%s/v2/api/queries/%s?lastStepSeen=%d", d.dataSetUrl, responseBody.Id, responseBody.StepsCompleted)
+		request, err = http.NewRequest("GET", url, nil)
 		if err != nil {
 			log.DefaultLogger.Warn("error constructing request to DataSet", "err", err)
-			return LRQResult{}, err
+			return nil, err
 		}
 		request.Header.Set("Authorization", "Bearer "+d.apiKey)
 		request.Header.Set("Content-Type", "application/json")
 	}
 
-	return responseBody, nil
+	return &responseBody, nil
 }
 
-func (d *DataSetClient) DoFacetValuesRequest(req FacetQuery) (LRQResult, error) {
-	var body []byte
-	body, _ = json.Marshal(req)
+func (d *DataSetClient) DoLRQRequest(req LRQRequest) (*LRQResult, error) {
+	return d.doPingRequest(req)
+}
 
-	request, err := http.NewRequest("POST", d.dataSetUrl+"/v2/api/queries", bytes.NewBuffer(body))
+func (d *DataSetClient) DoFacetValuesRequest(req FacetQuery) (*LRQResult, error) {
+	return d.doPingRequest(req)
+}
+
+func (d *DataSetClient) DoTopFacetRequest(req TopFacetRequest) (*LRQResult, error) {
+	return d.doPingRequest(req)
+}
+
+func (d *DataSetClient) DoFacetRequest(req FacetRequest) (int, error) {
+	body, err := json.Marshal(req)
 	if err != nil {
-		log.DefaultLogger.Warn("error constructing request to DataSet", "err", err)
-		return LRQResult{}, err
+		log.DefaultLogger.Warn("error marshalling request to DataSet", "err", err)
+		return 0, err
 	}
-	request.Header.Set("Authorization", "Bearer "+d.apiKey)
-	request.Header.Set("Content-Type", "application/json")
-
-	var responseBody LRQResult
-	stepsComplete, stepsTotal := 0, 1
-	// Repeat ping requests for our query until we get a result with all steps steps complete
-	// TODO: A timeout or some other way of escaping besides an error
-	for stepsComplete < stepsTotal {
-		resp, err := d.netClient.Do(request)
-		if err != nil {
-			log.DefaultLogger.Warn("error sending request to DataSet", "err", err)
-			return LRQResult{}, err
-		}
-		defer resp.Body.Close()
-		responseBytes, err := io.ReadAll(resp.Body)
-		if err != nil {
-			log.DefaultLogger.Warn("error reading response from DataSet", "err", err)
-			return LRQResult{}, err
-		}
-		responseBody = LRQResult{}
-		err = json.Unmarshal(responseBytes, &responseBody)
-		if err != nil {
-			log.DefaultLogger.Warn(" error unmarshaling response from DataSet", "err", err)
-			return LRQResult{}, err
-		}
-		stepsTotal = responseBody.StepsTotal
-		stepsComplete = responseBody.StepsCompleted
-		// Build next ping request (which we might not use)
-		request, err = http.NewRequest("GET", fmt.Sprintf("%s/v2/api/queries/%s?lastStepSeen=%d", d.dataSetUrl, responseBody.Id, responseBody.StepsCompleted), nil)
-		if err != nil {
-			log.DefaultLogger.Warn("error constructing request to DataSet", "err", err)
-			return LRQResult{}, err
-		}
-		request.Header.Set("Authorization", "Bearer "+d.apiKey)
-		request.Header.Set("Content-Type", "application/json")
-	}
-
-	return responseBody, nil
-}
-
-func (d *DataSetClient) DoTopFacetRequest(req TopFacetRequest) (LRQResult, error) {
-	var body []byte
-	body, _ = json.Marshal(req)
-
-	request, err := http.NewRequest("POST", d.dataSetUrl+"/v2/api/queries", bytes.NewBuffer(body))
-	if err != nil {
-		log.DefaultLogger.Warn("error constructing request to DataSet", "err", err)
-		return LRQResult{}, err
-	}
-	request.Header.Set("Authorization", "Bearer "+d.apiKey)
-	request.Header.Set("Content-Type", "application/json")
-
-	var responseBody LRQResult
-	stepsComplete, stepsTotal := 0, 1
-	// Repeat ping requests for our query until we get a result with all steps steps complete
-	// TODO: A timeout or some other way of escaping besides an error
-	for stepsComplete < stepsTotal {
-		resp, err := d.netClient.Do(request)
-		if err != nil {
-			log.DefaultLogger.Warn("error sending request to DataSet", "err", err)
-			return LRQResult{}, err
-		}
-		defer resp.Body.Close()
-		responseBytes, err := io.ReadAll(resp.Body)
-		if err != nil {
-			log.DefaultLogger.Warn("error reading response from DataSet", "err", err)
-			return LRQResult{}, err
-		}
-		responseBody = LRQResult{}
-		err = json.Unmarshal(responseBytes, &responseBody)
-		if err != nil {
-			log.DefaultLogger.Warn(" error unmarshaling response from DataSet", "err", err)
-			return LRQResult{}, err
-		}
-		stepsTotal = responseBody.StepsTotal
-		stepsComplete = responseBody.StepsCompleted
-		// Build next ping request (which we might not use)
-		request, err = http.NewRequest("GET", fmt.Sprintf("%s/v2/api/queries/%s?lastStepSeen=%d", d.dataSetUrl, responseBody.Id, responseBody.StepsCompleted), nil)
-		if err != nil {
-			log.DefaultLogger.Warn("error constructing request to DataSet", "err", err)
-			return LRQResult{}, err
-		}
-		request.Header.Set("Authorization", "Bearer "+d.apiKey)
-		request.Header.Set("Content-Type", "application/json")
-	}
-
-	return responseBody, nil
-}
-
-func (d *DataSetClient) DoFacetRequest(req FacetRequest) int {
-	var body []byte
-	body, _ = json.Marshal(req)
 
 	request, err := http.NewRequest("POST", d.dataSetUrl+"/api/facetQuery", bytes.NewBuffer(body))
+	if err != nil {
+		log.DefaultLogger.Warn("error constructing request to DataSet", "err", err)
+		return 0, err
+	}
 	request.Header.Set("Authorization", "Bearer "+d.apiKey)
 	request.Header.Set("Content-Type", "application/json")
 
 	resp, err := d.netClient.Do(request)
 	if err != nil {
 		log.DefaultLogger.Warn("error sending request to DataSet", "err", err)
-		return 0
+		return 0, err
 	}
 	defer resp.Body.Close()
 
 	responseBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.DefaultLogger.Warn("error reading response from DataSet", "err", err)
+		return 0, err
 	}
-	responseString := string(responseBytes)
-	log.DefaultLogger.Info("Result of request to facet", "body", responseString)
+	log.DefaultLogger.Info("Result of request to facet", "body", string(responseBytes))
 
-	return resp.StatusCode
+	return resp.StatusCode, nil
 }
