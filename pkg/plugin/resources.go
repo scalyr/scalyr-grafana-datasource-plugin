@@ -37,7 +37,7 @@ func (d *DataSetDatasource) CallResource(ctx context.Context, req *backend.CallR
 		}
 		var facetResultData FacetList
 		if err := json.Unmarshal(result.Data, &facetResultData); err != nil {
-			log.DefaultLogger.Warn("error unmarshaling response from FACETS LIST query", "err", err)
+			log.DefaultLogger.Error("error unmarshaling response from FACETS LIST query", "err", err)
 			return sender.Send(&backend.CallResourceResponse{
 				Status: http.StatusInternalServerError,
 			})
@@ -49,7 +49,7 @@ func (d *DataSetDatasource) CallResource(ctx context.Context, req *backend.CallR
 		pb := &FacetResponse{Value: finalResponse}
 		jsonStr, err := json.Marshal(pb)
 		if err != nil {
-			log.DefaultLogger.Warn("could not marshal facets JSON: %s", err)
+			log.DefaultLogger.Error("could not marshal facets JSON", "err", err)
 			return sender.Send(&backend.CallResourceResponse{
 				Status: http.StatusInternalServerError,
 			})
@@ -75,14 +75,14 @@ func (d *DataSetDatasource) CallResource(ctx context.Context, req *backend.CallR
 		}
 		var topFacets TopFacets
 		if err := json.Unmarshal(result.Data, &topFacets); err != nil {
-			log.DefaultLogger.Warn("error unmarshaling response from TOP FACETS query", "err", err)
+			log.DefaultLogger.Error("error unmarshaling response from TOP FACETS query", "err", err)
 			return sender.Send(&backend.CallResourceResponse{
 				Status: http.StatusNotFound,
 			})
 		}
 		jsonStr, err := json.Marshal(topFacets)
 		if err != nil {
-			log.DefaultLogger.Warn("could not marshal JSON: %s", err)
+			log.DefaultLogger.Error("could not marshal JSON", "err", err)
 			return sender.Send(&backend.CallResourceResponse{
 				Status: http.StatusInternalServerError,
 			})

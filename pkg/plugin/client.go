@@ -26,6 +26,8 @@ type DataSetClient struct {
 }
 
 func NewDataSetClient(dataSetUrl string, apiKey string) *DataSetClient {
+	// Consider using the backend.httpclient package provided by the Grafana SDK.
+	// This would allow a per-instance configurable timeout, rather than the hardcoded value here.
 	var netClient = &http.Client{
 		Timeout: time.Second * 10,
 	}
@@ -40,13 +42,13 @@ func NewDataSetClient(dataSetUrl string, apiKey string) *DataSetClient {
 func (d *DataSetClient) doPingRequest(req interface{}) (*LRQResult, error) {
 	body, err := json.Marshal(req)
 	if err != nil {
-		log.DefaultLogger.Warn("error marshalling request to DataSet", "err", err)
+		log.DefaultLogger.Error("error marshalling request to DataSet", "err", err)
 		return nil, err
 	}
 
 	request, err := http.NewRequest("POST", d.dataSetUrl+"/v2/api/queries", bytes.NewBuffer(body))
 	if err != nil {
-		log.DefaultLogger.Warn("error constructing request to DataSet", "err", err)
+		log.DefaultLogger.Error("error constructing request to DataSet", "err", err)
 		return nil, err
 	}
 	request.Header.Set("Authorization", "Bearer "+d.apiKey)
@@ -60,7 +62,7 @@ func (d *DataSetClient) doPingRequest(req interface{}) (*LRQResult, error) {
 		resp, err := d.netClient.Do(request)
 		if err != nil {
 			if e, ok := err.(*url.Error); ok && e.Timeout() {
-				log.DefaultLogger.Warn("request to DataSet timed out")
+				log.DefaultLogger.Error("request to DataSet timed out")
 				return nil, e
 			} else {
 				return nil, err
@@ -70,12 +72,12 @@ func (d *DataSetClient) doPingRequest(req interface{}) (*LRQResult, error) {
 		responseBytes, err := io.ReadAll(resp.Body)
 		resp.Body.Close()
 		if err != nil {
-			log.DefaultLogger.Warn("error reading response from DataSet", "err", err)
+			log.DefaultLogger.Error("error reading response from DataSet", "err", err)
 			return nil, err
 		}
 
 		if err = json.Unmarshal(responseBytes, &responseBody); err != nil {
-			log.DefaultLogger.Warn(" error unmarshaling response from DataSet", "err", err)
+			log.DefaultLogger.Error(" error unmarshaling response from DataSet", "err", err)
 			return nil, err
 		}
 
@@ -86,7 +88,7 @@ func (d *DataSetClient) doPingRequest(req interface{}) (*LRQResult, error) {
 		url := fmt.Sprintf("%s/v2/api/queries/%s?lastStepSeen=%d", d.dataSetUrl, responseBody.Id, responseBody.StepsCompleted)
 		request, err = http.NewRequest("GET", url, nil)
 		if err != nil {
-			log.DefaultLogger.Warn("error constructing request to DataSet", "err", err)
+			log.DefaultLogger.Error("error constructing request to DataSet", "err", err)
 			return nil, err
 		}
 		request.Header.Set("Authorization", "Bearer "+d.apiKey)
@@ -111,13 +113,13 @@ func (d *DataSetClient) DoTopFacetRequest(req TopFacetRequest) (*LRQResult, erro
 func (d *DataSetClient) DoFacetRequest(req FacetRequest) (int, error) {
 	body, err := json.Marshal(req)
 	if err != nil {
-		log.DefaultLogger.Warn("error marshalling request to DataSet", "err", err)
+		log.DefaultLogger.Error("error marshalling request to DataSet", "err", err)
 		return 0, err
 	}
 
 	request, err := http.NewRequest("POST", d.dataSetUrl+"/api/facetQuery", bytes.NewBuffer(body))
 	if err != nil {
-		log.DefaultLogger.Warn("error constructing request to DataSet", "err", err)
+		log.DefaultLogger.Error("error constructing request to DataSet", "err", err)
 		return 0, err
 	}
 	request.Header.Set("Authorization", "Bearer "+d.apiKey)
@@ -125,14 +127,14 @@ func (d *DataSetClient) DoFacetRequest(req FacetRequest) (int, error) {
 
 	resp, err := d.netClient.Do(request)
 	if err != nil {
-		log.DefaultLogger.Warn("error sending request to DataSet", "err", err)
+		log.DefaultLogger.Error("error sending request to DataSet", "err", err)
 		return 0, err
 	}
 	defer resp.Body.Close()
 
 	responseBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.DefaultLogger.Warn("error reading response from DataSet", "err", err)
+		log.DefaultLogger.Error("error reading response from DataSet", "err", err)
 		return 0, err
 	}
 	log.DefaultLogger.Info("Result of request to facet", "body", string(responseBytes))

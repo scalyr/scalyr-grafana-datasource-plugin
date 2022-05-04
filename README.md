@@ -5,7 +5,8 @@ and dashboards in Grafana using data in Dataset. You may want to use this plugin
 to allow you to visualize Dataset data next to other data sources, for instance
 when you want to monitor many feeds on a single dashboard.
 
-![SystemDashboard](https://github.com/scalyr/scalyr-grafana-datasource-plugin/blob/go-rewrite-v2/src/img/SystemDashboard.png)
+<!-- TODO When the go-rewrite-v2 branch gets merged into master, change these urls -->
+![SystemDashboard](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/go-rewrite-v2/src/img/SystemDashboard.png)
 
 With the Dataset plugin, you will be able to create and visualize your log-based
 metrics along side all of your other data sources. It's a great way to have a
@@ -27,7 +28,7 @@ can find documentation on API Keys [here](https://www.scalyr.com/help/api#scalyr
 
 ## Getting started
 
-### Installing with grafana-cli
+### Installing the latest / stable version with grafana-cli
 
 1. To install the stable version of the plugin using grafana-cli, run the following command:
 
@@ -37,13 +38,9 @@ can find documentation on API Keys [here](https://www.scalyr.com/help/api#scalyr
    plugins install sentinelone-dataset-datasource
    ```
 
-2. Update your Grafana configuration in the `grafana.ini` file to allow this plugin by adding the following line:
+   Older versions can be downloaded from [github releases](https://github.com/scalyr/scalyr-grafana-datasource-plugin/releases).
 
-   ```bash
-   allow_loading_unsigned_plugins = sentinelone-dataset-datasource
-   ```
-
-3. Adding plugins requires a restart of your grafana server.
+2. Adding plugins requires a restart of your grafana server.
 
     For init.d based services you can use the command:
 
@@ -57,41 +54,60 @@ can find documentation on API Keys [here](https://www.scalyr.com/help/api#scalyr
     systemctl restart grafana-server
     ```
 
-If you require the development version, use the manual installation instructions.
-### Installing manually
+### Building a development version and installing manually
 
-1. If you want a stable version of plugin, download the desired version from
-[github releases](https://github.com/scalyr/scalyr-grafana-datasource-plugin/releases).
-If you want the `development` version of the plugin,
-clone the [plugin repository](https://github.com/scalyr/scalyr-grafana-datasource-plugin)
-from GitHub. Switch to branch `go-rewrite-v2`
+1. To build and install the `development` version of the plugin, clone the
+[plugin repository](https://github.com/scalyr/scalyr-grafana-datasource-plugin) from GitHub.
 
     ```bash
     git  clone https://github.com/scalyr/scalyr-grafana-datasource-plugin.git
     ```
 
-2. Grafana plugins exist in the directory: `/var/lib/grafana/plugins/`. Create a folder for the dataset plugin:
+2. Build the Golang backend (with the version defined in go.mod, currently 1.16) using Mage
+
+    ```bash
+    mage
+    ```
+
+    This will build the executables in `dist/`
+
+    To install Mage (Golang make-like build tool):
+
+    ```bash
+    git clone https://github.com/magefile/mage $GOPATH/src/github.com/magefile/mage
+    cd $GOPATH/src/github.com/magefile/mage
+    git checkout tags/v1.12.1 # Specified in go.mod
+    go run bootstrap.go
+    ```
+
+    A `mage` executable should now be in `$GOPATH/bin/`.
+
+3. Build the Typescript frontend using LTS Node (>= v14) and Yarn
+
+    ```bash
+    yarn install --pure-lockfile # Install dependencies into node_modules
+    yarn build
+    ```
+
+    This will build and the frontend files in `dist/`
+
+    To install Yarn: `npm install --global yarn`
+
+
+5. For development versions, simply copy the files to the Grafana server plugin directory
 
     ```bash
     mkdir /var/lib/grafana/plugins/dataset
+    # copy files from dist/ into /var/lib/grafana/plugins/dataset
     ```
 
-3. Copy the contents of the Dataset plugin into grafana:
+    Note that this is an unsigned plugin, and you must update your `grafana.ini` file to allow it adding the following line:
 
-    Stable version:
+   ```bash
+   allow_loading_unsigned_plugins = sentinelone-dataset-datasource
+   ```
 
-    ```bash
-    tar -xvf scalyr_grafana_plugin_51057f6.tar.gz
-    cp -rf dist/ /var/lib/grafana/plugins/scalyr/
-    ```
-
-    Development version:
-
-    ```bash
-    cp -r scalyr-grafana-datasource/dist/ /var/lib/grafana/plugins/scalyr/
-    ```
-
-4. Adding plugins requires a restart of your grafana server.
+6. Adding plugins requires a restart of your grafana server.
 
     For init.d based services you can use the command:
 
@@ -104,26 +120,44 @@ from GitHub. Switch to branch `go-rewrite-v2`
     ```bash
     systemctl restart grafana-server
     ```
+
+### Package and sign the plugin
+
+To sign and package the plugin for distribution:
+
+```bash
+export GRAFANA_API_KEY=<YOUR_API_KEY>
+npx @grafana/toolkit plugin:sign # This creates dist/MANIFEST.txt
+
+cp -r dist sentinelone-dataset-datasource
+zip -r sentinelone-dataset-datasource-$(jq -r .info.version sentinelone-dataset-datasource/plugin.json).zip sentinelone-dataset-datasource
+rm -rf sentinelone-dataset-datasource # Cleanup
+```
+
+References
+- https://grafana.com/docs/grafana/latest/developers/plugins/package-a-plugin/
+- https://grafana.com/docs/grafana/latest/developers/plugins/sign-a-plugin/
+
 ### Verify the Plugin was Installed
 
 1. In order to verify proper installation you must log in to your grafana instance
    and navigate to **Configuration Settings -> Data Sources**.
 
-    ![ConfigDataSource](https://github.com/scalyr/scalyr-grafana-datasource-plugin/blob/go-rewrite-v2/src/img/ConfigDataSource.png)
+    ![ConfigDataSource](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/go-rewrite-v2/src/img/ConfigDataSource.png)
 
 2. This will take you into the configuration page. If you already have other data
    sources installed, you will see them show up here. Click on the **Add data source** button:
 
-    ![DatasetConfig](https://github.com/scalyr/scalyr-grafana-datasource-plugin/blob/go-rewrite-v2/src/img/DatasetConfig.png)
+    ![DatasetConfig](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/go-rewrite-v2/src/img/DatasetConfig.png)
 
 3. If you enter "Dataset" in the search bar on the resulting page you should see "Dataset" grafana plugin show up as an option.
 
-    ![SearchForPlugin](https://github.com/scalyr/scalyr-grafana-datasource-plugin/blob/go-rewrite-v2/src/img/SearchForPlugin.png)
+    ![SearchForPlugin](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/go-rewrite-v2/src/img/SearchForPlugin.png)
 
 4. Click on ***“Select”***. This will take you to a configuration page where you
    insert your API key mentioned in the prerequisite section.
 
-    ![PluginConfig](https://github.com/scalyr/scalyr-grafana-datasource-plugin/blob/go-rewrite-v2/src/img/PluginConfig.png)
+    ![PluginConfig](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/go-rewrite-v2/src/img/PluginConfig.png)
 
 5. Enter these settings:
 
@@ -141,17 +175,17 @@ using Scalyr data.
 
 1. Create a new dashboard by click Create > dashboard
 
-    ![CreateDashboard](https://github.com/scalyr/scalyr-grafana-datasource-plugin/blob/go-rewrite-v2/src/img/CreateDashboard.png)
+    ![CreateDashboard](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/go-rewrite-v2/src/img/CreateDashboard.png)
 
 2. In the **“New dashboard”** box, select the **“Add a new panel** icon
 
 3. From the Data source dropdown, select **"Dataset"**.
 
-    ![DataSetPlugin](https://github.com/scalyr/scalyr-grafana-datasource-plugin/blob/go-rewrite-v2/src/img/DatasetPlugin.png)
+    ![DataSetPlugin](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/go-rewrite-v2/src/img/DatasetPlugin.png)
 
 4. A 'Query Type' field allows to choose the type of query you wanted to search for
 
-    ![QueryType](https://github.com/scalyr/scalyr-grafana-datasource-plugin/blob/go-rewrite-v2/src/img/QueryType.png)
+    ![QueryType](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/go-rewrite-v2/src/img/QueryType.png)
 
 5. 'Standard Query' - A standard query allows to search on Graph view, 
     You can enter Graph Functions into the expression box and visualize the results. You can even enter and visualize Complex Expressions
@@ -160,13 +194,13 @@ using Scalyr data.
     Enter expression and click the save button. In the image below, we've added a query to graph visualized the 
     number of log messages that contain the word "error"
 
-     ![StandardQuery](https://github.com/scalyr/scalyr-grafana-datasource-plugin/blob/go-rewrite-v2/src/img/StandardQuery.png)
+     ![StandardQuery](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/go-rewrite-v2/src/img/StandardQuery.png)
 
 6. 'Power Query' - Works similar to PQ search in Dataset app. You can enter rich set of commands for transforming
     and manipulating data. Data can be viewed in Table format
     Visit [this documentation](https://app.scalyr.com/help/power-queries) for more information on building Power Queries
 
-     ![PowerQuery](https://github.com/scalyr/scalyr-grafana-datasource-plugin/blob/go-rewrite-v2/src/img/PowerQuery.png)
+     ![PowerQuery](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/go-rewrite-v2/src/img/PowerQuery.png)
 
 You’ve successfully installed, configured and created a graph in Grafana using Dataset data!
 

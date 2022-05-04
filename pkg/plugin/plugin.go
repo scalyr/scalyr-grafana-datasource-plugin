@@ -153,7 +153,7 @@ func displayPlotData(result *LRQResult, response backend.DataResponse) backend.D
 
 	response.Error = json.Unmarshal(result.Data, &resultData)
 	if response.Error != nil {
-		log.DefaultLogger.Warn("error unmarshaling response from DataSet", "err", response.Error)
+		log.DefaultLogger.Error("error unmarshaling response from DataSet", "err", response.Error)
 		return response
 	}
 	if len(resultData.Plots) < 1 {
@@ -302,11 +302,5 @@ func (d *DataSetDatasource) CheckHealth(_ context.Context, req *backend.CheckHea
 	return &backend.CheckHealthResult{
 		Status:  backend.HealthStatusOk,
 		Message: "Successfully connected to DataSet",
-	}, nil
-}
-
-func (d *DataSetDatasource) CollectMetrics(_ context.Context, req *backend.CollectMetricsRequest) (*backend.CollectMetricsResult, error) {
-	return &backend.CollectMetricsResult{
-		PrometheusMetrics: []byte{},
 	}, nil
 }
