@@ -34,7 +34,7 @@ can find documentation on API Keys [here](https://www.scalyr.com/help/api#scalyr
 
    ```bash
    grafana-cli --pluginUrl \
-   https://github.com/scalyr/scalyr-grafana-datasource-plugin/releases/download/3.0.0/sentinelone-dataset-datasource.zip \
+   https://github.com/scalyr/scalyr-grafana-datasource-plugin/releases/download/3.0.1/sentinelone-dataset-datasource.zip \
    plugins install sentinelone-dataset-datasource
    ```
 
