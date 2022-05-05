@@ -3,9 +3,9 @@ package plugin
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math"
-	"strconv"
 	"strings"
 	"time"
 
@@ -15,29 +15,11 @@ import (
 	"github.com/grafana/grafana-plugin-sdk-go/data"
 )
 
-// Make sure the datasource implements required interfaces. This is important to do
-// since otherwise we will only get a not implemented error response from plugin in
-// runtime. We implement backend.QueryDataHandler,
-// backend.CheckHealthHandler interfaces. Plugin should not
-// implement all these interfaces - only those which are required for a particular task.
-// For example if plugin does not need streaming functionality then you are free to remove
-// methods that implement backend.StreamHandler. Implementing instancemgmt.InstanceDisposer
-// is useful to clean up resources used by previous datasource instance when a new datasource
-// instance created upon datasource settings changed.
-var (
-	_ backend.QueryDataHandler      = (*DataSetDatasource)(nil)
-	_ backend.CheckHealthHandler    = (*DataSetDatasource)(nil)
-	_ backend.CallResourceHandler   = (*DataSetDatasource)(nil)
-	_ instancemgmt.InstanceDisposer = (*DataSetDatasource)(nil)
-)
-
 func NewDataSetDatasource(settings backend.DataSourceInstanceSettings) (instancemgmt.Instance, error) {
-	type jsonData struct {
+	var unsecure struct {
 		ScalyrUrl string `json:"scalyrUrl"`
 	}
-	var unsecure jsonData
-	err := json.Unmarshal(settings.JSONData, &unsecure)
-	if err != nil {
+	if err := json.Unmarshal(settings.JSONData, &unsecure); err != nil {
 		return nil, err
 	}
 	url := unsecure.ScalyrUrl
@@ -45,10 +27,13 @@ func NewDataSetDatasource(settings backend.DataSourceInstanceSettings) (instance
 		url = url[:len(url)-1]
 	}
 
-	secure := settings.DecryptedSecureJSONData
+	apiKey, ok := settings.DecryptedSecureJSONData["apiKey"]
+	if !ok {
+		return nil, errors.New("apiKey not found")
+	}
 
 	return &DataSetDatasource{
-		dataSetClient: NewDataSetClient(url, secure["apiKey"]),
+		dataSetClient: NewDataSetClient(url, apiKey),
 	}, nil
 }
 
@@ -92,20 +77,24 @@ type queryModel struct {
 }
 
 func (d *DataSetDatasource) query(_ context.Context, pCtx backend.PluginContext, query backend.DataQuery) backend.DataResponse {
+	response := backend.DataResponse{}
+
 	// Unmarshal the JSON into our queryModel.
 	var qm queryModel
-	response := backend.DataResponse{}
+
 	response.Error = json.Unmarshal(query.JSON, &qm)
 	if response.Error != nil {
 		return response
 	}
-	buckets := int64(float64(query.TimeRange.To.Unix()-query.TimeRange.From.Unix()) / (query.Interval.Seconds()))
+
+	buckets := int64(query.TimeRange.Duration().Seconds() / query.Interval.Seconds())
 	if buckets > 5000 {
 		buckets = 5000
 	}
 	if buckets < 1 {
 		buckets = 1
 	}
+
 	var request LRQRequest
 	if qm.QueryType == "Power Query" {
 		request = LRQRequest{
@@ -146,7 +135,12 @@ func (d *DataSetDatasource) query(_ context.Context, pCtx backend.PluginContext,
 		}
 	}
 
-	result, _ := d.dataSetClient.DoLRQRequest(request)
+	var result *LRQResult
+	result, response.Error = d.dataSetClient.DoLRQRequest(request)
+	if response.Error != nil {
+		return response
+	}
+
 	if qm.QueryType == "Power Query" {
 		return displayPQData(result, response)
 	} else {
@@ -154,19 +148,18 @@ func (d *DataSetDatasource) query(_ context.Context, pCtx backend.PluginContext,
 	}
 }
 
-func displayPlotData(result LRQResult, response backend.DataResponse) backend.DataResponse {
+func displayPlotData(result *LRQResult, response backend.DataResponse) backend.DataResponse {
 	resultData := PlotResultData{}
-	err := json.Unmarshal(result.Data, &resultData)
 
-	if err != nil {
-		log.DefaultLogger.Warn("error unmarshaling response from DataSet", "err", err)
+	response.Error = json.Unmarshal(result.Data, &resultData)
+	if response.Error != nil {
+		log.DefaultLogger.Error("error unmarshaling response from DataSet", "err", response.Error)
 		return response
 	}
 	if len(resultData.Plots) < 1 {
-		// No usable data
 		return response
 	}
-	// create data frame response.
+
 	frame := data.NewFrame("response")
 
 	for i, plot := range resultData.Plots {
@@ -180,59 +173,63 @@ func displayPlotData(result LRQResult, response backend.DataResponse) backend.Da
 		)
 		for pIdx, point := range plot.Samples {
 			if i == 0 {
-				times := time.Unix((resultData.XAxis[pIdx])/1000, 0)
-				frame.Set(i, pIdx, times)
+				sec := resultData.XAxis[pIdx] / 1000
+				nsec := (resultData.XAxis[pIdx] % 1000) * 1000000
+				frame.Set(i, pIdx, time.Unix(sec, nsec))
 			}
 			frame.Set(i+1, pIdx, point)
 		}
 	}
 
-	// add the frames to the response.
 	response.Frames = append(response.Frames, frame)
 	return response
 }
 
-func displayPQData(result LRQResult, response backend.DataResponse) backend.DataResponse {
+func displayPQData(result *LRQResult, response backend.DataResponse) backend.DataResponse {
 	resultData := TableResultData{}
-	err := json.Unmarshal(result.Data, &resultData)
-	if err != nil {
+
+	response.Error = json.Unmarshal(result.Data, &resultData)
+	if response.Error != nil {
 		return response
 	}
 	if len(resultData.Values) < 1 {
 		return response
 	}
+
 	frame := data.NewFrame("response")
+
 	// Iterate over the data to modify the result into dataframe acceptable format
 	for idx, col := range resultData.Columns {
-		switch cellType := col.Type; {
-		case cellType == TIMESTAMP:
+		if cellType := col.Type; cellType == TIMESTAMP {
 			res := make([]time.Time, len(resultData.Values))
 			for i, val := range resultData.Values {
-				timeInInt := int64(val[idx].(float64))
-				res[i] = time.Unix(timeInInt/1000000000, 0) // convert nanoseconds to Time.time format
-			}
-			frame.Fields = append(frame.Fields,
-				data.NewField(col.Name, nil, res),
-			)
-			break
-		case cellType == PERCENTAGE:
-			res := make([]string, len(resultData.Values))
-			for i, val := range resultData.Values {
-				if w, ok := val[idx].(int); ok {
-					res[i] = strconv.FormatInt(int64(w), 10) + "%"
+				if w, ok := val[idx].(float64); ok {
+					sec := int64(w / 1000000000)
+					nsec := int64(math.Mod(w, 1000000000))
+					res[i] = time.Unix(sec, nsec)
 				}
 			}
 			frame.Fields = append(frame.Fields,
 				data.NewField(col.Name, nil, res),
 			)
-			break
-		case cellType == NUMBER && col.DecimalPlaces > 0:
+		} else if cellType == PERCENTAGE {
+			res := make([]string, len(resultData.Values))
+			for i, val := range resultData.Values {
+				if w, ok := val[idx].(int); ok {
+					res[i] = fmt.Sprintf("%d%%", w)
+				}
+			}
+			frame.Fields = append(frame.Fields,
+				data.NewField(col.Name, nil, res),
+			)
+		} else if cellType == NUMBER && col.DecimalPlaces > 0 {
 			res := make([]float64, len(resultData.Values))
 			for i, val := range resultData.Values {
 				switch val[idx].(type) {
 				case float32:
 					res[i] = float64(val[idx].(float32))
-					break
+				case float64:
+					res[i] = val[idx].(float64)
 				case string:
 					if val[idx] == "Infinity" {
 						res[i] = math.Inf(1)
@@ -241,57 +238,36 @@ func displayPQData(result LRQResult, response backend.DataResponse) backend.Data
 					} else if val[idx] == "NaN" {
 						res[i] = math.NaN()
 					}
-					break
-				default:
-					res[i] = val[idx].(float64)
 				}
 			}
 			frame.Fields = append(frame.Fields,
 				data.NewField(col.Name, nil, res),
 			)
-			break
-		case cellType == NUMBER && col.DecimalPlaces <= 0:
+		} else if cellType == NUMBER && col.DecimalPlaces <= 0 {
 			res := make([]int64, len(resultData.Values))
 			for i, val := range resultData.Values {
 				switch val[idx].(type) {
 				case int:
 					res[i] = int64(val[idx].(int))
-					break
 				case int16:
 					res[i] = int64(val[idx].(int16))
-					break
 				case int32:
 					res[i] = int64(val[idx].(int32))
-					break
+				case int64:
+					res[i] = val[idx].(int64)
 				case float32:
 					res[i] = int64(val[idx].(float32))
-					break
 				case float64:
 					res[i] = int64(val[idx].(float64))
-					break
-				default:
-					res[i] = val[idx].(int64)
 				}
 			}
 			frame.Fields = append(frame.Fields,
 				data.NewField(col.Name, nil, res),
 			)
-			break
-		default:
+		} else {
 			res := make([]string, len(resultData.Values))
 			for i, val := range resultData.Values {
-				switch val[idx].(type) {
-				case string:
-					res[i] = val[idx].(string)
-					break
-				case bool:
-					if w, ok := val[idx].(bool); ok {
-						res[i] = strconv.FormatBool(w)
-					}
-					break
-				default:
-
-				}
+				res[i] = fmt.Sprintf("%v", val[idx])
 			}
 			frame.Fields = append(frame.Fields,
 				data.NewField(col.Name, nil, res),
@@ -307,12 +283,14 @@ func displayPQData(result LRQResult, response backend.DataResponse) backend.Data
 // datasource configuration page which allows users to verify that
 // a datasource is working as expected.
 func (d *DataSetDatasource) CheckHealth(_ context.Context, req *backend.CheckHealthRequest) (*backend.CheckHealthResult, error) {
-	request := FacetRequest{
+	statusCode, err := d.dataSetClient.DoFacetRequest(FacetRequest{
 		QueryType: "facet",
 		MaxCount:  1,
 		Field:     "test",
+	})
+	if err != nil {
+		return nil, err
 	}
-	statusCode := d.dataSetClient.DoFacetRequest(request)
 
 	if statusCode != 200 {
 		return &backend.CheckHealthResult{
@@ -324,12 +302,5 @@ func (d *DataSetDatasource) CheckHealth(_ context.Context, req *backend.CheckHea
 	return &backend.CheckHealthResult{
 		Status:  backend.HealthStatusOk,
 		Message: "Successfully connected to DataSet",
-	}, nil
-}
-
-func (d *DataSetDatasource) CollectMetrics(_ context.Context, req *backend.CollectMetricsRequest) (*backend.CollectMetricsResult, error) {
-	var prometheusMetrics []byte
-	return &backend.CollectMetricsResult{
-		PrometheusMetrics: prometheusMetrics,
 	}, nil
 }

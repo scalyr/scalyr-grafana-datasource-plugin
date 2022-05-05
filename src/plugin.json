@@ -11,7 +11,7 @@
   "info": {
     "description": "Scalyr Observability Platform",
     "author": {
-      "name": "Yan Shnayder",
+      "name": "DataSet",
       "url": "https://www.dataset.com/"
     },
     "keywords": ["database"],
@@ -22,11 +22,11 @@
     "links": [
       {
         "name": "Website",
-        "url": "https://github.com/grafana/grafana-starter-datasource-backend"
+        "url": "https://github.com/scalyr/scalyr-grafana-datasource-plugin"
       },
       {
         "name": "License",
-        "url": "https://github.com/grafana/grafana-starter-datasource-backend/blob/master/LICENSE"
+        "url": "https://github.com/scalyr/scalyr-grafana-datasource-plugin/blob/master/LICENSE"
       }
     ],
     "screenshots": [
@@ -43,8 +43,8 @@
         "path": "img/DatasetConfig.png"
       }
     ],
-    "version": "1.0.0",
-    "updated": "2022-02-16"
+    "version": "3.0.1",
+    "updated": "2022-05-04"
   },
   "dependencies": {
     "grafanaDependency": ">=7.0.0",

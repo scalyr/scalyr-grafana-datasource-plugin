@@ -1,4 +1,4 @@
-module github.com/grafana/grafana-starter-datasource-backend
+module github.com/scalyr/scalyr-grafana-datasource-plugin
 
 go 1.16
 
