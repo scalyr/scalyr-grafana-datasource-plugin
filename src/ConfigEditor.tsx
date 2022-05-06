@@ -59,7 +59,7 @@ export class ConfigEditor extends PureComponent<Props, State> {
               isConfigured={(secureJsonFields && secureJsonFields.apiKey) as boolean}
               value={secureJsonData.apiKey || ''}
               label="Dataset API Key"
-              placeholder="secure json field (backend only)"
+              placeholder="Scalyr Read Log API Key"
               labelWidth={8}
               inputWidth={20}
               onReset={this.onResetAPIKey}
