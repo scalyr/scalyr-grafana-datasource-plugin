@@ -295,7 +295,7 @@ func (d *DataSetDatasource) CheckHealth(_ context.Context, req *backend.CheckHea
 	if statusCode != 200 {
 		return &backend.CheckHealthResult{
 			Status:  backend.HealthStatusError,
-			Message: fmt.Sprintf("DataSet returned response code %d", statusCode),
+			Message: fmt.Sprintf("Failed to connect to DataSet, please inspect the Grafana server log for details"),
 		}, nil
 	}
 
