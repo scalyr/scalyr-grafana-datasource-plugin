@@ -2,7 +2,7 @@
 
 ## 3.0.3
 
-Minor client fix and set Grafana dependency to &lt;=8.3.0.
+Minor client fix and set Grafana dependency to &gt;=8.3.0.
 
 ## 3.0.2
 
