@@ -54,11 +54,9 @@ func (d *DataSetClient) doPingRequest(req interface{}) (*LRQResult, error) {
 	request.Header.Set("Authorization", "Bearer "+d.apiKey)
 	request.Header.Set("Content-Type", "application/json")
 
-	var responseBody LRQResult
-	stepsComplete, stepsTotal := 0, 1
-
-	// Repeat ping requests for our query until we get a result with all steps steps complete
-	for stepsComplete < stepsTotal {
+	// Repeat ping requests until all steps are complete
+	var respBody LRQResult
+	for {
 		resp, err := d.netClient.Do(request)
 		if err != nil {
 			if e, ok := err.(*url.Error); ok && e.Timeout() {
@@ -69,23 +67,26 @@ func (d *DataSetClient) doPingRequest(req interface{}) (*LRQResult, error) {
 			}
 		}
 
-		responseBytes, err := io.ReadAll(resp.Body)
+		respBytes, err := io.ReadAll(resp.Body)
 		resp.Body.Close()
 		if err != nil {
 			log.DefaultLogger.Error("error reading response from DataSet", "err", err)
 			return nil, err
 		}
 
-		if err = json.Unmarshal(responseBytes, &responseBody); err != nil {
-			log.DefaultLogger.Error(" error unmarshaling response from DataSet", "err", err)
+		if err = json.Unmarshal(respBytes, &respBody); err != nil {
+			log.DefaultLogger.Error("error unmarshaling response from DataSet", "err", err)
 			return nil, err
 		}
 
-		stepsTotal = responseBody.StepsTotal
-		stepsComplete = responseBody.StepsCompleted
+		if respBody.StepsCompleted >= respBody.StepsTotal {
+			break
+		}
 
-		// Build next ping request (which we might not use)
-		url := fmt.Sprintf("%s/v2/api/queries/%s?lastStepSeen=%d", d.dataSetUrl, responseBody.Id, responseBody.StepsCompleted)
+		time.Sleep(100 * time.Millisecond)
+
+		// Build next ping request
+		url := fmt.Sprintf("%s/v2/api/queries/%s?lastStepSeen=%d", d.dataSetUrl, respBody.Id, respBody.StepsCompleted)
 		request, err = http.NewRequest("GET", url, nil)
 		if err != nil {
 			log.DefaultLogger.Error("error constructing request to DataSet", "err", err)
@@ -95,7 +96,7 @@ func (d *DataSetClient) doPingRequest(req interface{}) (*LRQResult, error) {
 		request.Header.Set("Content-Type", "application/json")
 	}
 
-	return &responseBody, nil
+	return &respBody, nil
 }
 
 func (d *DataSetClient) DoLRQRequest(req LRQRequest) (*LRQResult, error) {
@@ -132,12 +133,12 @@ func (d *DataSetClient) DoFacetRequest(req FacetRequest) (int, error) {
 	}
 	defer resp.Body.Close()
 
-	responseBytes, err := io.ReadAll(resp.Body)
+	respBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.DefaultLogger.Error("error reading response from DataSet", "err", err)
 		return 0, err
 	}
-	log.DefaultLogger.Info("Result of request to facet", "body", string(responseBytes))
+	log.DefaultLogger.Info("Result of request to facet", "body", string(respBytes))
 
 	return resp.StatusCode, nil
 }
