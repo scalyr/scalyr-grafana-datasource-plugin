@@ -138,7 +138,7 @@ func (d *DataSetClient) DoFacetRequest(req FacetRequest) (int, error) {
 		log.DefaultLogger.Error("error reading response from DataSet", "err", err)
 		return 0, err
 	}
-	log.DefaultLogger.Info("Result of request to facet", "body", string(respBytes))
+	log.DefaultLogger.Debug("Result of request to facet", "body", string(respBytes))
 
 	return resp.StatusCode, nil
 }
