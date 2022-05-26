@@ -5,7 +5,6 @@ and dashboards in Grafana using data in Dataset. You may want to use this plugin
 to allow you to visualize Dataset data next to other data sources, for instance
 when you want to monitor many feeds on a single dashboard.
 
-<!-- TODO When the go-rewrite-v2 branch gets merged into master, change these urls -->
 ![SystemDashboard](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/go-rewrite-v2/src/img/SystemDashboard.png)
 
 With the Dataset plugin, you will be able to create and visualize your log-based
@@ -62,10 +61,10 @@ afterwards.
 
 5. Enter these settings:
 
-    |Field Name | Value|
+    | Field Name | Value |
     | --- | --- |
-    |Dataset API Key | Your Scalyr Read Logs API Key|
-    |Dataset URL | `https://www.scalyr.com` or `https://eu.scalyr.com` for EU users.|
+    | Dataset API Key | Your Scalyr Read Logs API Key |
+    | Dataset URL | `https://app.scalyr.com` or `https://app.eu.scalyr.com` for EU users. |
 
 6. Click **Save & Test** to verify these settings are correct.
 

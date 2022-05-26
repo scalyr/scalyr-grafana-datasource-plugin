@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.4
+
+- Minor README.md fixes
+- Minor default server url fix
+
 ## 3.0.3
 
 Minor client fix and set Grafana dependency to &gt;=8.3.0.
