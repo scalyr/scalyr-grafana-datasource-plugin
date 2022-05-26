@@ -4,6 +4,7 @@
 
 - Minor README.md fixes
 - Minor default server url fix
+- Support breakdown graphs with empty standard queries
 
 ## 3.0.3
 
