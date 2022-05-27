@@ -107,6 +107,13 @@ func (d *DataSetDatasource) query(_ context.Context, pCtx backend.PluginContext,
 			},
 		}
 	} else {
+		// The breakdown facet from the query may be null or the empty string.
+		// Avoid having the DataSet LRQ api attempt to treat the empty string as facet.
+		var breakdownFacet *string
+		if qm.BreakDownFacetValue != nil && len(*qm.BreakDownFacetValue) > 0 {
+			breakdownFacet = qm.BreakDownFacetValue
+		}
+
 		request = LRQRequest{
 			QueryType: PLOT,
 			StartTime: query.TimeRange.From.Unix(),
@@ -116,7 +123,7 @@ func (d *DataSetDatasource) query(_ context.Context, pCtx backend.PluginContext,
 				Slices:         buckets,
 				Frequency:      HIGH,
 				AutoAlign:      true,
-				BreakdownFacet: qm.BreakDownFacetValue,
+				BreakdownFacet: breakdownFacet,
 			},
 		}
 	}
