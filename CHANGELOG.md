@@ -4,6 +4,8 @@
 
 - Minor README.md fixes
 - Minor default server url fix
+- Support breakdown graphs with empty standard queries
+- Removed an unnecessary hardcoded field in top-facet requests
 
 ## 3.0.3
 

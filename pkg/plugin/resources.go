@@ -64,7 +64,6 @@ func (d *DataSetDatasource) CallResource(ctx context.Context, req *backend.CallR
 			TopFacet: &TopFacetOptions{
 				NumFacetsToReturn: 100,
 				DetermineNumeric:  true,
-				Filter:            "tag",
 			},
 		}
 		result, err := d.dataSetClient.DoTopFacetRequest(request)
