@@ -82,19 +82,13 @@ jobs:
           plugincheck sentinelone-dataset-datasource-${{ steps.version.outputs.version }}.zip
       - name: Generate changelog
         run: awk '/^## / {s++} s==1 {print} s==2 {exit}' CHANGELOG.md > RELEASE_CHANGELOG.md
-# FIXME STOPPED Untested
-# FIXME Also generate / upload a checksum file
-#      - uses: softprops/action-gh-release@v1
-#        with:
-#          body_path: RELEASE_CHANGELOG.md
-#          files: |
-#            sentinelone-dataset-datasource-${{ steps.version.outputs.version }}.zip
-#            SHA256SUMS
-#          token: ${{ secrets.GITHUB_TOKEN }}
-          
-#
-#      - name: Publish to Grafana.com
-#        run: |
-#          echo A draft release has been created for your plugin. Please review and publish it. Then submit your plugin to grafana.com/plugins by opening a PR to https://github.com/grafana/grafana-plugin-repository with the following entry:
-#          echo
-#          echo '{ "id": "${{ steps.metadata.outputs.plugin-id }}", "type": "${{ steps.metadata.outputs.plugin-type }}", "url": "https://github.com/${{ github.repository }}", "versions": [ { "version": "${{ steps.metadata.outputs.plugin-version }}", "commit": "${{ github.sha }}", "url": "https://github.com/${{ github.repository }}", "download": { "any": { "url": "https://github.com/${{ github.repository }}/releases/download/v${{ steps.metadata.outputs.plugin-version }}/${{ steps.metadata.outputs.archive }}", "md5": "${{ steps.package-plugin.outputs.checksum }}" } } } ] }' | jq .
+      # TODO Untested
+      #- uses: softprops/action-gh-release@v1
+      #  with:
+      #    draft: true
+      #    body_path: RELEASE_CHANGELOG.md
+      #    files: |
+      #      sentinelone-dataset-datasource-${{ steps.version.outputs.version }}.zip
+      #      SHA256SUMS
+      #    token: ${{ secrets.GITHUB_TOKEN }}
+      # TODO Consider automating the grafana.com publish process here
