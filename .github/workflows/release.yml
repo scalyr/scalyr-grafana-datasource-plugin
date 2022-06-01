@@ -54,54 +54,25 @@ jobs:
         run: npx @grafana/toolkit plugin:sign
         env:
           GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }}
-      - name: Get plugin version
-        id: plugin-version
+      - name: Get version
+        id: version
         run: |
           import json
           version = json.load(open('dist/plugin.json'))['info']['version']
           print(f'::set-output name=version::{version}')
         shell: python
+      - name: Compare version and Github tag
+        run: |
+          [ "${{ steps.version.outputs.version }}" = "${GITHUB_REF#refs/tags/}" ] || { echo 'plugin version and github tag mismatch'; exit 1; }
       - name: Package plugin
         run: |
           mv dist sentinelone-dataset-datasource
-          zip -r sentinelone-dataset-datasource-${{ steps.plugin-version.outputs.version }}.zip sentinelone-dataset-datasource
+          zip -r sentinelone-dataset-datasource-${{ steps.version.outputs.version }}.zip sentinelone-dataset-datasource
+      - name: Read changelog
+        run: awk '/^## / {s++} s==1 {print}' CHANGELOG.md > release_changelog.md
 # FIXME STOPPED
       - run: ls -l
-#      - name: Get plugin metadata
-#        id: metadata
-#        run: |
-#          sudo apt-get install jq
-#
-#          export GRAFANA_PLUGIN_ID=$(cat dist/plugin.json | jq -r .id)
-#          export GRAFANA_PLUGIN_VERSION=$(cat dist/plugin.json | jq -r .info.version)
-#          export GRAFANA_PLUGIN_TYPE=$(cat dist/plugin.json | jq -r .type)
-#          export GRAFANA_PLUGIN_ARTIFACT=${GRAFANA_PLUGIN_ID}-${GRAFANA_PLUGIN_VERSION}.zip
-#          export GRAFANA_PLUGIN_ARTIFACT_CHECKSUM=${GRAFANA_PLUGIN_ARTIFACT}.md5
-#
-#          echo "::set-output name=plugin-id::${GRAFANA_PLUGIN_ID}"
-#          echo "::set-output name=plugin-version::${GRAFANA_PLUGIN_VERSION}"
-#          echo "::set-output name=plugin-type::${GRAFANA_PLUGIN_TYPE}"
-#          echo "::set-output name=archive::${GRAFANA_PLUGIN_ARTIFACT}"
-#          echo "::set-output name=archive-checksum::${GRAFANA_PLUGIN_ARTIFACT_CHECKSUM}"
-#
-#          echo ::set-output name=github-tag::${GITHUB_REF#refs/*/}
-#
-#      - name: Read changelog
-#        id: changelog
-#        run: |
-#          awk '/^## / {s++} s == 1 {print}' CHANGELOG.md > release_notes.md
-#          echo "::set-output name=path::release_notes.md"
-#
-#      - name: Check package version
-#        run: if [ "v${{ steps.metadata.outputs.plugin-version }}" != "${{ steps.metadata.outputs.github-tag }}" ]; then printf "\033[0;31mPlugin version doesn't match tag name\033[0m\n"; exit 1; fi
-#
-#      - name: Package plugin
-#        id: package-plugin
-#        run: |
-#          mv dist ${{ steps.metadata.outputs.plugin-id }}
-#          zip ${{ steps.metadata.outputs.archive }} ${{ steps.metadata.outputs.plugin-id }} -r
-#          md5sum ${{ steps.metadata.outputs.archive }} > ${{ steps.metadata.outputs.archive-checksum }}
-#          echo "::set-output name=checksum::$(cat ./${{ steps.metadata.outputs.archive-checksum }} | cut -d' ' -f1)"
+      - run: cat release_changelog.md
 #
 #      - name: Lint plugin
 #        run: |
