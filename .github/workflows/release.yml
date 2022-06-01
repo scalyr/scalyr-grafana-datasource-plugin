@@ -69,6 +69,7 @@ jobs:
         run: |
           mv dist sentinelone-dataset-datasource
           zip -r sentinelone-dataset-datasource-${{ steps.version.outputs.version }}.zip sentinelone-dataset-datasource
+          sha256sum sentinelone-dataset-datasource-${{ steps.version.outputs.version }}.zip >SHA256SUMS
       - name: Validate plugin
         run: |
           # Avoid a git clone within another checkout
@@ -79,45 +80,18 @@ jobs:
           popd
           popd
           plugincheck sentinelone-dataset-datasource-${{ steps.version.outputs.version }}.zip
-      - name: Read changelog
-        run: awk '/^## / {s++} s==1 {print} s==2 {exit}' CHANGELOG.md > release_changelog.md
-# FIXME STOPPED
-      - run: ls -l
-      - run: cat release_changelog.md
-#
-#
-#      - name: Create release
-#        id: create_release
-#        uses: actions/create-release@v1
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate changelog
+        run: awk '/^## / {s++} s==1 {print} s==2 {exit}' CHANGELOG.md > RELEASE_CHANGELOG.md
+# FIXME STOPPED Untested
+# FIXME Also generate / upload a checksum file
+#      - uses: softprops/action-gh-release@v1
 #        with:
-#          tag_name: ${{ github.ref }}
-#          release_name: Release ${{ github.ref }}
-#          body_path: ${{ steps.changelog.outputs.path }}
-#          draft: true
-#
-#      - name: Add plugin to release
-#        id: upload-plugin-asset
-#        uses: actions/upload-release-asset@v1
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        with:
-#          upload_url: ${{ steps.create_release.outputs.upload_url }}
-#          asset_path: ./${{ steps.metadata.outputs.archive }}
-#          asset_name: ${{ steps.metadata.outputs.archive }}
-#          asset_content_type: application/zip
-#
-#      - name: Add checksum to release
-#        id: upload-checksum-asset
-#        uses: actions/upload-release-asset@v1
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        with:
-#          upload_url: ${{ steps.create_release.outputs.upload_url }}
-#          asset_path: ./${{ steps.metadata.outputs.archive-checksum }}
-#          asset_name: ${{ steps.metadata.outputs.archive-checksum }}
-#          asset_content_type: text/plain
+#          body_path: RELEASE_CHANGELOG.md
+#          files: |
+#            sentinelone-dataset-datasource-${{ steps.version.outputs.version }}.zip
+#            SHA256SUMS
+#          token: ${{ secrets.GITHUB_TOKEN }}
+          
 #
 #      - name: Publish to Grafana.com
 #        run: |
