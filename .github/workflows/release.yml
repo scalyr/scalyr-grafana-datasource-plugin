@@ -54,6 +54,14 @@ jobs:
         run: npx @grafana/toolkit plugin:sign
         env:
           GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }}
+      - name: Get plugin version
+        id: plugin-version
+        run: |
+          import json
+          version = json.load(open('dist/plugin.json'))['info']['version']
+          print(version)
+          print(f'::set-output name=version::{version}')
+        shell: python
 # FIXME STOPPED
       - run: ls -l
       - run: ls -l dist
