@@ -59,10 +59,10 @@ jobs:
         run: |
           import json
           version = json.load(open('dist/plugin.json'))['info']['version']
-          print(version)
           print(f'::set-output name=version::{version}')
         shell: python
 # FIXME STOPPED
+      - run: echo ${{ plugin-version.outputs.version }}
       - run: ls -l
       - run: ls -l dist
 #      - name: Get plugin metadata
