@@ -69,20 +69,19 @@ jobs:
         run: |
           mv dist sentinelone-dataset-datasource
           zip -r sentinelone-dataset-datasource-${{ steps.version.outputs.version }}.zip sentinelone-dataset-datasource
+      - name: Validate plugin
+        run: |
+          git clone https://github.com/grafana/plugin-validator
+          pushd plugin-validator/pkg/cmd/plugincheck
+          go install
+          popd
+          plugincheck sentinelone-dataset-datasource-${{ steps.version.outputs.version }}.zip
       - name: Read changelog
         run: awk '/^## / {s++} s==1 {print}' CHANGELOG.md > release_changelog.md
 # FIXME STOPPED
-      - run: echo $GITHUB_REF
       - run: ls -l
       - run: cat release_changelog.md
 #
-#      - name: Lint plugin
-#        run: |
-#          git clone https://github.com/grafana/plugin-validator
-#          pushd ./plugin-validator/pkg/cmd/plugincheck
-#          go install
-#          popd
-#          plugincheck ${{ steps.metadata.outputs.archive }}
 #
 #      - name: Create release
 #        id: create_release
