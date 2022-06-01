@@ -77,7 +77,7 @@ jobs:
           popd
           plugincheck sentinelone-dataset-datasource-${{ steps.version.outputs.version }}.zip
       - name: Read changelog
-        run: awk '/^## / {s++} s==1 {print}' CHANGELOG.md > release_changelog.md
+        run: awk '/^## / {s++} s==1 {print} s==2 {exit}' CHANGELOG.md > release_changelog.md
 # FIXME STOPPED
       - run: ls -l
       - run: cat release_changelog.md
