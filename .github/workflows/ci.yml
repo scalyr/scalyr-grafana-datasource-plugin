@@ -9,7 +9,7 @@ on: push
 #    branches:
 #      - master
 jobs:
-  build:
+  frontend:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -28,29 +28,32 @@ jobs:
             ${{ runner.os }}-yarn-
       # Not recommened to cache node_modules
       # Ref: https://github.com/actions/cache/blob/main/examples.md#node---npm
-      - name: Install frontend dependencies
+      - name: Install dependencies
         run: yarn install --frozen-lockfile
-      - name: Build and test frontend
+      - name: Build and test
         run: yarn build
-      - uses: actions/setup-go@v3
-        with:
-          go-version: "1.16"
-      # Ref: https://github.com/actions/cache/blob/main/examples.md#linux-1
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-      - name: Test backend tests and generate coverage report
-        uses: magefile/mage-action@v2
-        with:
-          version: latest
-          args: coverage
-      - name: Build backend
-        uses: magefile/mage-action@v2
-        with:
-          version: latest
-          args: buildAll
+    backend:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v2
+        - uses: actions/setup-go@v3
+          with:
+            go-version: "1.16"
+        # Ref: https://github.com/actions/cache/blob/main/examples.md#linux-1
+        - uses: actions/cache@v3
+          with:
+            path: |
+              ~/.cache/go-build
+              ~/go/pkg/mod
+            key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+            restore-keys: |
+              ${{ runner.os }}-go-
+        - name: Run tests and generate coverage report
+          uses: magefile/mage-action@v2
+          with:
+            version: latest
+            args: coverage
+        - uses: magefile/mage-action@v2
+          with:
+            version: latest
+            args: buildAll
