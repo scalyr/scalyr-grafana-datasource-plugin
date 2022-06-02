@@ -1,10 +1,8 @@
 name: Release
-# FIXME
-#on:
-#  push:
-#    tags:
-#      - [0-9]+.[0-9]+.[0-9]+
-on: push
+on:
+  push:
+    tags:
+      - [0-9]+.[0-9]+.[0-9]+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -61,10 +59,9 @@ jobs:
           version = json.load(open('dist/plugin.json'))['info']['version']
           print(f'::set-output name=version::{version}')
         shell: python
-      # FIXME
-      #- name: Compare version and Github tag
-      #  run: |
-      #    [ "${{ steps.version.outputs.version }}" = "${GITHUB_REF#refs/tags/}" ] || { echo 'plugin version and github tag mismatch'; exit 1; }
+      - name: Compare version and Github tag
+        run: |
+          [ "${{ steps.version.outputs.version }}" = "${GITHUB_REF#refs/tags/}" ] || { echo 'plugin version and github tag mismatch'; exit 1; }
       - name: Package plugin
         run: |
           mv dist sentinelone-dataset-datasource
@@ -82,13 +79,11 @@ jobs:
           plugincheck sentinelone-dataset-datasource-${{ steps.version.outputs.version }}.zip
       - name: Generate changelog
         run: awk '/^## / {s++} s==1 {print} s==2 {exit}' CHANGELOG.md > RELEASE_CHANGELOG.md
-      # TODO Untested
-      #- uses: softprops/action-gh-release@v1
-      #  with:
-      #    draft: true
-      #    body_path: RELEASE_CHANGELOG.md
-      #    files: |
-      #      sentinelone-dataset-datasource-${{ steps.version.outputs.version }}.zip
-      #      SHA256SUMS
-      #    token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          body_path: RELEASE_CHANGELOG.md
+          files: |
+            sentinelone-dataset-datasource-${{ steps.version.outputs.version }}.zip
+            SHA256SUMS
       # TODO Consider automating the grafana.com publish process here
