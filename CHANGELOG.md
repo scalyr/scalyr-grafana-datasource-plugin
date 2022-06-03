@@ -7,6 +7,7 @@
 - Support breakdown graphs with empty standard queries
 - Removed an unnecessary hardcoded field in top-facet requests
 - Minor change to support Grafana 8.2.x
+- Support for future LRQ api change
 
 ## 3.0.3
 
