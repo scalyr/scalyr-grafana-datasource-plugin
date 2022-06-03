@@ -49,7 +49,7 @@ func (d *DataSetClient) doPingRequest(req interface{}) (*LRQResult, error) {
 	// - When complete send a DELETE request to clean up resources
 	//   - If the token is present in the initial POST request response, include it in this request as well
 
-	const TOKEN_HEADER = "X-Query-Token"
+	const TOKEN_HEADER = "X-Dataset-Query-Forward-Tag"
 
 	body, err := json.Marshal(req)
 	if err != nil {
