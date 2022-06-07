@@ -8,7 +8,7 @@ and dashboards in Grafana using data in Dataset. You may want to use this plugin
 to allow you to visualize Dataset data next to other data sources, for instance
 when you want to monitor many feeds on a single dashboard.
 
-![SystemDashboard](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/go-rewrite-v2/src/img/SystemDashboard.png)
+![SystemDashboard](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/master/src/img/SystemDashboard.png)
 
 With the Dataset plugin, you will be able to create and visualize your log-based
 metrics along side all of your other data sources. It's a great way to have a
@@ -44,23 +44,23 @@ afterwards.
 1. Log in to your grafana instance and navigate to **Configuration Settings ->
    Data sources**.
 
-    ![ConfigDataSource](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/go-rewrite-v2/src/img/ConfigDataSource.png)
+    ![ConfigDataSource](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/master/src/img/ConfigDataSource.png)
 
 2. This will take you into the configuration page. If you already have other
    data sources installed, you will see them show up here. Click on the **Add
    data source** button:
 
-    ![DatasetConfig](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/go-rewrite-v2/src/img/DatasetConfig.png)
+    ![DatasetConfig](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/master/src/img/DatasetConfig.png)
 
 3. If you enter "Dataset" in the search bar on the resulting page you should see
    "Dataset" grafana plugin show up as an option.
 
-    ![SearchForPlugin](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/go-rewrite-v2/src/img/SearchForPlugin.png)
+    ![SearchForPlugin](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/master/src/img/SearchForPlugin.png)
 
 4. Click on **Select**. This will take you to a configuration page where you
    insert your API key mentioned in the prerequisite section.
 
-    ![PluginConfig](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/go-rewrite-v2/src/img/PluginConfig.png)
+    ![PluginConfig](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/master/src/img/PluginConfig.png)
 
 5. Enter these settings:
 
@@ -79,18 +79,18 @@ dashboard using Scalyr data.
 
 1. Create a new dashboard by click **Create -> Dashboard**.
 
-    ![CreateDashboard](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/go-rewrite-v2/src/img/CreateDashboard.png)
+    ![CreateDashboard](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/master/src/img/CreateDashboard.png)
 
 2. In the **New dashboard** box, select the **Add a new panel** icon.
 
 3. From the Data source dropdown, select **Dataset**.
 
-    ![DataSetPlugin](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/go-rewrite-v2/src/img/DatasetPlugin.png)
+    ![DataSetPlugin](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/master/src/img/DatasetPlugin.png)
 
 4. A **Query Type** field allows to choose the type of query you wanted to
    search for.
 
-    ![QueryType](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/go-rewrite-v2/src/img/QueryType.png)
+    ![QueryType](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/master/src/img/QueryType.png)
 
 5. **Standard Query** - A standard query allows to search on Graph view. You can
    enter graph functions into the expression box and visualize the results. You
@@ -102,7 +102,7 @@ dashboard using Scalyr data.
    added a query to graph the number of log messages that contain the word
    "error".
 
-     ![StandardQuery](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/go-rewrite-v2/src/img/StandardQuery.png)
+     ![StandardQuery](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/master/src/img/StandardQuery.png)
 
 6. **Power Query** - Works similar to PQ search in Dataset app. You can enter
    rich set of commands for transforming and manipulating data. Data can be
@@ -110,7 +110,7 @@ dashboard using Scalyr data.
    [this page](https://app.scalyr.com/help/power-queries) for more information
    on building Power Queries.
 
-     ![PowerQuery](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/go-rewrite-v2/src/img/PowerQuery.png)
+     ![PowerQuery](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/master/src/img/PowerQuery.png)
 
 You’ve successfully installed, configured and created a graph in Grafana using
 Dataset data!
