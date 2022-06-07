@@ -1,0 +1,89 @@
+name: Release
+on:
+  push:
+    tags:
+      - [0-9]+.[0-9]+.[0-9]+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2.1.5
+        with:
+          node-version: "16.x"
+      # Ref: https://github.com/actions/cache/blob/main/examples.md#node---yarn
+      - name: Get yarn cache path
+        id: yarn-cache-path
+        run: echo "::set-output name=path::$(yarn cache dir)"
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.yarn-cache-path.outputs.path }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      # Not recommened to cache node_modules
+      # Ref: https://github.com/actions/cache/blob/main/examples.md#node---npm
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Build and test
+        run: yarn build
+      - uses: actions/setup-go@v3
+        with:
+          go-version: "1.16"
+      # Ref: https://github.com/actions/cache/blob/main/examples.md#linux-1
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: Run tests and generate coverage report
+        uses: magefile/mage-action@v2
+        with:
+          version: latest
+          args: coverage
+      - uses: magefile/mage-action@v2
+        with:
+          version: latest
+          args: buildAll
+      - name: Sign plugin
+        run: npx @grafana/toolkit plugin:sign
+        env:
+          GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }}
+      - name: Get version
+        id: version
+        run: |
+          import json
+          version = json.load(open('dist/plugin.json'))['info']['version']
+          print(f'::set-output name=version::{version}')
+        shell: python
+      - name: Compare version and Github tag
+        run: |
+          [ "${{ steps.version.outputs.version }}" = "${GITHUB_REF#refs/tags/}" ] || { echo 'plugin version and github tag mismatch'; exit 1; }
+      - name: Package plugin
+        run: |
+          mv dist sentinelone-dataset-datasource
+          zip -r sentinelone-dataset-datasource-${{ steps.version.outputs.version }}.zip sentinelone-dataset-datasource
+          sha256sum sentinelone-dataset-datasource-${{ steps.version.outputs.version }}.zip >SHA256SUMS
+      - name: Validate plugin
+        run: |
+          # Avoid a git clone within another checkout
+          pushd ~
+          git clone https://github.com/grafana/plugin-validator
+          pushd plugin-validator/pkg/cmd/plugincheck
+          go install
+          popd
+          popd
+          plugincheck sentinelone-dataset-datasource-${{ steps.version.outputs.version }}.zip
+      - name: Generate changelog
+        run: awk '/^## / {s++} s==1 {print} s==2 {exit}' CHANGELOG.md > RELEASE_CHANGELOG.md
+      - uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          body_path: RELEASE_CHANGELOG.md
+          files: |
+            sentinelone-dataset-datasource-${{ steps.version.outputs.version }}.zip
+            SHA256SUMS
+      # TODO Consider automating the grafana.com publish process here

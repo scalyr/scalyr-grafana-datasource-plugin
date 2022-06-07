@@ -1,45 +1,53 @@
 {
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/master/docs/sources/developers/plugins/plugin.schema.json",
   "type": "datasource",
+  "name": "Dataset",
+  "id": "sentinelone-dataset-datasource",
   "metrics": true,
+  "backend": true,
+  "alerting": true,
   "annotations": true,
-  "category": "logging",
-  "name": "Scalyr",
-  "id": "scalyr-datasource",
+  "executable": "gpx_scalyr-grafana-datasource-plugin",
   "info": {
-    "version": "2.3.7",
     "description": "Scalyr Observability Platform",
     "author": {
-      "name": "Scalyr",
-      "url": "https://www.scalyr.com"
+      "name": "DataSet",
+      "url": "https://www.dataset.com/"
     },
+    "keywords": ["database"],
     "logos": {
-      "small": "img/scalyr.svg",
-      "large": "img/scalyr.svg"
-    }
+      "small": "img/logo.png",
+      "large": "img/logo.png"
+    },
+    "links": [
+      {
+        "name": "Website",
+        "url": "https://github.com/scalyr/scalyr-grafana-datasource-plugin"
+      },
+      {
+        "name": "License",
+        "url": "https://github.com/scalyr/scalyr-grafana-datasource-plugin/blob/master/LICENSE"
+      }
+    ],
+    "screenshots": [
+      {
+      "name": "CreateDashboard",
+      "path": "img/CreateDashboard.png"
+      },
+      {
+        "name": "ConfigDataSource",
+        "path": "img/ConfigDataSource.png"
+      },
+      {
+        "name": "DatasetConfig",
+        "path": "img/DatasetConfig.png"
+      }
+    ],
+    "version": "3.0.4",
+    "updated": "2022-06-02"
   },
   "dependencies": {
-    "grafanaVersion": ">=6.3.7"
-  },
-  "routes": [
-    {
-      "path": "timeSeriesApi",
-      "method": "POST",
-      "url": "{{.JsonData.scalyrUrl}}/api/timeseriesQuery"
-    },
-    {
-      "path": "facetQuery",
-      "method": "POST",
-      "url": "{{.JsonData.scalyrUrl}}/api/facetQuery"
-    },
-    {
-      "path": "powerQuery",
-      "method": "POST",
-      "url": "{{.JsonData.scalyrUrl}}/api/powerQuery"
-    },
-    {
-      "path": "query",
-      "method": "POST",
-      "url": "{{.JsonData.scalyrUrl}}/api/query"
-    }
-  ]
+    "grafanaDependency": ">=8.2.0",
+    "plugins": []
+  }
 }

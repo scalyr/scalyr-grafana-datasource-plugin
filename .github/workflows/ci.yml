@@ -1,0 +1,57 @@
+name: CI
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2.1.5
+        with:
+          node-version: "16.x"
+      # Ref: https://github.com/actions/cache/blob/main/examples.md#node---yarn
+      - name: Get yarn cache path
+        id: yarn-cache-path
+        run: echo "::set-output name=path::$(yarn cache dir)"
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.yarn-cache-path.outputs.path }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      # Not recommened to cache node_modules
+      # Ref: https://github.com/actions/cache/blob/main/examples.md#node---npm
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Build and test
+        run: yarn build
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v3
+        with:
+          go-version: "1.16"
+      # Ref: https://github.com/actions/cache/blob/main/examples.md#linux-1
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: Run tests and generate coverage report
+        uses: magefile/mage-action@v2
+        with:
+          version: latest
+          args: coverage
+      - uses: magefile/mage-action@v2
+        with:
+          version: latest
+          args: buildAll
