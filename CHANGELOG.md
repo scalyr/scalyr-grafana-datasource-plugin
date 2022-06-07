@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.5
+
+- Update yarn dependency @grafana/toolkit to 8.5.0
+
 ## 3.0.4
 
 - Minor README.md fixes

@@ -1,6 +1,6 @@
 {
   "name": "sentinelone-scalyr-grafana-datasource-plugin",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "description": "Scalyr Observability Platform",
   "scripts": {
     "build": "grafana-toolkit plugin:build",
@@ -15,7 +15,7 @@
   "devDependencies": {
     "@grafana/data": "latest",
     "@grafana/runtime": "latest",
-    "@grafana/toolkit": "^8.3.6",
+    "@grafana/toolkit": "^8.5.0",
     "@grafana/ui": "latest",
     "@types/lodash": "latest"
   },
