@@ -62,7 +62,7 @@ jobs:
           assert version == json.load(open('package.json'))['version']
           version2 = None
           for line in open('pkg/plugin/client.go'):
-              match = re.search('VERSION\s*=\s*"(\d+\.\d+\.\d+)", line)
+              match = re.search('VERSION\s*=\s*"(\d+\.\d+\.\d+)"', line)
               if match:
                  version2 = match.group(1)
                  break
