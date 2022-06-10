@@ -39,6 +39,24 @@ func NewDataSetClient(dataSetUrl string, apiKey string) *DataSetClient {
 	}
 }
 
+func (d *DataSetClient) newRequest(method, url string, body io.Reader) (*http.Request, error) {
+	const VERSION = "3.0.5"
+
+	request, err := http.NewRequest(method, url, body)
+	if err != nil {
+		log.DefaultLogger.Error("error constructing request to DataSet", "err", err)
+		return nil, err
+	}
+
+	// An alternative approach is to wrap http.Client.Transport
+	// However RoundTrip should not modify the request (ref: go doc net/http.RoundTripper)
+	request.Header.Set("Authorization", "Bearer " + d.apiKey)
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("User-Agent", "sentinelone-dataset-datasource/" + VERSION)
+
+	return request, nil
+}
+
 func (d *DataSetClient) doPingRequest(req interface{}) (*LRQResult, error) {
 	// Long-Running Query (LRQ) api usage:
 	// - An initial POST request is made containing the standard/power query
@@ -57,13 +75,11 @@ func (d *DataSetClient) doPingRequest(req interface{}) (*LRQResult, error) {
 		return nil, err
 	}
 
-	request, err := http.NewRequest("POST", d.dataSetUrl+"/v2/api/queries", bytes.NewBuffer(body))
+	request, err := d.newRequest("POST", d.dataSetUrl + "/v2/api/queries", bytes.NewBuffer(body))
 	if err != nil {
 		log.DefaultLogger.Error("error constructing request to DataSet", "err", err)
 		return nil, err
 	}
-	request.Header.Set("Authorization", "Bearer "+d.apiKey)
-	request.Header.Set("Content-Type", "application/json")
 
 	var respBody LRQResult
 	var token string
@@ -102,25 +118,21 @@ func (d *DataSetClient) doPingRequest(req interface{}) (*LRQResult, error) {
 		time.Sleep(100 * time.Millisecond)
 
 		u := fmt.Sprintf("%s/v2/api/queries/%s?lastStepSeen=%d", d.dataSetUrl, respBody.Id, respBody.StepsCompleted)
-		request, err = http.NewRequest("GET", u, nil)
+		request, err = d.newRequest("GET", u, nil)
 		if err != nil {
 			log.DefaultLogger.Error("error constructing request to DataSet", "err", err)
 			return nil, err
 		}
-		request.Header.Set("Authorization", "Bearer "+d.apiKey)
-		request.Header.Set("Content-Type", "application/json")
 		if token != "" {
 			request.Header.Set(TOKEN_HEADER, token)
 		}
 	}
 
 	u := fmt.Sprintf("%s/v2/api/queries/%s", d.dataSetUrl, respBody.Id)
-	request, err = http.NewRequest("DELETE", u, nil)
+	request, err = d.newRequest("DELETE", u, nil)
 	if err != nil {
 		log.DefaultLogger.Warn("error constructing request to DataSet", "err", err)
 	} else {
-		request.Header.Set("Authorization", "Bearer "+d.apiKey)
-		request.Header.Set("Content-Type", "application/json")
 		if token != "" {
 			request.Header.Set(TOKEN_HEADER, token)
 		}
@@ -159,13 +171,11 @@ func (d *DataSetClient) DoFacetRequest(req FacetRequest) (int, error) {
 		return 0, err
 	}
 
-	request, err := http.NewRequest("POST", d.dataSetUrl+"/api/facetQuery", bytes.NewBuffer(body))
+	request, err := d.newRequest("POST", d.dataSetUrl + "/api/facetQuery", bytes.NewBuffer(body))
 	if err != nil {
 		log.DefaultLogger.Error("error constructing request to DataSet", "err", err)
 		return 0, err
 	}
-	request.Header.Set("Authorization", "Bearer "+d.apiKey)
-	request.Header.Set("Content-Type", "application/json")
 
 	resp, err := d.netClient.Do(request)
 	if err != nil {
