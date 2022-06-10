@@ -56,7 +56,17 @@ jobs:
         id: version
         run: |
           import json
+          import re
           version = json.load(open('dist/plugin.json'))['info']['version']
+          # Verify the other version strings match (until they can be eliminated)
+          assert version == json.load(open('package.json'))['version']
+          version2 = None
+          for line in open('pkg/plugin/client.go'):
+              match = re.search('VERSION\s*=\s*"(\d+\.\d+\.\d+)", line)
+              if match:
+                 version2 = match.group(1)
+                 break
+          assert version == version2
           print(f'::set-output name=version::{version}')
         shell: python
       - name: Compare version and Github tag

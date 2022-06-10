@@ -3,6 +3,7 @@
 ## 3.0.5
 
 - Update yarn dependency @grafana/toolkit to 8.5.0
+- Set a custom user-agent to support tracking
 
 ## 3.0.4
 
