@@ -6,6 +6,8 @@ on:
   pull_request:
     branches:
       - master
+permissions:
+  contents: read
 jobs:
   frontend:
     runs-on: ubuntu-latest
