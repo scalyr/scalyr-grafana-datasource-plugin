@@ -13,6 +13,10 @@
 #     ...
 #   }
 # }
+#
+# This script works with Grafana Cloud accounts as well, however an api key is needed.
+# It must be specified using the special username api_key (ie --creds api_key:<api-key>)
+# Ref: https://grafana.com/docs/grafana/latest/developers/http_api/auth/
 
 import requests
 
