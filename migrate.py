@@ -14,8 +14,9 @@
 #   }
 # }
 #
-# This script works with Grafana Cloud accounts as well, however an api key is needed.
-# It must be specified using the special username api_key (ie --creds api_key:<api-key>)
+# This script works with Grafana Cloud accounts however an api key is required.
+# The api key is specified along with the special username api_key, ie:
+#   ./migrate.py -g grafana.com:443 -t -c api_key:<api-key> config.json
 # Ref: https://grafana.com/docs/grafana/latest/developers/http_api/auth/
 
 import requests
@@ -37,6 +38,7 @@ if __name__ == '__main__':
     parser.add_argument('config', help='config json')
     parser.add_argument('--grafana', '-g', default='127.0.0.1:3000', help='grafana server')
     parser.add_argument('--creds', '-c', default='admin:admin', help='grafana api creds')
+    parser.add_argument('--tls', '-t', action='store_true', help='use tls?')
 
     action = parser.add_mutually_exclusive_group()
     action.add_argument('--overwrite', '-w', action='store_true', help='overwrite dashboards')
@@ -62,7 +64,7 @@ if __name__ == '__main__':
            'auth': requests.auth.HTTPBasicAuth(*args.creds.split(':')),
         'timeout': 100,
     }
-    grafana_baseurl = f'http://{args.grafana}'
+    grafana_baseurl = f'http{"s" if args.tls else ""}://{args.grafana}'
 
     #
     # Validate the datasource uid mapping
