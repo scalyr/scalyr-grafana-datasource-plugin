@@ -36,6 +36,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('config', help='config json')
+    parser.add_argument('uids', nargs='*', help='dashboard uids')
     parser.add_argument('--grafana', '-g', default='127.0.0.1:3000', help='grafana server')
     parser.add_argument('--creds', '-c', default='admin:admin', help='grafana api creds')
     parser.add_argument('--tls', '-t', action='store_true', help='use tls?')
@@ -100,6 +101,12 @@ if __name__ == '__main__':
             break
         search_params['page'] += 1
 
+    if args.uids:
+        dashboard_uids = list(set(args.uids) & set(dashboard_uids))
+        if len(dashboard_uids) == 0:
+            raise Exception('no dashboards uids found matching those specified')
+        logging.info(f'only processing the following dashboard{"s" if len(dashboard_uids) > 1 else ""}: {", ".join(dashboard_uids)}')
+
     dashboards = []
     for dashboard_uid in dashboard_uids:
         resp = requests.get(f'{grafana_baseurl}/api/dashboards/uid/{dashboard_uid}', **requests_kwargs)
@@ -124,7 +131,9 @@ if __name__ == '__main__':
         datasource['type'] = NEW_PLUGIN
         datasource['uid'] = newuid
 
+    modified_dashboards = []
     for dashboard in dashboards:
+        modified = False
         dashboard_label = f'"{dashboard["dashboard"]["title"]}" / {dashboard["dashboard"]["uid"]}'
 
         for annotation in dashboard.get('dashboard', {}).get('annotations', {}).get('list', []):
@@ -146,6 +155,8 @@ if __name__ == '__main__':
 
                 logging.info(f'updated dashboard {dashboard_label}: annotation {annotation_label}')
 
+                modified = True
+
         for panel in dashboard.get('dashboard', {}).get('panels', []):
             panel_label = (f'"{panel["title"]}"/' if panel.get('title') else '') + f'{panel["id"]}'
 
@@ -163,12 +174,11 @@ if __name__ == '__main__':
 
                     if querytype == 'Standard Query':
                         assert target.get('filter')
-                        assert target.get('function')
 
                         target.pop('copyText', None)
                         target.pop('dataLink', None)
                         filter = target.pop('filter')
-                        function = target.pop('function')
+                        function = target.pop('function', 'count')
 
                         target['queryType'] = 'Standard'
                         target['expression'] = f'{function}({filter})'
@@ -185,21 +195,26 @@ if __name__ == '__main__':
 
                     logging.info(f'updated dashboard {dashboard_label}: panel {panel_label}: target {target_label}')
 
+                modified = True
+
+        if modified:
+            modified_dashboards += [dashboard]
+
     with open('dashboards.json', 'w') as updatedfile:
-        json.dump(dashboards, updatedfile)
+        json.dump(modified_dashboards, updatedfile)
 
     #
-    # Deploy the updated dashboards
+    # Deploy the modified dashboards
     #
 
     if args.create:
-        for dashboard in dashboards:
+        for dashboard in modified_dashboards:
             dashboard['dashboard']['id'] = None
             dashboard['dashboard']['uid'] = None
             dashboard['dashboard']['title'] = 'Migrated: ' + dashboard['dashboard']['title']
 
     verb = 'created' if args.create else 'updated'
-    for dashboard in dashboards:
+    for dashboard in modified_dashboards:
         resp = requests.post(grafana_baseurl + '/api/dashboards/db', json=dashboard, **requests_kwargs)
         resp.raise_for_status()
         resp_json = resp.json()
