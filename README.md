@@ -120,27 +120,28 @@ the same graph.
 
 ## Variables
 
-For general information on Grafana variables see the
-[Grafana documentation](https://grafana.com/docs/grafana/latest/reference/templating/)
+For general information on Grafana variables see the documentation on
+[variable syntax](https://grafana.com/docs/grafana/latest/variables/syntax/) and
+[variable format options](https://grafana.com/docs/grafana/latest/variables/advanced-variable-format-options/)
 
 Queries support all Grafana variable substitution syntaxes, for example:
 
 ```bash
 $varname
-[[varname]]
-${varname:option}
+${varname}
+${varname:<format>}
 ```
 
-For multi-value variables there is a custom default substitution method, the
-values will be quoted and separated with commas, for example:
+For multi-value variables use the singlequote or doublequote formatting option:
 
 ```bash
-"value1","value2","value3"
+${varname:singlequote} => 'value1','value2','value3'
+${varname:doublequote} => "value1","value2","value3"
 ```
 
 The expected use of multi-value variables is for `in` queries, for example:
 
 ```bash
-$serverHost=($host)
+$serverHost=(${host:singlequote})
 ```
 
