@@ -4,6 +4,7 @@
 
 - Update yarn dependency @grafana/toolkit to 8.5.0
 - Set a custom user-agent to support tracking
+- Added user-specified label support (Issue #105)
 
 ## 3.0.4
 
