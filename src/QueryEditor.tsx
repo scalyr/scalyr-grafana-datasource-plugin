@@ -32,6 +32,11 @@ export function QueryEditor(props: Props): ReactElement {
     onRunQuery();
   };
 
+  const onLabelChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { onChange, query } = props;
+    onChange({ ...query, label: event.target.value });
+  };
+
   const onBlur = async () => {
     const { onRunQuery } = props;
     onRunQuery();
@@ -74,6 +79,11 @@ export function QueryEditor(props: Props): ReactElement {
             />
           </InlineField>
         )}
+      </InlineFieldRow>
+      <InlineFieldRow>
+        <InlineField label="Label" grow>
+          <Input type="text" value={query.label || ''} onChange={onLabelChange} />
+        </InlineField>
       </InlineFieldRow>
     </>
   );
