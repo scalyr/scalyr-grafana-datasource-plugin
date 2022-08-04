@@ -74,6 +74,7 @@ type queryModel struct {
 	QueryType           string  `json:"queryType"`
 	Format              string  `json:"format"`
 	BreakDownFacetValue *string `json:"breakDownFacetValue"`
+	Label               *string `json:"label"`
 }
 
 func (d *DataSetDatasource) query(_ context.Context, pCtx backend.PluginContext, query backend.DataQuery) backend.DataResponse {
@@ -137,11 +138,11 @@ func (d *DataSetDatasource) query(_ context.Context, pCtx backend.PluginContext,
 	if qm.QueryType == "Power Query" {
 		return displayPQData(result, response)
 	} else {
-		return displayPlotData(result, response)
+		return displayPlotData(qm.Label, result, response)
 	}
 }
 
-func displayPlotData(result *LRQResult, response backend.DataResponse) backend.DataResponse {
+func displayPlotData(label *string, result *LRQResult, response backend.DataResponse) backend.DataResponse {
 	resultData := PlotResultData{}
 
 	response.Error = json.Unmarshal(result.Data, &resultData)
@@ -161,9 +162,18 @@ func displayPlotData(result *LRQResult, response backend.DataResponse) backend.D
 				data.NewField("time", nil, make([]time.Time, len(resultData.XAxis))),
 			)
 		}
+
+		var panelLabel string;
+		if plot.Label != "" { // Breakdown facet
+			panelLabel = plot.Label;
+		} else if label != nil && *label != "" { // User-specified label
+			panelLabel = *label;
+		}
+
 		frame.Fields = append(frame.Fields,
-			data.NewField("", map[string]string{"app": plot.Label}, make([]float64, len(resultData.XAxis))),
+			data.NewField("", map[string]string{"app": panelLabel}, make([]float64, len(resultData.XAxis))),
 		)
+
 		for pIdx, point := range plot.Samples {
 			if i == 0 {
 				sec := resultData.XAxis[pIdx] / 1000

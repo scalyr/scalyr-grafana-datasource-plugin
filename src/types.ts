@@ -4,12 +4,14 @@ export interface MyQuery extends DataQuery {
   expression: string;
   queryType: any;
   breakDownFacetValue: string | undefined | null;
+  label: string | undefined | null;
 }
 
 export const defaultQuery: Partial<MyQuery> = {
   expression: '',
   queryType: 'Standard',
   breakDownFacetValue: '',
+  label: '',
 };
 
 export const queryTypes = [

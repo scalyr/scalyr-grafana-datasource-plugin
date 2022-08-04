@@ -1,5 +1,5 @@
 {
-  "name": "sentinelone-scalyr-grafana-datasource-plugin",
+  "name": "sentinelone-dataset-datasource",
   "version": "3.0.5",
   "description": "Scalyr Observability Platform",
   "scripts": {
