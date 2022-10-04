@@ -2,12 +2,15 @@ package plugin
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"time"
+
+	"golang.org/x/time/rate"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 )
@@ -20,27 +23,38 @@ type FacetRequest struct {
 }
 
 type DataSetClient struct {
-	dataSetUrl string
-	apiKey     string
-	netClient  *http.Client
+	dataSetUrl  string
+	apiKey      string
+	netClient   *http.Client
+	rateLimiter *rate.Limiter
 }
 
 func NewDataSetClient(dataSetUrl string, apiKey string) *DataSetClient {
 	// Consider using the backend.httpclient package provided by the Grafana SDK.
 	// This would allow a per-instance configurable timeout, rather than the hardcoded value here.
-	var netClient = &http.Client{
+	netClient := &http.Client{
 		Timeout: time.Second * 10,
 	}
 
+	// TODO Are there alternate approaches to implementing rate limits via the Grafana SDK?
+	//      Consult with Grafana support about this, potentially there's a simplier option.
+	rateLimiter := rate.NewLimiter(rate.Every(1 * time.Minute), 100) // 100 requests / minute
+
 	return &DataSetClient{
-		dataSetUrl: dataSetUrl,
-		apiKey:     apiKey,
-		netClient:  netClient,
+		dataSetUrl:  dataSetUrl,
+		apiKey:      apiKey,
+		netClient:   netClient,
+		rateLimiter: rateLimiter,
 	}
 }
 
 func (d *DataSetClient) newRequest(method, url string, body io.Reader) (*http.Request, error) {
-	const VERSION = "3.0.5"
+	const VERSION = "3.0.6"
+
+	if err := d.rateLimiter.Wait(context.Background()); err != nil {
+		log.DefaultLogger.Error("error applying rate limiter", "err", err)
+		return nil, err
+	}
 
 	request, err := http.NewRequest(method, url, body)
 	if err != nil {
@@ -83,6 +97,10 @@ func (d *DataSetClient) doPingRequest(req interface{}) (*LRQResult, error) {
 
 	var respBody LRQResult
 	var token string
+
+	delay := 250 * time.Millisecond
+	const maxDelay = 1 * time.Second
+
 	for i := 0; ; i++ {
 		resp, err := d.netClient.Do(request)
 		if err != nil {
@@ -115,7 +133,10 @@ func (d *DataSetClient) doPingRequest(req interface{}) (*LRQResult, error) {
 			token = resp.Header.Get(TOKEN_HEADER)
 		}
 
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(delay)
+		if delay < maxDelay {
+			delay *= 2
+		}
 
 		u := fmt.Sprintf("%s/v2/api/queries/%s?lastStepSeen=%d", d.dataSetUrl, respBody.Id, respBody.StepsCompleted)
 		request, err = d.newRequest("GET", u, nil)

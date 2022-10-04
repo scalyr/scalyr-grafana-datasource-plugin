@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.6
+
+DataSet api usage improvements
+
 ## 3.0.5
 
 - Update yarn dependency @grafana/toolkit to 8.5.0
