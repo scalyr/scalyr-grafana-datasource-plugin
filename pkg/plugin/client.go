@@ -83,6 +83,10 @@ func (d *DataSetClient) doPingRequest(req interface{}) (*LRQResult, error) {
 
 	const TOKEN_HEADER = "X-Dataset-Query-Forward-Tag"
 
+	isSuccessful := func(r *http.Response) bool {
+		return 200 <= r.StatusCode && r.StatusCode < 300
+	}
+
 	body, err := json.Marshal(req)
 	if err != nil {
 		log.DefaultLogger.Error("error marshalling request to DataSet", "err", err)
@@ -126,9 +130,9 @@ func (d *DataSetClient) doPingRequest(req interface{}) (*LRQResult, error) {
 			return nil, err
 		}
 
-		if !(200 <= resp.StatusCode && resp.StatusCode < 300) {
-			log.DefaultLogger.Error("non-2xx status code from DataSet request", "code", resp.StatusCode)
-			return nil, fmt.Errorf("non-2xx (%d) status code from DataSet request", resp.StatusCode)
+		if !isSuccessful(resp) {
+			log.DefaultLogger.Error("unsuccessful status code from DataSet request", "code", resp.StatusCode)
+			return nil, fmt.Errorf("unsuccessful (%d) status code from DataSet request", resp.StatusCode)
 		}
 
 		if err = json.Unmarshal(respBytes, &respBody); err != nil {
@@ -180,8 +184,8 @@ func (d *DataSetClient) doPingRequest(req interface{}) (*LRQResult, error) {
 			io.ReadAll(resp.Body)
 			resp.Body.Close()
 
-			if !(200 <= resp.StatusCode && resp.StatusCode < 300) {
-				log.DefaultLogger.Warn("non-2xx status code from DataSet delete", "code", resp.StatusCode)
+			if !isSuccessful(resp) {
+				log.DefaultLogger.Warn("unsuccessful status code from DataSet delete", "code", resp.StatusCode)
 			}
 		}
 	}
