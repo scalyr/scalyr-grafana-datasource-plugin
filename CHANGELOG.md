@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.0.6
+## 3.0.{6,7}
 
 DataSet api usage improvements
 

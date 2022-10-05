@@ -49,7 +49,7 @@ func NewDataSetClient(dataSetUrl string, apiKey string) *DataSetClient {
 }
 
 func (d *DataSetClient) newRequest(method, url string, body io.Reader) (*http.Request, error) {
-	const VERSION = "3.0.6"
+	const VERSION = "3.0.7"
 
 	if err := d.rateLimiter.Wait(context.Background()); err != nil {
 		log.DefaultLogger.Error("error applying rate limiter", "err", err)
@@ -98,10 +98,17 @@ func (d *DataSetClient) doPingRequest(req interface{}) (*LRQResult, error) {
 	var respBody LRQResult
 	var token string
 
-	delay := 250 * time.Millisecond
-	const maxDelay = 1 * time.Second
+	delay := 1 * time.Second
+	const maxDelay = 8 * time.Second
+
+	stop := time.Now().Add(45 * time.Second)
 
 	for i := 0; ; i++ {
+		if time.Now().After(stop) {
+			log.DefaultLogger.Error("DataSet session time exceeded")
+			return nil, fmt.Errorf("DataSet session time exceeded")
+		}
+
 		resp, err := d.netClient.Do(request)
 		if err != nil {
 			if e, ok := err.(*url.Error); ok && e.Timeout() {
@@ -117,6 +124,11 @@ func (d *DataSetClient) doPingRequest(req interface{}) (*LRQResult, error) {
 		if err != nil {
 			log.DefaultLogger.Error("error reading response from DataSet", "err", err)
 			return nil, err
+		}
+
+		if !(200 <= resp.StatusCode && resp.StatusCode < 300) {
+			log.DefaultLogger.Error("non-2xx status code from DataSet request", "code", resp.StatusCode)
+			return nil, fmt.Errorf("non-2xx (%d) status code from DataSet request", resp.StatusCode)
 		}
 
 		if err = json.Unmarshal(respBytes, &respBody); err != nil {
@@ -167,6 +179,11 @@ func (d *DataSetClient) doPingRequest(req interface{}) (*LRQResult, error) {
 			// Read/close the body so the client's transport can re-use a persistent tcp connection
 			io.ReadAll(resp.Body)
 			resp.Body.Close()
+
+			if !(200 <= resp.StatusCode && resp.StatusCode < 300) {
+				log.DefaultLogger.Error("non-2xx status code from DataSet delete", "code", resp.StatusCode)
+				return nil, fmt.Errorf("non-2xx (%d) status code from DataSet delete", resp.StatusCode)
+			}
 		}
 	}
 
