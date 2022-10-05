@@ -181,8 +181,7 @@ func (d *DataSetClient) doPingRequest(req interface{}) (*LRQResult, error) {
 			resp.Body.Close()
 
 			if !(200 <= resp.StatusCode && resp.StatusCode < 300) {
-				log.DefaultLogger.Error("non-2xx status code from DataSet delete", "code", resp.StatusCode)
-				return nil, fmt.Errorf("non-2xx (%d) status code from DataSet delete", resp.StatusCode)
+				log.DefaultLogger.Warn("non-2xx status code from DataSet delete", "code", resp.StatusCode)
 			}
 		}
 	}
