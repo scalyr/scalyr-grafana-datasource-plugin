@@ -53,19 +53,10 @@ func (d *DataSetDatasource) Dispose() {
 // The QueryDataResponse contains a map of RefID to the response for each query, and each response
 // contains Frames ([]*Frame).
 func (d *DataSetDatasource) QueryData(ctx context.Context, req *backend.QueryDataRequest) (*backend.QueryDataResponse, error) {
-
-	// create response struct
 	response := backend.NewQueryDataResponse()
-
-	// loop over queries and execute them individually.
 	for _, q := range req.Queries {
-		res := d.query(ctx, req.PluginContext, q)
-
-		// save the response in a hashmap
-		// based on with RefID as identifier
-		response.Responses[q.RefID] = res
+		response.Responses[q.RefID] = d.query(ctx, q)
 	}
-
 	return response, nil
 }
 
@@ -77,7 +68,7 @@ type queryModel struct {
 	Label               *string `json:"label"`
 }
 
-func (d *DataSetDatasource) query(_ context.Context, pCtx backend.PluginContext, query backend.DataQuery) backend.DataResponse {
+func (d *DataSetDatasource) query(ctx context.Context, query backend.DataQuery) backend.DataResponse {
 	response := backend.DataResponse{}
 
 	// Unmarshal the JSON into our queryModel.
@@ -130,7 +121,7 @@ func (d *DataSetDatasource) query(_ context.Context, pCtx backend.PluginContext,
 	}
 
 	var result *LRQResult
-	result, response.Error = d.dataSetClient.DoLRQRequest(request)
+	result, response.Error = d.dataSetClient.DoLRQRequest(ctx, request)
 	if response.Error != nil {
 		return response
 	}
@@ -285,8 +276,8 @@ func displayPQData(result *LRQResult, response backend.DataResponse) backend.Dat
 // The main use case for these health checks is the test button on the
 // datasource configuration page which allows users to verify that
 // a datasource is working as expected.
-func (d *DataSetDatasource) CheckHealth(_ context.Context, req *backend.CheckHealthRequest) (*backend.CheckHealthResult, error) {
-	statusCode, err := d.dataSetClient.DoFacetRequest(FacetRequest{
+func (d *DataSetDatasource) CheckHealth(ctx context.Context, req *backend.CheckHealthRequest) (*backend.CheckHealthResult, error) {
+	statusCode, err := d.dataSetClient.DoFacetRequest(ctx, FacetRequest{
 		QueryType: "facet",
 		MaxCount:  1,
 		Field:     "test",

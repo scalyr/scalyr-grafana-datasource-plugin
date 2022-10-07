@@ -29,7 +29,7 @@ func (d *DataSetDatasource) CallResource(ctx context.Context, req *backend.CallR
 				MaxValues: "100",
 			},
 		}
-		result, err := d.dataSetClient.DoFacetValuesRequest(request)
+		result, err := d.dataSetClient.DoFacetValuesRequest(ctx, request)
 		if err != nil {
 			return sender.Send(&backend.CallResourceResponse{
 				Status: http.StatusInternalServerError,
@@ -66,7 +66,7 @@ func (d *DataSetDatasource) CallResource(ctx context.Context, req *backend.CallR
 				DetermineNumeric:  true,
 			},
 		}
-		result, err := d.dataSetClient.DoTopFacetRequest(request)
+		result, err := d.dataSetClient.DoTopFacetRequest(ctx, request)
 		if err != nil {
 			return sender.Send(&backend.CallResourceResponse{
 				Status: http.StatusInternalServerError,

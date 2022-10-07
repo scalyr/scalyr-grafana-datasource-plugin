@@ -1,8 +1,9 @@
 # Changelog
 
-## 3.0.{6,7}
+## 3.0.{6-8}
 
-DataSet api usage improvements
+- DataSet api usage improvements
+- Use the Grafana server context to cancel queries if signaled
 
 ## 3.0.5
 

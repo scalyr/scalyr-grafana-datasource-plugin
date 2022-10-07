@@ -49,7 +49,7 @@ func NewDataSetClient(dataSetUrl string, apiKey string) *DataSetClient {
 }
 
 func (d *DataSetClient) newRequest(method, url string, body io.Reader) (*http.Request, error) {
-	const VERSION = "3.0.7"
+	const VERSION = "3.0.8"
 
 	if err := d.rateLimiter.Wait(context.Background()); err != nil {
 		log.DefaultLogger.Error("error applying rate limiter", "err", err)
@@ -71,7 +71,7 @@ func (d *DataSetClient) newRequest(method, url string, body io.Reader) (*http.Re
 	return request, nil
 }
 
-func (d *DataSetClient) doPingRequest(req interface{}) (*LRQResult, error) {
+func (d *DataSetClient) doPingRequest(ctx context.Context, req interface{}) (*LRQResult, error) {
 	// Long-Running Query (LRQ) api usage:
 	// - An initial POST request is made containing the standard/power query
 	// - Its response may or may not contain the results
@@ -105,14 +105,7 @@ func (d *DataSetClient) doPingRequest(req interface{}) (*LRQResult, error) {
 	delay := 1 * time.Second
 	const maxDelay = 8 * time.Second
 
-	stop := time.Now().Add(45 * time.Second)
-
 	for i := 0; ; i++ {
-		if time.Now().After(stop) {
-			log.DefaultLogger.Error("DataSet session time exceeded")
-			return nil, fmt.Errorf("DataSet session time exceeded")
-		}
-
 		resp, err := d.netClient.Do(request)
 		if err != nil {
 			if e, ok := err.(*url.Error); ok && e.Timeout() {
@@ -144,12 +137,22 @@ func (d *DataSetClient) doPingRequest(req interface{}) (*LRQResult, error) {
 			break
 		}
 
-		// Only check for the token from the initial POST launch request
+		// Only check for the token from the initial launch request
 		if i == 0 {
 			token = resp.Header.Get(TOKEN_HEADER)
 		}
 
-		time.Sleep(delay)
+		// Sleep but cancel if signaled by the Grafana server context.
+		// Cancels occur when the user navigates aways from the page (via embedded Javascript), Grafana shutdown, etc.
+		select {
+		case <- ctx.Done():
+			err := ctx.Err()
+			log.DefaultLogger.Warn("DataSet request canceled by Grafana", "err", err)
+			return nil, err
+		case <- time.After(delay):
+			// No-op
+		}
+
 		if delay < maxDelay {
 			delay *= 2
 		}
@@ -193,19 +196,19 @@ func (d *DataSetClient) doPingRequest(req interface{}) (*LRQResult, error) {
 	return &respBody, nil
 }
 
-func (d *DataSetClient) DoLRQRequest(req LRQRequest) (*LRQResult, error) {
-	return d.doPingRequest(req)
+func (d *DataSetClient) DoLRQRequest(ctx context.Context, req LRQRequest) (*LRQResult, error) {
+	return d.doPingRequest(ctx, req)
 }
 
-func (d *DataSetClient) DoFacetValuesRequest(req FacetQuery) (*LRQResult, error) {
-	return d.doPingRequest(req)
+func (d *DataSetClient) DoFacetValuesRequest(ctx context.Context, req FacetQuery) (*LRQResult, error) {
+	return d.doPingRequest(ctx, req)
 }
 
-func (d *DataSetClient) DoTopFacetRequest(req TopFacetRequest) (*LRQResult, error) {
-	return d.doPingRequest(req)
+func (d *DataSetClient) DoTopFacetRequest(ctx context.Context, req TopFacetRequest) (*LRQResult, error) {
+	return d.doPingRequest(ctx, req)
 }
 
-func (d *DataSetClient) DoFacetRequest(req FacetRequest) (int, error) {
+func (d *DataSetClient) DoFacetRequest(ctx context.Context, req FacetRequest) (int, error) {
 	body, err := json.Marshal(req)
 	if err != nil {
 		log.DefaultLogger.Error("error marshalling request to DataSet", "err", err)
