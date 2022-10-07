@@ -105,7 +105,7 @@ func (d *DataSetClient) doPingRequest(ctx context.Context, req interface{}) (*LR
 	delay := 1 * time.Second
 	const maxDelay = 8 * time.Second
 
-	for i := 0; ; i++ {
+	loop: for i := 0; ; i++ {
 		resp, err := d.netClient.Do(request)
 		if err != nil {
 			if e, ok := err.(*url.Error); ok && e.Timeout() {
@@ -133,13 +133,13 @@ func (d *DataSetClient) doPingRequest(ctx context.Context, req interface{}) (*LR
 			return nil, err
 		}
 
-		if respBody.StepsCompleted >= respBody.StepsTotal {
-			break
-		}
-
 		// Only check for the token from the initial launch request
 		if i == 0 {
 			token = resp.Header.Get(TOKEN_HEADER)
+		}
+
+		if respBody.StepsCompleted >= respBody.StepsTotal {
+			break
 		}
 
 		// Sleep but cancel if signaled by the Grafana server context.
@@ -148,7 +148,8 @@ func (d *DataSetClient) doPingRequest(ctx context.Context, req interface{}) (*LR
 		case <- ctx.Done():
 			err := ctx.Err()
 			log.DefaultLogger.Warn("DataSet request canceled by Grafana", "err", err)
-			return nil, err
+			// This is commonplace occurrence and should still send the delete to cleanup
+			break loop
 		case <- time.After(delay):
 			// No-op
 		}
