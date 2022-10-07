@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"net/url"
 	"time"
@@ -103,7 +104,8 @@ func (d *DataSetClient) doPingRequest(ctx context.Context, req interface{}) (*LR
 	var token string
 
 	delay := 1 * time.Second
-	const maxDelay = 8 * time.Second
+	const maxDelay = 2 * time.Second
+	const delayFactor = 1.2
 
 	loop: for i := 0; ; i++ {
 		resp, err := d.netClient.Do(request)
@@ -155,7 +157,10 @@ func (d *DataSetClient) doPingRequest(ctx context.Context, req interface{}) (*LR
 		}
 
 		if delay < maxDelay {
-			delay *= 2
+			delay = time.Duration(math.Round(float64(delay) * delayFactor))
+			if delay > maxDelay {
+				delay = maxDelay
+			}
 		}
 
 		u := fmt.Sprintf("%s/v2/api/queries/%s?lastStepSeen=%d", d.dataSetUrl, respBody.Id, respBody.StepsCompleted)
