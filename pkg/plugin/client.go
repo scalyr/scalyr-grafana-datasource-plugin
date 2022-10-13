@@ -34,7 +34,7 @@ func NewDataSetClient(dataSetUrl string, apiKey string) *DataSetClient {
 	// Consider using the backend.httpclient package provided by the Grafana SDK.
 	// This would allow a per-instance configurable timeout, rather than the hardcoded value here.
 	netClient := &http.Client{
-		Timeout: time.Second * 10,
+		Timeout: time.Second * 30,
 	}
 
 	// TODO Are there alternate approaches to implementing rate limits via the Grafana SDK?
