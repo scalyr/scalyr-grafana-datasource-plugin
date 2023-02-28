@@ -43,8 +43,8 @@
         "path": "img/DatasetConfig.png"
       }
     ],
-    "version": "3.0.8",
-    "updated": "2022-10-13"
+    "version": "3.0.9",
+    "updated": "2023-02-28"
   },
   "dependencies": {
     "grafanaDependency": ">=8.2.0",

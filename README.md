@@ -142,6 +142,6 @@ ${varname:doublequote} => "value1","value2","value3"
 The expected use of multi-value variables is for `in` queries, for example:
 
 ```bash
-$serverHost=(${host:singlequote})
+$serverHost in (${host:singlequote})
 ```
 
