@@ -50,7 +50,7 @@ func NewDataSetClient(dataSetUrl string, apiKey string) *DataSetClient {
 }
 
 func (d *DataSetClient) newRequest(method, url string, body io.Reader) (*http.Request, error) {
-	const VERSION = "3.0.8"
+	const VERSION = "3.0.9a"
 
 	if err := d.rateLimiter.Wait(context.Background()); err != nil {
 		log.DefaultLogger.Error("error applying rate limiter", "err", err)
@@ -88,17 +88,52 @@ func (d *DataSetClient) doPingRequest(ctx context.Context, req interface{}) (*LR
 		return 200 <= r.StatusCode && r.StatusCode < 300
 	}
 
+	var latencyInfo struct {
+		RequestBody                   string    `json:"request_body"`
+		RequestSetupLatency           float64   `json:"request_setup_latency_ms"`
+		LoopIterations                int       `json:"loop_iterations"`
+		RequestTransportLatency       []float64 `json:"request_transport_latency_ms"`
+		ResponseBodyReadLatency       []float64 `json:"response_body_read_latency_ms"`
+		ResponseBodyUnmarshalLatency  []float64 `json:"response_body_unmarshal_latency_ms"`
+		ResponseBodyStepsCompleted    []int     `json:"response_body_steps_completed"`
+		ExplicitDelays                []float64 `json:"explicit_delays_ms"`
+		NextRequestSetupLatency       []float64 `json:"next_request_setup_latency_ms"`
+		DeleteRequestSetupLatency     float64   `json:"delete_request_setup_latency_ms"`
+		DeleteRequestTransportLatency float64   `json:"delete_request_transport_latency_ms"`
+		DeleteResponseBodyReadLatency float64   `json:"delete_response_body_read_latency_ms"`
+		RequestTimedOut               bool      `json:"request_timed_out"`
+		DeleteRequestTimedOut         bool      `json:"delete_request_timed_out"`
+
+		TotalRequestTransportLatency      float64 `json:"total_request_transport_latency_ms"`
+		TotalResponseBodyReadLatency      float64 `json:"total_response_body_read_latency_ms"`
+		TotalResponseBodyUnmarshalLatency float64 `json:"total_response_body_unmarshal_latency_ms"`
+		TotalExplicitDelays               float64 `json:"total_explicit_delays_ms"`
+		TotalNextRequestSetupLatency      float64 `json:"total_next_request_setup_latency_ms"`
+	}
+	defer func() {
+		if marshalled, err := json.Marshal(latencyInfo); err != nil {
+			log.DefaultLogger.Error("error marshalling latency info", "err", err)
+		} else {
+			log.DefaultLogger.Debug("latency info", "info", string(marshalled))
+		}
+	}()
+
+	start := time.Now()
+
 	body, err := json.Marshal(req)
 	if err != nil {
 		log.DefaultLogger.Error("error marshalling request to DataSet", "err", err)
 		return nil, err
 	}
+	latencyInfo.RequestBody = string(body)
 
 	request, err := d.newRequest("POST", d.dataSetUrl + "/v2/api/queries", bytes.NewBuffer(body))
 	if err != nil {
 		log.DefaultLogger.Error("error constructing request to DataSet", "err", err)
 		return nil, err
 	}
+
+	latencyInfo.RequestSetupLatency = float64(time.Since(start) / time.Millisecond)
 
 	var respBody LRQResult
 	var token string
@@ -108,38 +143,54 @@ func (d *DataSetClient) doPingRequest(ctx context.Context, req interface{}) (*LR
 	const delayFactor = 1.2
 
 	loop: for i := 0; ; i++ {
+		latencyInfo.LoopIterations = i
+
+		start = time.Now()
 		resp, err := d.netClient.Do(request)
 		if err != nil {
 			if e, ok := err.(*url.Error); ok && e.Timeout() {
+				latencyInfo.RequestTimedOut = true
 				log.DefaultLogger.Error("request to DataSet timed out")
 				return nil, e
 			} else {
 				return nil, err
 			}
 		}
+		elapsed := float64(time.Since(start) / time.Millisecond)
+		latencyInfo.RequestTransportLatency = append(latencyInfo.RequestTransportLatency, elapsed)
+		latencyInfo.TotalRequestTransportLatency += elapsed
 
+		start = time.Now()
 		respBytes, err := io.ReadAll(resp.Body)
 		resp.Body.Close()
 		if err != nil {
 			log.DefaultLogger.Error("error reading response from DataSet", "err", err)
 			return nil, err
 		}
+		elapsed = float64(time.Since(start) / time.Millisecond)
+		latencyInfo.ResponseBodyReadLatency = append(latencyInfo.ResponseBodyReadLatency, elapsed)
+		latencyInfo.TotalResponseBodyReadLatency += elapsed
 
 		if !isSuccessful(resp) {
 			log.DefaultLogger.Error("unsuccessful status code from DataSet request", "code", resp.StatusCode)
 			return nil, fmt.Errorf("unsuccessful (%d) status code from DataSet request", resp.StatusCode)
 		}
 
+		start = time.Now()
 		if err = json.Unmarshal(respBytes, &respBody); err != nil {
 			log.DefaultLogger.Error("error unmarshaling response from DataSet", "err", err)
 			return nil, err
 		}
+		elapsed = float64(time.Since(start) / time.Millisecond)
+		latencyInfo.ResponseBodyUnmarshalLatency = append(latencyInfo.ResponseBodyUnmarshalLatency, elapsed)
+		latencyInfo.TotalResponseBodyUnmarshalLatency += elapsed
 
 		// Only check for the token from the initial launch request
 		if i == 0 {
 			token = resp.Header.Get(TOKEN_HEADER)
 		}
 
+		latencyInfo.ResponseBodyStepsCompleted = append(latencyInfo.ResponseBodyStepsCompleted, respBody.StepsCompleted)
 		if respBody.StepsCompleted >= respBody.StepsTotal {
 			break
 		}
@@ -155,6 +206,9 @@ func (d *DataSetClient) doPingRequest(ctx context.Context, req interface{}) (*LR
 		case <- time.After(delay):
 			// No-op
 		}
+		elapsed = float64(delay / time.Millisecond)
+		latencyInfo.ExplicitDelays = append(latencyInfo.ExplicitDelays, elapsed)
+		latencyInfo.TotalExplicitDelays += elapsed
 
 		if delay < maxDelay {
 			delay = time.Duration(math.Round(float64(delay) * delayFactor))
@@ -163,6 +217,7 @@ func (d *DataSetClient) doPingRequest(ctx context.Context, req interface{}) (*LR
 			}
 		}
 
+		start = time.Now()
 		u := fmt.Sprintf("%s/v2/api/queries/%s?lastStepSeen=%d", d.dataSetUrl, respBody.Id, respBody.StepsCompleted)
 		request, err = d.newRequest("GET", u, nil)
 		if err != nil {
@@ -172,8 +227,12 @@ func (d *DataSetClient) doPingRequest(ctx context.Context, req interface{}) (*LR
 		if token != "" {
 			request.Header.Set(TOKEN_HEADER, token)
 		}
+		elapsed = float64(time.Since(start) / time.Millisecond)
+		latencyInfo.NextRequestSetupLatency = append(latencyInfo.NextRequestSetupLatency, elapsed)
+		latencyInfo.TotalNextRequestSetupLatency += elapsed
 	}
 
+	start = time.Now()
 	u := fmt.Sprintf("%s/v2/api/queries/%s", d.dataSetUrl, respBody.Id)
 	request, err = d.newRequest("DELETE", u, nil)
 	if err != nil {
@@ -182,16 +241,24 @@ func (d *DataSetClient) doPingRequest(ctx context.Context, req interface{}) (*LR
 		if token != "" {
 			request.Header.Set(TOKEN_HEADER, token)
 		}
+		latencyInfo.DeleteRequestSetupLatency = float64(time.Since(start) / time.Millisecond)
+
+		start = time.Now()
 		if resp, err := d.netClient.Do(request); err != nil {
 			if e, ok := err.(*url.Error); ok && e.Timeout() {
+				latencyInfo.DeleteRequestTimedOut = true
 				log.DefaultLogger.Warn("request to DataSet timed out")
 			} else {
 				log.DefaultLogger.Warn("error sending request to DataSet", "err", err)
 			}
 		} else {
+			latencyInfo.DeleteRequestTransportLatency = float64(time.Since(start) / time.Millisecond)
+
 			// Read/close the body so the client's transport can re-use a persistent tcp connection
+			start = time.Now()
 			io.ReadAll(resp.Body)
 			resp.Body.Close()
+			latencyInfo.DeleteResponseBodyReadLatency = float64(time.Since(start) / time.Millisecond)
 
 			if !isSuccessful(resp) {
 				log.DefaultLogger.Warn("unsuccessful status code from DataSet delete", "code", resp.StatusCode)
