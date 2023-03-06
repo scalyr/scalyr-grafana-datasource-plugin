@@ -2,7 +2,7 @@
 
 ## 3.0.9
 
-- #110: Do not set autoAlign for plots to allow specification via query options
+- #110: Do not set autoAlign (formerly the default) for plots to allow specification via query options
 
 ## 3.0.{6-8}
 
