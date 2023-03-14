@@ -33,7 +33,7 @@ jobs:
         run: yarn build
       - uses: actions/setup-go@v3
         with:
-          go-version: "1.16"
+          go-version: "stable"
       # Ref: https://github.com/actions/cache/blob/main/examples.md#linux-1
       - uses: actions/cache@v3
         with:
@@ -86,12 +86,11 @@ jobs:
           # Avoid a git clone within another checkout
           pushd ~
           git clone https://github.com/grafana/plugin-validator
-          pushd plugin-validator/pkg/cmd/plugincheck
-          go mod tidy
+          pushd plugin-validator/pkg/cmd/plugincheck2
           go install
           popd
           popd
-          plugincheck sentinelone-dataset-datasource-${{ steps.version.outputs.version }}.zip
+          plugincheck2 sentinelone-dataset-datasource-${{ steps.version.outputs.version }}.zip
       - name: Generate changelog
         run: awk '/^## / {s++} s==1 {print} s==2 {exit}' CHANGELOG.md | tail -n+2 > RELEASE_CHANGELOG.md
       - uses: softprops/action-gh-release@v1
