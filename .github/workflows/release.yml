@@ -86,11 +86,12 @@ jobs:
           # Avoid a git clone within another checkout
           pushd ~
           git clone https://github.com/grafana/plugin-validator
-          pushd plugin-validator/pkg/cmd/plugincheck2
+          pushd plugin-validator/pkg/cmd/plugincheck
+          go mod tidy
           go install
           popd
           popd
-          plugincheck2 sentinelone-dataset-datasource-${{ steps.version.outputs.version }}.zip
+          plugincheck sentinelone-dataset-datasource-${{ steps.version.outputs.version }}.zip
       - name: Generate changelog
         run: awk '/^## / {s++} s==1 {print} s==2 {exit}' CHANGELOG.md | tail -n+2 > RELEASE_CHANGELOG.md
       - uses: softprops/action-gh-release@v1
