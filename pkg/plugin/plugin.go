@@ -79,14 +79,6 @@ func (d *DataSetDatasource) query(ctx context.Context, query backend.DataQuery) 
 		return response
 	}
 
-	buckets := int64(query.TimeRange.Duration().Seconds() / query.Interval.Seconds())
-	if buckets > 5000 {
-		buckets = 5000
-	}
-	if buckets < 1 {
-		buckets = 1
-	}
-
 	var request LRQRequest
 	if qm.QueryType == "Power Query" {
 		request = LRQRequest{
@@ -106,15 +98,21 @@ func (d *DataSetDatasource) query(ctx context.Context, query backend.DataQuery) 
 			breakdownFacet = qm.BreakDownFacetValue
 		}
 
+		// Setting the LRQ api's autoAlign would override the data points requested by the user (via query options).
+		// The query options support explicitly specifying data points (MaxDataPoints) or implicitly via time range and interval.
+		slices := query.MaxDataPoints
+		if slices > 10000 {
+			slices = 10000
+		}
+
 		request = LRQRequest{
 			QueryType: PLOT,
 			StartTime: query.TimeRange.From.Unix(),
 			EndTime:   query.TimeRange.To.Unix(),
 			Plot: &PlotOptions{
 				Expression:     qm.Expression,
-				Slices:         buckets,
+				Slices:         slices,
 				Frequency:      HIGH,
-				AutoAlign:      true,
 				BreakdownFacet: breakdownFacet,
 			},
 		}
