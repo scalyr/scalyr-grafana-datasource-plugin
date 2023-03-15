@@ -39,12 +39,15 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version: 'stable'
-      - name: Run tests and generate coverage report
-        uses: magefile/mage-action@v2
-        with:
-          version: latest
-          args: coverage
+      # `mage format` would reformat files
+      - name: gofmt check
+        run: test -z "$(gofmt -l pkg)"
       - uses: magefile/mage-action@v2
         with:
-          version: latest
+          args: lint
+      - uses: magefile/mage-action@v2
+        with:
+          args: test
+      - uses: magefile/mage-action@v2
+        with:
           args: buildAll
