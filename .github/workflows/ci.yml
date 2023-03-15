@@ -12,10 +12,10 @@ jobs:
   frontend:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v2.1.5
         with:
-          node-version: "16.x"
+          node-version: '16.x'
       # Ref: https://github.com/actions/cache/blob/main/examples.md#node---yarn
       - name: Get yarn cache path
         id: yarn-cache-path
@@ -35,19 +35,10 @@ jobs:
   backend:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v3
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
         with:
-          go-version: "1.16"
-      # Ref: https://github.com/actions/cache/blob/main/examples.md#linux-1
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
+          go-version: 'stable'
       - name: Run tests and generate coverage report
         uses: magefile/mage-action@v2
         with:
