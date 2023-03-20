@@ -42,7 +42,6 @@ type DataSetDatasource struct {
 // created. As soon as datasource settings change detected by SDK old datasource instance will
 // be disposed and a new one will be created using NewDataSetDatasource factory function.
 func (d *DataSetDatasource) Dispose() {
-	// Clean up datasource instance resources.
 }
 
 // QueryData handles multiple queries and returns multiple responses.

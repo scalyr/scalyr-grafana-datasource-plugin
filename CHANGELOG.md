@@ -2,7 +2,7 @@
 
 ## 3.1.0
 
-- Bumped Golang version 1.20
+- Bumped Golang version to 1.20
   - Bumped dependent packages (namely grafana-plugin-sdk-go) to latest
 
 ## 3.0.9
