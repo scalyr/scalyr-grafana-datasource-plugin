@@ -12,7 +12,7 @@ import (
 
 func TestNewDataSetDatasource(t *testing.T) {
 	settings := backend.DataSourceInstanceSettings{
-		JSONData: []byte(`{"scalyrUrl":"https://app.scalyr.com/"}`),
+		JSONData:                []byte(`{"scalyrUrl":"https://app.scalyr.com/"}`),
 		DecryptedSecureJSONData: map[string]string{"apiKey": "key"},
 	}
 	if _, err := NewDataSetDatasource(settings); err != nil {
@@ -52,7 +52,7 @@ func liveDatasource() (*DataSetDatasource, string, error) {
 	}
 
 	settings := backend.DataSourceInstanceSettings{
-		JSONData: []byte(fmt.Sprintf(`{"scalyrUrl":"%s"}`, scalyrUrl)),
+		JSONData:                []byte(fmt.Sprintf(`{"scalyrUrl":"%s"}`, scalyrUrl)),
 		DecryptedSecureJSONData: map[string]string{"apiKey": apiKey},
 	}
 	datasource, err := NewDataSetDatasource(settings)
@@ -82,7 +82,7 @@ func TestLiveQueryDataPQ(t *testing.T) {
 					RefID: refId,
 					TimeRange: backend.TimeRange{
 						From: time.Now().Add(-4 * time.Hour),
-						To: time.Now(),
+						To:   time.Now(),
 					},
 					JSON: []byte(fmt.Sprintf(`{"expression":"%s","queryType":"Power Query"}`, powerQuery)),
 				},
@@ -126,10 +126,10 @@ func TestLiveQueryDataPlot(t *testing.T) {
 					RefID: refId,
 					TimeRange: backend.TimeRange{
 						From: time.Now().Add(-4 * time.Hour),
-						To: time.Now(),
+						To:   time.Now(),
 					},
 					MaxDataPoints: 1000,
-					JSON: []byte(`{"expression":"count(severity != 3)","queryType":"Standard","breakDownFacetValue":"severity"}`),
+					JSON:          []byte(`{"expression":"count(severity != 3)","queryType":"Standard","breakDownFacetValue":"severity"}`),
 				},
 			},
 		},
