@@ -44,7 +44,6 @@ jobs:
         with:
           version: 'latest'
           working-directory: pkg
-          args: '--timeout 3m'
       - uses: magefile/mage-action@v2
         with:
           args: test
