@@ -42,9 +42,13 @@ jobs:
       # `mage format` would reformat files
       - name: gofmt check
         run: test -z "$(gofmt -l pkg)"
-      - uses: magefile/mage-action@v2
+      #- uses: magefile/mage-action@v2
+      #  with:
+      #    args: lint
+      - uses: golangci/golangci-lint-action@v3
         with:
-          args: lint
+          version: 'latest'
+          working-directory: pkg
       - uses: magefile/mage-action@v2
         with:
           args: test
