@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.0
+
+- Bumped Golang version to 1.20
+  - Bumped dependent packages (namely grafana-plugin-sdk-go) to latest
+
 ## 3.0.9
 
 - #110: Do not set autoAlign (formerly the default) for plots to allow specification via query options

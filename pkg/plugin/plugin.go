@@ -22,10 +22,7 @@ func NewDataSetDatasource(settings backend.DataSourceInstanceSettings) (instance
 	if err := json.Unmarshal(settings.JSONData, &unsecure); err != nil {
 		return nil, err
 	}
-	url := unsecure.ScalyrUrl
-	if strings.HasSuffix(url, "/") {
-		url = url[:len(url)-1]
-	}
+	url := strings.TrimSuffix(unsecure.ScalyrUrl, "/")
 
 	apiKey, ok := settings.DecryptedSecureJSONData["apiKey"]
 	if !ok {
@@ -45,7 +42,6 @@ type DataSetDatasource struct {
 // created. As soon as datasource settings change detected by SDK old datasource instance will
 // be disposed and a new one will be created using NewDataSetDatasource factory function.
 func (d *DataSetDatasource) Dispose() {
-	// Clean up datasource instance resources.
 }
 
 // QueryData handles multiple queries and returns multiple responses.
@@ -152,11 +148,11 @@ func displayPlotData(label *string, result *LRQResult, response backend.DataResp
 			)
 		}
 
-		var panelLabel string;
+		var panelLabel string
 		if plot.Label != "" { // Breakdown facet
-			panelLabel = plot.Label;
+			panelLabel = plot.Label
 		} else if label != nil && *label != "" { // User-specified label
-			panelLabel = *label;
+			panelLabel = *label
 		}
 
 		frame.Fields = append(frame.Fields,
@@ -287,7 +283,7 @@ func (d *DataSetDatasource) CheckHealth(ctx context.Context, req *backend.CheckH
 	if statusCode != 200 {
 		return &backend.CheckHealthResult{
 			Status:  backend.HealthStatusError,
-			Message: fmt.Sprintf("Failed to connect to DataSet, please inspect the Grafana server log for details"),
+			Message: "Failed to connect to DataSet, please inspect the Grafana server log for details",
 		}, nil
 	}
 

@@ -2,7 +2,7 @@ name: Release
 on:
   push:
     tags:
-      - "[0-9]+.[0-9]+.[0-9]+"
+      - '[0-9]+.[0-9]+.[0-9]+'
 permissions:
   # Write permissions required to create a release
   # Ref: https://stackoverflow.com/a/69941765
@@ -11,10 +11,10 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v2.1.5
         with:
-          node-version: "16.x"
+          node-version: '16.x'
       # Ref: https://github.com/actions/cache/blob/main/examples.md#node---yarn
       - name: Get yarn cache path
         id: yarn-cache-path
@@ -31,27 +31,25 @@ jobs:
         run: yarn install --frozen-lockfile
       - name: Build and test
         run: yarn build
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
-          go-version: "stable"
-      # Ref: https://github.com/actions/cache/blob/main/examples.md#linux-1
-      - uses: actions/cache@v3
+          go-version: 'stable'
+      # `mage format` would reformat files
+      - name: gofmt check
+        run: test -z "$(gofmt -l pkg)"
+      #- uses: magefile/mage-action@v2
+      #  with:
+      #    args: lint
+      - uses: golangci/golangci-lint-action@v3
         with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-      - name: Run tests and generate coverage report
-        uses: magefile/mage-action@v2
-        with:
-          version: latest
-          args: coverage
+          version: 'latest'
+          working-directory: pkg
       - uses: magefile/mage-action@v2
         with:
-          version: latest
-          args: buildAll
+          args: test
+      - uses: magefile/mage-action@v2
+        with:
+          args: buildall
       - name: Sign plugin
         run: npx @grafana/toolkit plugin:sign
         env:

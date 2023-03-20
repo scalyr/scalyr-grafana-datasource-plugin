@@ -39,7 +39,7 @@ func NewDataSetClient(dataSetUrl string, apiKey string) *DataSetClient {
 
 	// TODO Are there alternate approaches to implementing rate limits via the Grafana SDK?
 	//      Consult with Grafana support about this, potentially there's a simplier option.
-	rateLimiter := rate.NewLimiter(100 * rate.Every(1 * time.Minute), 100) // 100 requests / minute
+	rateLimiter := rate.NewLimiter(100*rate.Every(1*time.Minute), 100) // 100 requests / minute
 
 	return &DataSetClient{
 		dataSetUrl:  dataSetUrl,
@@ -65,9 +65,9 @@ func (d *DataSetClient) newRequest(method, url string, body io.Reader) (*http.Re
 
 	// An alternative approach is to wrap http.Client.Transport
 	// However RoundTrip should not modify the request (ref: go doc net/http.RoundTripper)
-	request.Header.Set("Authorization", "Bearer " + d.apiKey)
+	request.Header.Set("Authorization", "Bearer "+d.apiKey)
 	request.Header.Set("Content-Type", "application/json")
-	request.Header.Set("User-Agent", "sentinelone-dataset-datasource/" + VERSION)
+	request.Header.Set("User-Agent", "sentinelone-dataset-datasource/"+VERSION)
 
 	return request, nil
 }
@@ -94,7 +94,7 @@ func (d *DataSetClient) doPingRequest(ctx context.Context, req interface{}) (*LR
 		return nil, err
 	}
 
-	request, err := d.newRequest("POST", d.dataSetUrl + "/v2/api/queries", bytes.NewBuffer(body))
+	request, err := d.newRequest("POST", d.dataSetUrl+"/v2/api/queries", bytes.NewBuffer(body))
 	if err != nil {
 		log.DefaultLogger.Error("error constructing request to DataSet", "err", err)
 		return nil, err
@@ -107,7 +107,8 @@ func (d *DataSetClient) doPingRequest(ctx context.Context, req interface{}) (*LR
 	const maxDelay = 2 * time.Second
 	const delayFactor = 1.2
 
-	loop: for i := 0; ; i++ {
+loop:
+	for i := 0; ; i++ {
 		resp, err := d.netClient.Do(request)
 		if err != nil {
 			if e, ok := err.(*url.Error); ok && e.Timeout() {
@@ -147,12 +148,12 @@ func (d *DataSetClient) doPingRequest(ctx context.Context, req interface{}) (*LR
 		// Sleep but cancel if signaled by the Grafana server context.
 		// Cancels occur when the user navigates aways from the page (via embedded Javascript), Grafana shutdown, etc.
 		select {
-		case <- ctx.Done():
+		case <-ctx.Done():
 			err := ctx.Err()
 			log.DefaultLogger.Warn("DataSet request canceled by Grafana", "err", err)
 			// This is commonplace occurrence and should still send the delete to cleanup
 			break loop
-		case <- time.After(delay):
+		case <-time.After(delay):
 			// No-op
 		}
 
@@ -190,8 +191,11 @@ func (d *DataSetClient) doPingRequest(ctx context.Context, req interface{}) (*LR
 			}
 		} else {
 			// Read/close the body so the client's transport can re-use a persistent tcp connection
-			io.ReadAll(resp.Body)
+			_, err := io.ReadAll(resp.Body)
 			resp.Body.Close()
+			if err != nil {
+				log.DefaultLogger.Warn("error reading delete response from DataSet", "err", err)
+			}
 
 			if !isSuccessful(resp) {
 				log.DefaultLogger.Warn("unsuccessful status code from DataSet delete", "code", resp.StatusCode)
@@ -221,7 +225,7 @@ func (d *DataSetClient) DoFacetRequest(ctx context.Context, req FacetRequest) (i
 		return 0, err
 	}
 
-	request, err := d.newRequest("POST", d.dataSetUrl + "/api/facetQuery", bytes.NewBuffer(body))
+	request, err := d.newRequest("POST", d.dataSetUrl+"/api/facetQuery", bytes.NewBuffer(body))
 	if err != nil {
 		log.DefaultLogger.Error("error constructing request to DataSet", "err", err)
 		return 0, err
