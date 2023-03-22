@@ -12,9 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v2.1.5
+      - uses: actions/setup-node@v3
         with:
-          node-version: '16.x'
+          node-version: 'lts'
       # Ref: https://github.com/actions/cache/blob/main/examples.md#node---yarn
       - name: Get yarn cache path
         id: yarn-cache-path
@@ -25,12 +25,10 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      # Not recommened to cache node_modules
+      # Not recommended to cache node_modules
       # Ref: https://github.com/actions/cache/blob/main/examples.md#node---npm
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-      - name: Build and test
-        run: yarn build
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
       - uses: actions/setup-go@v4
         with:
           go-version: 'stable'
@@ -51,7 +49,7 @@ jobs:
         with:
           args: buildall
       - name: Sign plugin
-        run: npx @grafana/toolkit plugin:sign
+        run: yarn sign
         env:
           GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }}
       - name: Get version
