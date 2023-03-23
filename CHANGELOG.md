@@ -7,6 +7,7 @@
 - Bumped Node version to latest LTS version
   - Replaced the grafana/toolkit package with the grafana/{create,sign}-plugin packages
   - Bumped dependent package versions to latest
+- Bugfix around repeated panels with multiple-selected variables
 
 ## 3.0.9
 
