@@ -35,7 +35,7 @@ func NewDataSetDatasource(settings backend.DataSourceInstanceSettings) (instance
 }
 
 type DataSetDatasource struct {
-	dataSetClient *DataSetClient
+	dataSetClient DataSetClient
 }
 
 // Dispose here tells plugin SDK that plugin wants to clean up resources when a new instance
@@ -96,7 +96,10 @@ func (d *DataSetDatasource) query(ctx context.Context, query backend.DataQuery) 
 
 		// Setting the LRQ api's autoAlign would override the data points requested by the user (via query options).
 		// The query options support explicitly specifying data points (MaxDataPoints) or implicitly via time range and interval.
-		slices := query.MaxDataPoints
+		slices := int64(query.TimeRange.Duration() / query.Interval)
+		if slices > query.MaxDataPoints {
+			slices = query.MaxDataPoints
+		}
 		if slices > 10000 {
 			slices = 10000
 		}
