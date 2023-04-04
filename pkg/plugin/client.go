@@ -23,14 +23,21 @@ type FacetRequest struct {
 	Field string `json:"field"`
 }
 
-type DataSetClient struct {
+type DataSetClient interface {
+	DoLRQRequest(ctx context.Context, req LRQRequest) (*LRQResult, error)
+	DoFacetValuesRequest(ctx context.Context, req FacetQuery) (*LRQResult, error)
+	DoTopFacetRequest(ctx context.Context, req TopFacetRequest) (*LRQResult, error)
+	DoFacetRequest(ctx context.Context, req FacetRequest) (int, error)
+}
+
+type dataSetClient struct {
 	dataSetUrl  string
 	apiKey      string
 	netClient   *http.Client
 	rateLimiter *rate.Limiter
 }
 
-func NewDataSetClient(dataSetUrl string, apiKey string) *DataSetClient {
+func NewDataSetClient(dataSetUrl string, apiKey string) DataSetClient {
 	// Consider using the backend.httpclient package provided by the Grafana SDK.
 	// This would allow a per-instance configurable timeout, rather than the hardcoded value here.
 	netClient := &http.Client{
@@ -41,7 +48,7 @@ func NewDataSetClient(dataSetUrl string, apiKey string) *DataSetClient {
 	//      Consult with Grafana support about this, potentially there's a simplier option.
 	rateLimiter := rate.NewLimiter(100*rate.Every(1*time.Minute), 100) // 100 requests / minute
 
-	return &DataSetClient{
+	return &dataSetClient{
 		dataSetUrl:  dataSetUrl,
 		apiKey:      apiKey,
 		netClient:   netClient,
@@ -49,8 +56,8 @@ func NewDataSetClient(dataSetUrl string, apiKey string) *DataSetClient {
 	}
 }
 
-func (d *DataSetClient) newRequest(method, url string, body io.Reader) (*http.Request, error) {
-	const VERSION = "3.1.0"
+func (d *dataSetClient) newRequest(method, url string, body io.Reader) (*http.Request, error) {
+	const VERSION = "3.1.1"
 
 	if err := d.rateLimiter.Wait(context.Background()); err != nil {
 		log.DefaultLogger.Error("error applying rate limiter", "err", err)
@@ -72,7 +79,7 @@ func (d *DataSetClient) newRequest(method, url string, body io.Reader) (*http.Re
 	return request, nil
 }
 
-func (d *DataSetClient) doPingRequest(ctx context.Context, req interface{}) (*LRQResult, error) {
+func (d *dataSetClient) doPingRequest(ctx context.Context, req interface{}) (*LRQResult, error) {
 	// Long-Running Query (LRQ) api usage:
 	// - An initial POST request is made containing the standard/power query
 	// - Its response may or may not contain the results
@@ -206,19 +213,19 @@ loop:
 	return &respBody, nil
 }
 
-func (d *DataSetClient) DoLRQRequest(ctx context.Context, req LRQRequest) (*LRQResult, error) {
+func (d *dataSetClient) DoLRQRequest(ctx context.Context, req LRQRequest) (*LRQResult, error) {
 	return d.doPingRequest(ctx, req)
 }
 
-func (d *DataSetClient) DoFacetValuesRequest(ctx context.Context, req FacetQuery) (*LRQResult, error) {
+func (d *dataSetClient) DoFacetValuesRequest(ctx context.Context, req FacetQuery) (*LRQResult, error) {
 	return d.doPingRequest(ctx, req)
 }
 
-func (d *DataSetClient) DoTopFacetRequest(ctx context.Context, req TopFacetRequest) (*LRQResult, error) {
+func (d *dataSetClient) DoTopFacetRequest(ctx context.Context, req TopFacetRequest) (*LRQResult, error) {
 	return d.doPingRequest(ctx, req)
 }
 
-func (d *DataSetClient) DoFacetRequest(ctx context.Context, req FacetRequest) (int, error) {
+func (d *dataSetClient) DoFacetRequest(ctx context.Context, req FacetRequest) (int, error) {
 	body, err := json.Marshal(req)
 	if err != nil {
 		log.DefaultLogger.Error("error marshalling request to DataSet", "err", err)

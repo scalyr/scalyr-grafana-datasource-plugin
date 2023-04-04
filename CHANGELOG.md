@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.1.1
+
+- Bugfix around use of query options (max data points &amp; interval)
+
 ## 3.1.0
 
 - Bumped Golang version to 1.20

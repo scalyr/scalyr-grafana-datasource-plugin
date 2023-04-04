@@ -99,7 +99,7 @@ func TestLiveQueryDataPQ(t *testing.T) {
 
 	dataResp := resp.Responses[refId]
 	if dataResp.Error != nil {
-		t.Error(err)
+		t.Error(dataResp.Error)
 	}
 
 	fields := dataResp.Frames[0].Fields
@@ -128,6 +128,7 @@ func TestLiveQueryDataPlot(t *testing.T) {
 						From: time.Now().Add(-4 * time.Hour),
 						To:   time.Now(),
 					},
+					Interval:      1 * time.Minute,
 					MaxDataPoints: 1000,
 					JSON:          []byte(`{"expression":"count(severity != 3)","queryType":"Standard","breakDownFacetValue":"severity"}`),
 				},
@@ -144,7 +145,7 @@ func TestLiveQueryDataPlot(t *testing.T) {
 
 	dataResp := resp.Responses[refId]
 	if dataResp.Error != nil {
-		t.Error(err)
+		t.Error(dataResp.Error)
 	}
 
 	fields := dataResp.Frames[0].Fields
@@ -156,5 +157,81 @@ func TestLiveQueryDataPlot(t *testing.T) {
 		if len(field.Labels) == 0 {
 			t.Errorf("breakdown facet not used as label")
 		}
+	}
+}
+
+type dataSetClientMock struct {
+	lastLRQRequest LRQRequest
+}
+
+func (d *dataSetClientMock) DoLRQRequest(ctx context.Context, req LRQRequest) (*LRQResult, error) {
+	d.lastLRQRequest = req
+	return &LRQResult{Data: []byte("{}")}, nil
+}
+
+func (d *dataSetClientMock) DoFacetValuesRequest(ctx context.Context, req FacetQuery) (*LRQResult, error) {
+	return &LRQResult{Data: []byte("{}")}, nil
+}
+
+func (d *dataSetClientMock) DoTopFacetRequest(ctx context.Context, req TopFacetRequest) (*LRQResult, error) {
+	return &LRQResult{Data: []byte("{}")}, nil
+}
+
+func (d *dataSetClientMock) DoFacetRequest(ctx context.Context, req FacetRequest) (int, error) {
+	return 0, nil
+}
+
+func TestQueryDataOptions(t *testing.T) {
+	var clientMock dataSetClientMock
+	datasource := DataSetDatasource{dataSetClient: &clientMock}
+
+	queryDataSlices := func(interval time.Duration, maxDataPoints int64) int64 {
+		refId := "A"
+		resp, err := datasource.QueryData(
+			context.Background(),
+			&backend.QueryDataRequest{
+				Queries: []backend.DataQuery{
+					{
+						RefID: refId,
+						TimeRange: backend.TimeRange{
+							From: time.Now().Add(-4 * time.Hour),
+							To:   time.Now(),
+						},
+						Interval:      interval,
+						MaxDataPoints: maxDataPoints,
+						JSON:          []byte(`{"expression":"count(severity != 3)","queryType":"Standard"}`),
+					},
+				},
+			},
+		)
+		if err != nil {
+			t.Error(err)
+		}
+
+		if len(resp.Responses) != 1 {
+			t.Fatal("QueryData must return a response")
+		}
+
+		if err := resp.Responses[refId].Error; err != nil {
+			t.Error(err)
+		}
+
+		return clientMock.lastLRQRequest.Plot.Slices
+	}
+
+	if queryDataSlices(1*time.Minute, 1000) != 240 {
+		t.Error("unexpected slice count")
+	}
+	if queryDataSlices(15*time.Second, 1000) != 960 {
+		t.Error("unexpected slice count")
+	}
+	if queryDataSlices(10*time.Second, 1000) != 1000 {
+		t.Error("unexpected slice count")
+	}
+	if queryDataSlices(10*time.Second, 2000) != 1440 {
+		t.Error("unexpected slice count")
+	}
+	if queryDataSlices(1*time.Second, 14400) != 10000 {
+		t.Error("unexpected slice count")
 	}
 }
