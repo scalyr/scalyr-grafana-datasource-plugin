@@ -110,6 +110,10 @@ dashboard using Scalyr data.
    [this page](https://app.scalyr.com/help/power-queries) for more information
    on building Power Queries.
 
+   *Note* PowerQuery results are unsorted by default. If using a PowerQuery to
+   populate a timeseries graph, make sure to sort results by appending
+   `| sort -timestamp` to the query.
+
      ![PowerQuery](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/master/src/img/PowerQuery.png)
 
 You’ve successfully installed, configured and created a graph in Grafana using
