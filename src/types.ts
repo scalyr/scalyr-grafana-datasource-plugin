@@ -5,6 +5,7 @@ export interface MyQuery extends DataQuery {
   queryType: any;
   breakDownFacetValue: string | undefined | null;
   label: string | undefined | null;
+  accountEmails: string[] | undefined | null;
 }
 
 export const defaultQuery: Partial<MyQuery> = {

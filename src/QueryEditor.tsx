@@ -37,6 +37,11 @@ export function QueryEditor(props: Props): ReactElement {
     onChange({ ...query, label: event.target.value });
   };
 
+  const onAccountEmailsChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { onChange, query } = props;
+    onChange({ ...query, accountEmails: event.target.value.split(",") });
+  };
+
   const onBlur = async () => {
     const { onRunQuery } = props;
     onRunQuery();
@@ -83,6 +88,11 @@ export function QueryEditor(props: Props): ReactElement {
       <InlineFieldRow>
         <InlineField label="Label" grow>
           <Input type="text" value={query.label || ''} onChange={onLabelChange} />
+        </InlineField>
+      </InlineFieldRow>
+      <InlineFieldRow>
+        <InlineField label="AccountEmails" grow>
+          <Input type="text" value={(query.accountEmails || ['']).join(",")} onChange={onAccountEmailsChange} onBlur={onBlur} />
         </InlineField>
       </InlineFieldRow>
     </>
