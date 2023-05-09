@@ -70,7 +70,7 @@ export function QueryEditor(props: Props): ReactElement {
         </InlineField>
       </InlineFieldRow>
       <InlineFieldRow>
-        {query.queryType === 'Standard' && topFacets.length > 0 && (
+        {query.queryType === 'Standard' && (
           <InlineField label="Breakdown" grow>
             <Select
               options={topFacets}
