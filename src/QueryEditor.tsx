@@ -12,7 +12,8 @@ export function QueryEditor(props: Props): ReactElement {
   const { datasource } = props;
   const { loading, topFacets } = useFacetsQuery(datasource);
   const query = defaults(props.query, defaultQuery);
-  const [ accountEmails, setAccountEmails ] = useState<Array<SelectableValue<string>>>([]);
+  const [ accountEmails, setAccountEmails ] = useState<Array<SelectableValue<string>>>(
+    (query.accountEmails || []).map(v => ({label: v, value: v})));
 
   const onExpressionChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { onChange, query } = props;
