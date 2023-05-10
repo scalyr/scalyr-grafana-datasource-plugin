@@ -57,12 +57,12 @@ func (d *DataSetDatasource) QueryData(ctx context.Context, req *backend.QueryDat
 }
 
 type queryModel struct {
-	Expression          string    `json:"expression"`
-	QueryType           string    `json:"queryType"`
-	Format              string    `json:"format"`
-	BreakDownFacetValue *string   `json:"breakDownFacetValue"`
-	Label               *string   `json:"label"`
-	AccountEmails       *[]string `json:"accountEmails"`
+	Expression          string   `json:"expression"`
+	QueryType           string   `json:"queryType"`
+	Format              string   `json:"format"`
+	BreakDownFacetValue *string  `json:"breakDownFacetValue"`
+	Label               *string  `json:"label"`
+	AccountEmails       []string `json:"accountEmails"`
 }
 
 func (d *DataSetDatasource) query(ctx context.Context, query backend.DataQuery) backend.DataResponse {
@@ -118,8 +118,8 @@ func (d *DataSetDatasource) query(ctx context.Context, query backend.DataQuery) 
 		}
 	}
 
-	if qm.AccountEmails != nil && len(*qm.AccountEmails) > 0 {
-		request.AccountEmails = *qm.AccountEmails
+	if qm.AccountEmails != nil && len(qm.AccountEmails) > 0 {
+		request.AccountEmails = qm.AccountEmails
 	}
 
 	var result *LRQResult
