@@ -1,6 +1,6 @@
 import { defaults } from 'lodash';
-import React, { ChangeEvent, ReactElement } from 'react';
-import { ActionMeta, InlineField, InlineFieldRow, Input, Select, TextArea } from '@grafana/ui';
+import React, { ChangeEvent, ReactElement, useState } from 'react';
+import { ActionMeta, InlineField, InlineFieldRow, Input, Select, MultiSelect, TextArea } from '@grafana/ui';
 import { QueryEditorProps, SelectableValue } from '@grafana/data';
 import { DataSource } from './datasource';
 import { defaultQuery, MyDataSourceOptions, MyQuery, queryTypes } from './types';
@@ -12,6 +12,8 @@ export function QueryEditor(props: Props): ReactElement {
   const { datasource } = props;
   const { loading, topFacets } = useFacetsQuery(datasource);
   const query = defaults(props.query, defaultQuery);
+  const [ accountEmails, setAccountEmails ] = useState<Array<SelectableValue<string>>>(
+    (query.accountEmails || []).map(v => ({label: v, value: v})));
 
   const onExpressionChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { onChange, query } = props;
@@ -35,6 +37,13 @@ export function QueryEditor(props: Props): ReactElement {
   const onLabelChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { onChange, query } = props;
     onChange({ ...query, label: event.target.value });
+  };
+
+  const onAccountEmailsChange = (values: Array<SelectableValue<string>>, actionMeta: ActionMeta) => {
+    const { onChange, query, onRunQuery } = props;
+    setAccountEmails(values);
+    onChange({ ...query, accountEmails: values.length > 0 ? values.map((v) => {return v.value;}) : null });
+    onRunQuery();
   };
 
   const onBlur = async () => {
@@ -65,7 +74,7 @@ export function QueryEditor(props: Props): ReactElement {
         </InlineField>
       </InlineFieldRow>
       <InlineFieldRow>
-        {query.queryType === 'Standard' && topFacets.length > 0 && (
+        {query.queryType === 'Standard' && (
           <InlineField label="Breakdown" grow>
             <Select
               options={topFacets}
@@ -83,6 +92,16 @@ export function QueryEditor(props: Props): ReactElement {
       <InlineFieldRow>
         <InlineField label="Label" grow>
           <Input type="text" value={query.label || ''} onChange={onLabelChange} />
+        </InlineField>
+      </InlineFieldRow>
+      <InlineFieldRow>
+        <InlineField label="AccountEmails" grow>
+          <MultiSelect
+            value={accountEmails}
+            allowCustomValue
+            isClearable
+            onChange={onAccountEmailsChange}
+          />
         </InlineField>
       </InlineFieldRow>
     </>

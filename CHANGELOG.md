@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.1.2
+
+- Cross-team query support.
+
 ## 3.1.1
 
 - Bugfix around use of query options (max data points &amp; interval)

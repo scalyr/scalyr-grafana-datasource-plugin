@@ -116,6 +116,16 @@ dashboard using Scalyr data.
 
      ![PowerQuery](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/master/src/img/PowerQuery.png)
 
+7. **Cross Team Search** - The AccountEmails field is used to specify which
+   teams the query should be run against. Works the same as
+   [Cross Team Search](https://app.scalyr.com/help/graphs#crossTeam) in the
+   DataSet app. More information on teams can be found
+   [here](https://app.scalyr.com/help/teams). Note that the owner of the Log
+   Read API key used to setup the DataSet Datasource must be a member of all
+   teams being queried.
+
+     ![CrossTeamQuery](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/master/src/img/CrossTeamQuery.png)
+
 You’ve successfully installed, configured and created a graph in Grafana using
 Dataset data!
 
