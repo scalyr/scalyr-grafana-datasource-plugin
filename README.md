@@ -116,7 +116,7 @@ dashboard using Scalyr data.
 
      ![PowerQuery](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/master/src/img/PowerQuery.png)
 
-7. **Cross Team Search** - The AccountEmails field is used to specify which
+7. **Cross Team Search** - The Team Emails field is used to specify which
    teams the query should be run against. Works the same as
    [Cross Team Search](https://app.scalyr.com/help/graphs#crossTeam) in the
    DataSet app. More information on teams can be found

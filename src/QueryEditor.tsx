@@ -12,8 +12,8 @@ export function QueryEditor(props: Props): ReactElement {
   const { datasource } = props;
   const { loading, topFacets } = useFacetsQuery(datasource);
   const query = defaults(props.query, defaultQuery);
-  const [ accountEmails, setAccountEmails ] = useState<Array<SelectableValue<string>>>(
-    (query.accountEmails || []).map(v => ({label: v, value: v})));
+  const [ teamEmails, setTeamEmails ] = useState<Array<SelectableValue<string>>>(
+    (query.teamEmails || []).map(v => ({label: v, value: v})));
 
   const onExpressionChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { onChange, query } = props;
@@ -39,10 +39,10 @@ export function QueryEditor(props: Props): ReactElement {
     onChange({ ...query, label: event.target.value });
   };
 
-  const onAccountEmailsChange = (values: Array<SelectableValue<string>>, actionMeta: ActionMeta) => {
+  const onTeamEmailsChange = (values: Array<SelectableValue<string>>, actionMeta: ActionMeta) => {
     const { onChange, query, onRunQuery } = props;
-    setAccountEmails(values);
-    onChange({ ...query, accountEmails: values.length > 0 ? values.map((v) => {return v.value;}) : null });
+    setTeamEmails(values);
+    onChange({ ...query, teamEmails: values.length > 0 ? values.map((v) => {return v.value;}) : null });
     onRunQuery();
   };
 
@@ -95,12 +95,12 @@ export function QueryEditor(props: Props): ReactElement {
         </InlineField>
       </InlineFieldRow>
       <InlineFieldRow>
-        <InlineField label="AccountEmails" grow>
+        <InlineField label="Team Emails" grow>
           <MultiSelect
-            value={accountEmails}
+            value={teamEmails}
             allowCustomValue
             isClearable
-            onChange={onAccountEmailsChange}
+            onChange={onTeamEmailsChange}
           />
         </InlineField>
       </InlineFieldRow>

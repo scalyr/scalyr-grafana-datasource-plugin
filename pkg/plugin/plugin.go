@@ -62,7 +62,7 @@ type queryModel struct {
 	Format              string   `json:"format"`
 	BreakDownFacetValue *string  `json:"breakDownFacetValue"`
 	Label               *string  `json:"label"`
-	AccountEmails       []string `json:"accountEmails"`
+	TeamEmails          []string `json:"teamEmails"`
 }
 
 func (d *DataSetDatasource) query(ctx context.Context, query backend.DataQuery) backend.DataResponse {
@@ -118,8 +118,8 @@ func (d *DataSetDatasource) query(ctx context.Context, query backend.DataQuery) 
 		}
 	}
 
-	if qm.AccountEmails != nil && len(qm.AccountEmails) > 0 {
-		request.AccountEmails = qm.AccountEmails
+	if qm.TeamEmails != nil && len(qm.TeamEmails) > 0 {
+		request.TeamEmails = qm.TeamEmails
 	}
 
 	var result *LRQResult
