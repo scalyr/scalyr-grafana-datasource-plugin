@@ -73,16 +73,16 @@ type DistributionOptions struct {
 }
 
 type LRQRequest struct {
-	QueryType     string               `json:"queryType"`
-	StartTime     int64                `json:"startTime"`
-	EndTime       int64                `json:"endTime"`
-	AccountEmails []string             `json:"accountEmails"`
-	Log           *LogOptions          `json:"log"`
-	Facet         *FacetOptions        `json:"facetValues"`
-	TopFacet      *TopFacetOptions     `json:"topFacets"`
-	Pq            *PQOptions           `json:"pq"`
-	Plot          *PlotOptions         `json:"plot"`
-	Distribution  *DistributionOptions `json:"distribution"`
+	QueryType    string               `json:"queryType"`
+	StartTime    int64                `json:"startTime"`
+	EndTime      int64                `json:"endTime"`
+	TeamEmails   []string             `json:"teamEmails"`
+	Log          *LogOptions          `json:"log"`
+	Facet        *FacetOptions        `json:"facetValues"`
+	TopFacet     *TopFacetOptions     `json:"topFacets"`
+	Pq           *PQOptions           `json:"pq"`
+	Plot         *PlotOptions         `json:"plot"`
+	Distribution *DistributionOptions `json:"distribution"`
 }
 
 type ResolvedTimeRange struct {
