@@ -49,7 +49,6 @@ export class ConfigEditor extends PureComponent<Props, State> {
   render() {
     const { options } = this.props;
     const { jsonData, secureJsonFields } = options;
-    jsonData.scalyrUrl = jsonData.scalyrUrl || 'https://app.scalyr.com/';
     const secureJsonData = (options.secureJsonData || {}) as MySecureJsonData;
 
     return (
@@ -76,7 +75,7 @@ export class ConfigEditor extends PureComponent<Props, State> {
               labelWidth={8}
               inputWidth={20}
               onChange={this.onURLChange}
-              value={jsonData.scalyrUrl}
+              value={jsonData.scalyrUrl || 'https://app.scalyr.com/'}
               placeholder="Scalyr server URL"
             />
           </div>
