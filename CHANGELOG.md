@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.1.3
+
+- Bugfix around scalyrUrl assignment (Issue #124)
+
 ## 3.1.2
 
 - Cross-team query support.

@@ -57,7 +57,7 @@ func NewDataSetClient(dataSetUrl string, apiKey string) DataSetClient {
 }
 
 func (d *dataSetClient) newRequest(method, url string, body io.Reader) (*http.Request, error) {
-	const VERSION = "3.1.2a"
+	const VERSION = "3.1.3"
 
 	if err := d.rateLimiter.Wait(context.Background()); err != nil {
 		log.DefaultLogger.Error("error applying rate limiter", "err", err)
