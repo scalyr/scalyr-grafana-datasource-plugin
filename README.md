@@ -26,8 +26,7 @@ Grafana](https://grafana.com/docs/installation/).
 * **A Dataset read log API Key**: A Dataset API key is required for Grafana to
 pull data from Dataset. You can obtain one by going to your account in the
 Dataset product and selecting the “API Keys” from the menu in the top right
-corner. You can find documentation on API Keys
-[here](https://www.scalyr.com/help/api#scalyr-api-keys).
+corner. See the [API Keys documentation](https://app.scalyr.com/help/api#scalyr-api-keys) for more.
 
 ## Installation
 
@@ -95,8 +94,7 @@ dashboard using Scalyr data.
 5. **Standard Query** - A standard query allows to search on Graph view. You can
    enter graph functions into the expression box and visualize the results. You
    can even enter and visualize complex expressions.
-   [This](https://www.scalyr.com/help/dashboards#graphFunctions) is a good
-   resource to see the list of supported functions.
+   See the [Dashboards documentation](https://app.scalyr.com/help/dashboards#graphFunctions) for a list of supported functions.
 
    Enter an expression and click the save button. In the image below, we've
    added a query to graph the number of log messages that contain the word
@@ -106,9 +104,7 @@ dashboard using Scalyr data.
 
 6. **Power Query** - Works similar to PQ search in Dataset app. You can enter
    rich set of commands for transforming and manipulating data. Data can be
-   viewed in table format. Visit
-   [this page](https://app.scalyr.com/help/power-queries) for more information
-   on building Power Queries.
+   viewed in table format. See the [PowerQueries documentation](https://app.scalyr.com/help/power-queries) for more.
 
    *Note* PowerQuery results are unsorted by default. If using a PowerQuery to
    populate a timeseries graph, make sure to sort results by appending
@@ -119,10 +115,7 @@ dashboard using Scalyr data.
 7. **Cross Team Search** - The Team Emails field is used to specify which
    teams the query should be run against. Works the same as
    [Cross Team Search](https://app.scalyr.com/help/graphs#crossTeam) in the
-   DataSet app. More information on teams can be found
-   [here](https://app.scalyr.com/help/teams). Note that the owner of the Log
-   Read API key used to setup the DataSet Datasource must be a member of all
-   teams being queried.
+   DataSet app. See the [Teams documentation](https://app.scalyr.com/help/teams) for more on teams. Note that the owner of the Log Read API key used to setup the DataSet Datasource must be a member of all teams being queried.
 
      ![CrossTeamQuery](https://raw.githubusercontent.com/scalyr/scalyr-grafana-datasource-plugin/master/src/img/CrossTeamQuery.png)
 
