@@ -28,7 +28,7 @@ pull data from Dataset. You can obtain one by going to your account in the
 Dataset product and selecting the “API Keys” from the menu in the top right
 corner. See the [API Keys documentation](https://app.scalyr.com/help/api#scalyr-api-keys) for more.
 
-## Installation
+## Installation 
 
 Using grafana-cli: `grafana-cli plugins install sentinelone-dataset-datasource`
 
