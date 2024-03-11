@@ -32,10 +32,7 @@ corner. See the [API Keys documentation](https://app.scalyr.com/help/api#scalyr-
 
 Using grafana-cli: `grafana-cli plugins install sentinelone-dataset-datasource`
 
-Alternatively can download it
-[here](https://github.com/scalyr/scalyr-grafana-datasource-plugin/releases/latest/)
-and unzip it manually into the Grafana plugins directory (eg
-`/var/lib/grafana/plugins`).  A restart of the Grafana server is required
+Alternatively, [download the plugin](https://github.com/scalyr/scalyr-grafana-datasource-plugin/releases/latest/) and unzip it in the Grafana plugins directory (eg `/var/lib/grafana/plugins`).  A restart of the Grafana server is required
 afterwards.
 
 ## Configuration
