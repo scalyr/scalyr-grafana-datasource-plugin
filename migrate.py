@@ -178,7 +178,7 @@ if __name__ == '__main__':
                         target.pop('copyText', None)
                         target.pop('dataLink', None)
                         filter = target.pop('filter')
-                        function = target.pop('function', 'count')
+                        function = target.pop('function', 'countPerSec')
 
                         target['queryType'] = 'Standard'
                         target['expression'] = f'{function}({filter})'
