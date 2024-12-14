@@ -12,7 +12,7 @@ import (
 
 func TestNewDataSetDatasource(t *testing.T) {
 	settings := backend.DataSourceInstanceSettings{
-		JSONData:                []byte(`{"scalyrUrl":"https://app.scalyr.com/"}`),
+		JSONData:                []byte(`{"scalyrUrl":"https://app.scalyr.com"}`),
 		DecryptedSecureJSONData: map[string]string{"apiKey": "key"},
 	}
 	if _, err := NewDataSetDatasource(settings); err != nil {

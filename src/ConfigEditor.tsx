@@ -75,7 +75,7 @@ export class ConfigEditor extends PureComponent<Props, State> {
               labelWidth={8}
               inputWidth={20}
               onChange={this.onURLChange}
-              value={jsonData.scalyrUrl || 'https://app.scalyr.com/'}
+              value={jsonData.scalyrUrl || 'https://app.scalyr.com'}
               placeholder="Scalyr server URL"
             />
           </div>
