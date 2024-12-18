@@ -118,7 +118,7 @@ func (d *DataSetDatasource) query(ctx context.Context, query backend.DataQuery) 
 		}
 	}
 
-	if qm.TeamEmails != nil && len(qm.TeamEmails) > 0 {
+	if len(qm.TeamEmails) > 0 {
 		request.TeamEmails = qm.TeamEmails
 	}
 
