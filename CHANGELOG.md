@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.1.4
+
+- Healthcheck bugfix, thanks @lutzwillek-tomtom
+
 ## 3.1.3
 
 - Bugfix around scalyrUrl assignment (Issue #124)
