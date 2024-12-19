@@ -69,7 +69,7 @@ func TestLiveQueryDataPQ(t *testing.T) {
 		t.Error(err)
 	}
 	if skip != "" {
-		t.Skipf(skip)
+		t.Skip(skip)
 	}
 
 	refId := "A"
@@ -114,7 +114,7 @@ func TestLiveQueryDataPlot(t *testing.T) {
 		t.Error(err)
 	}
 	if skip != "" {
-		t.Skipf(skip)
+		t.Skip(skip)
 	}
 
 	refId := "A"
