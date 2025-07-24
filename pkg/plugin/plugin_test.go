@@ -15,7 +15,7 @@ func TestNewDataSetDatasource(t *testing.T) {
 		JSONData:                []byte(`{"scalyrUrl":"https://app.scalyr.com"}`),
 		DecryptedSecureJSONData: map[string]string{"apiKey": "key"},
 	}
-	if _, err := NewDataSetDatasource(settings); err != nil {
+	if _, err := NewDataSetDatasource(context.Background(), settings); err != nil {
 		t.Error(err)
 	}
 }
@@ -55,7 +55,7 @@ func liveDatasource() (*DataSetDatasource, string, error) {
 		JSONData:                []byte(fmt.Sprintf(`{"scalyrUrl":"%s"}`, scalyrUrl)),
 		DecryptedSecureJSONData: map[string]string{"apiKey": apiKey},
 	}
-	datasource, err := NewDataSetDatasource(settings)
+	datasource, err := NewDataSetDatasource(context.Background(), settings)
 	if err != nil {
 		return nil, "", err
 	}

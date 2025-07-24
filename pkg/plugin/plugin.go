@@ -15,7 +15,7 @@ import (
 	"github.com/grafana/grafana-plugin-sdk-go/data"
 )
 
-func NewDataSetDatasource(settings backend.DataSourceInstanceSettings) (instancemgmt.Instance, error) {
+func NewDataSetDatasource(ctx context.Context, settings backend.DataSourceInstanceSettings) (instancemgmt.Instance, error) {
 	var unsecure struct {
 		ScalyrUrl string `json:"scalyrUrl"`
 	}
