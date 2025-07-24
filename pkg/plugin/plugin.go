@@ -227,11 +227,12 @@ func displayPQData(result *LRQResult, response backend.DataResponse) backend.Dat
 				case float64:
 					res[i] = val[idx].(float64)
 				case string:
-					if val[idx] == "Infinity" {
+					switch val[idx] {
+					case "Infinity":
 						res[i] = math.Inf(1)
-					} else if val[idx] == "-Infinity" {
+					case "-Infinity":
 						res[i] = math.Inf(-1)
-					} else if val[idx] == "NaN" {
+					case "NaN":
 						res[i] = math.NaN()
 					}
 				}
