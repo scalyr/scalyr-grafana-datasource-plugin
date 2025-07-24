@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.1.5
+
+- Updated grafana-plugin-sdk-go to 0.250.0
+
 ## 3.1.4
 
 - Healthcheck bugfix, thanks @lutzwillek-tomtom

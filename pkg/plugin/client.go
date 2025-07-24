@@ -57,7 +57,7 @@ func NewDataSetClient(dataSetUrl string, apiKey string) DataSetClient {
 }
 
 func (d *dataSetClient) newRequest(method, url string, body io.Reader) (*http.Request, error) {
-	const VERSION = "3.1.4"
+	const VERSION = "3.1.5"
 
 	if err := d.rateLimiter.Wait(context.Background()); err != nil {
 		log.DefaultLogger.Error("error applying rate limiter", "err", err)
@@ -127,7 +127,7 @@ loop:
 		}
 
 		respBytes, err := io.ReadAll(resp.Body)
-		resp.Body.Close()
+		resp.Body.Close() // nolint
 		if err != nil {
 			log.DefaultLogger.Error("error reading response from DataSet", "err", err)
 			return nil, err
@@ -199,7 +199,7 @@ loop:
 		} else {
 			// Read/close the body so the client's transport can re-use a persistent tcp connection
 			_, err := io.ReadAll(resp.Body)
-			resp.Body.Close()
+			resp.Body.Close() // nolint
 			if err != nil {
 				log.DefaultLogger.Warn("error reading delete response from DataSet", "err", err)
 			}
@@ -243,7 +243,7 @@ func (d *dataSetClient) DoFacetRequest(ctx context.Context, req FacetRequest) (i
 		log.DefaultLogger.Error("error sending request to DataSet", "err", err)
 		return 0, err
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() // nolint
 
 	respBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
