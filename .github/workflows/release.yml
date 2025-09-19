@@ -4,9 +4,9 @@ on:
     tags:
       - '[0-9]+.[0-9]+.[0-9]+'
 permissions:
-  # Write permissions required to create a release
-  # Ref: https://stackoverflow.com/a/69941765
+  id-token: write
   contents: write
+  attestations: write
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -99,4 +99,8 @@ jobs:
           files: |
             sentinelone-dataset-datasource-${{ steps.version.outputs.version }}.zip
             SHA256SUMS
+      - uses: grafana/plugin-actions/build-plugin@main
+        with:
+          policy_token: ${{ secrets.GRAFANA_API_KEY }}
+          attestation: true
       # TODO Consider automating the grafana.com publish process here
