@@ -46,7 +46,7 @@ func NewDataSetClient(dataSetUrl string, apiKey string) DataSetClient {
 
 	// TODO Are there alternate approaches to implementing rate limits via the Grafana SDK?
 	//      Consult with Grafana support about this, potentially there's a simplier option.
-	rateLimiter := rate.NewLimiter(100*rate.Every(1*time.Minute), 100) // 100 "requests" / minute
+	rateLimiter := rate.NewLimiter(100*rate.Every(1*time.Minute), 100) // 100 LRQ sessions / minute
 
 	return &dataSetClient{
 		dataSetUrl:  dataSetUrl,

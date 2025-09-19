@@ -10,7 +10,7 @@ import (
 	"sync"
 	"testing"
 	"time"
-	
+
 	"golang.org/x/time/rate"
 )
 
@@ -22,16 +22,16 @@ func TestClientRateLimiter(t *testing.T) {
 	}{
 		requestTimesByMethod: make(map[string][]time.Time),
 	}
-	
+
 	mockedServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		const totalSteps = 2
-		
+
 		mockedServerState.mutex.Lock()
 		defer mockedServerState.mutex.Unlock()
-		
+
 		mockedServerState.requestTimesByMethod[r.Method] = append(mockedServerState.requestTimesByMethod[r.Method], time.Now())
 		t.Logf("request %s %s %s", time.Now().Format("15:04:05"), r.Method, r.URL.String())
-		
+
 		if r.Method == http.MethodPost {
 			sessionId := mockedServerState.nextSessionId
 			mockedServerState.nextSessionId++
@@ -50,14 +50,14 @@ func TestClientRateLimiter(t *testing.T) {
 		}
 	}))
 	defer mockedServer.Close()
-	
+
 	datasetClient := &dataSetClient{
 		dataSetUrl:  mockedServer.URL,
 		apiKey:      "<api-key>",
 		netClient:   &http.Client{},
 		rateLimiter: rate.NewLimiter(1*rate.Every(1*time.Second), 1),
 	}
-	
+
 	request := LRQRequest{
 		QueryType: PQ,
 		StartTime: time.Now().Add(-4 * time.Hour).Unix(),
@@ -67,7 +67,7 @@ func TestClientRateLimiter(t *testing.T) {
 			ResultType: TABLE,
 		},
 	}
-	
+
 	var waitGroup sync.WaitGroup
 	for i := 0; i < 3; i++ {
 		waitGroup.Add(1)
@@ -89,20 +89,20 @@ func TestClientRateLimiter(t *testing.T) {
 		}
 		return rv
 	}
-	
+
 	// The rate limiter is set to only allow one session (POST request) per second.
 	// Verify that the minimum amount of time between consecutive POST requests is at least one second.
 	if diff := minTimeDiff(mockedServerState.requestTimesByMethod[http.MethodPost]); diff.Round(time.Second) < time.Second {
 		t.Errorf("expected >= 1s, actual = %v", diff)
 	}
-	
+
 	// There are no restrictions on GET or DELETE requests.
 	// Verify that the minimum amount of time between non-POST requests is less than 500 milliseconds.
 	var requestTimes []time.Time
 	requestTimes = append(requestTimes, mockedServerState.requestTimesByMethod[http.MethodGet]...)
 	requestTimes = append(requestTimes, mockedServerState.requestTimesByMethod[http.MethodDelete]...)
 	sort.Slice(requestTimes, func(i, j int) bool { return requestTimes[i].Before(requestTimes[j]) })
-	if diff := minTimeDiff(requestTimes); diff.Round(time.Millisecond) > 500 * time.Millisecond {
+	if diff := minTimeDiff(requestTimes); diff.Round(time.Millisecond) > 500*time.Millisecond {
 		t.Errorf("expected < 500ms, actual = %v", diff)
 	}
 }
