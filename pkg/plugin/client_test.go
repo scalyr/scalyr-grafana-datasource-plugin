@@ -32,20 +32,29 @@ func TestClientRateLimiter(t *testing.T) {
 		mockedServerState.requestTimesByMethod[r.Method] = append(mockedServerState.requestTimesByMethod[r.Method], time.Now())
 		t.Logf("request %s %s %s", time.Now().Format("15:04:05"), r.Method, r.URL.String())
 
-		if r.Method == http.MethodPost {
+		switch r.Method {
+		case http.MethodPost:
 			sessionId := mockedServerState.nextSessionId
 			mockedServerState.nextSessionId++
 			w.WriteHeader(http.StatusOK)
-			w.Write([]byte(fmt.Sprintf("{\"id\":\"%d\",\"stepsCompleted\":0,\"totalSteps\":%d}", sessionId, totalSteps)))
-		} else if r.Method == http.MethodGet {
+			_, err := fmt.Fprintf(w, "{\"id\":\"%d\",\"stepsCompleted\":0,\"totalSteps\":%d}", sessionId, totalSteps)
+			if err != nil {
+				t.Fatalf("failed to write response: %v", err)
+			}
+
+		case http.MethodGet:
 			sessionId := r.URL.Path
 			lastStepSeen, err := strconv.Atoi(r.URL.Query().Get("lastStepSeen"))
 			if err != nil {
 				t.Fatalf("failed to parse path %s: %v", r.URL.String(), err)
 			}
 			w.WriteHeader(http.StatusOK)
-			w.Write([]byte(fmt.Sprintf("{\"id\":\"%s\",\"stepsCompleted\":%d,\"totalSteps\":%d}", sessionId, lastStepSeen+1, totalSteps)))
-		} else if r.Method == http.MethodDelete {
+			_, err = fmt.Fprintf(w, "{\"id\":\"%s\",\"stepsCompleted\":%d,\"totalSteps\":%d}", sessionId, lastStepSeen+1, totalSteps)
+			if err != nil {
+				t.Fatalf("failed to write response: %v", err)
+			}
+
+		case http.MethodDelete:
 			w.WriteHeader(http.StatusOK)
 		}
 	}))
@@ -69,14 +78,21 @@ func TestClientRateLimiter(t *testing.T) {
 	}
 
 	var waitGroup sync.WaitGroup
+	var clientErr error
 	for i := 0; i < 3; i++ {
 		waitGroup.Add(1)
 		go func() {
 			defer waitGroup.Done()
-			datasetClient.DoLRQRequest(context.Background(), request)
+			_, err := datasetClient.DoLRQRequest(context.Background(), request)
+			if err != nil {
+				clientErr = err
+			}
 		}()
 	}
 	waitGroup.Wait()
+	if clientErr != nil {
+		t.Fatalf("failed to execute (at least one) request: %v", clientErr)
+	}
 
 	// Find the minimum time difference between consecutive elements.
 	// The elements are expected to be already sorted ascendingly.
