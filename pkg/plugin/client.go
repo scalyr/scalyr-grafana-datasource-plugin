@@ -46,7 +46,7 @@ func NewDataSetClient(dataSetUrl string, apiKey string) DataSetClient {
 
 	// TODO Are there alternate approaches to implementing rate limits via the Grafana SDK?
 	//      Consult with Grafana support about this, potentially there's a simplier option.
-	rateLimiter := rate.NewLimiter(100*rate.Every(1*time.Minute), 100) // 100 requests / minute
+	rateLimiter := rate.NewLimiter(100*rate.Every(1*time.Minute), 100) // 100 "requests" / minute
 
 	return &dataSetClient{
 		dataSetUrl:  dataSetUrl,
@@ -57,11 +57,16 @@ func NewDataSetClient(dataSetUrl string, apiKey string) DataSetClient {
 }
 
 func (d *dataSetClient) newRequest(method, url string, body io.Reader) (*http.Request, error) {
-	const VERSION = "3.1.5"
+	const VERSION = "3.1.6"
 
-	if err := d.rateLimiter.Wait(context.Background()); err != nil {
-		log.DefaultLogger.Error("error applying rate limiter", "err", err)
-		return nil, err
+	// Apply the rate limiter to the initial POST request of the LRQ api session.
+	// This ensures that later LRQ api "pings" (ie GET requests) are not rate-limited;
+	// timely pings are necessary to prevent the LRQ session from being terminated.
+	if method == http.MethodPost {
+		if err := d.rateLimiter.Wait(context.Background()); err != nil {
+			log.DefaultLogger.Error("error applying rate limiter", "err", err)
+			return nil, err
+		}
 	}
 
 	request, err := http.NewRequest(method, url, body)
