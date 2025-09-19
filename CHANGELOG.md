@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.6
+
+- Rate limit DataSet LRQ sessions rather than HTTP requests
+  - Prevents LRQ sessions from being terminated if a LRQ ping is throttled
+
 ## 3.1.5
 
 - Updated grafana-plugin-sdk-go to 0.250.0
