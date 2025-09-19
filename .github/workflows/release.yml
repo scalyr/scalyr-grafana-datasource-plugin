@@ -90,6 +90,9 @@ jobs:
           popd
           popd
           plugincheck2 sentinelone-dataset-datasource-${{ steps.version.outputs.version }}.zip
+      - uses: actions/attest-build-provenance@v3
+        with:
+          subject-path: sentinelone-dataset-datasource-${{ steps.version.outputs.version }}.zip
       - name: Generate changelog
         run: awk '/^## / {s++} s==1 {print} s==2 {exit}' CHANGELOG.md | tail -n+2 > RELEASE_CHANGELOG.md
       - uses: softprops/action-gh-release@v1
@@ -99,8 +102,4 @@ jobs:
           files: |
             sentinelone-dataset-datasource-${{ steps.version.outputs.version }}.zip
             SHA256SUMS
-      - uses: grafana/plugin-actions/build-plugin@main
-        with:
-          policy_token: ${{ secrets.GRAFANA_API_KEY }}
-          attestation: true
       # TODO Consider automating the grafana.com publish process here
