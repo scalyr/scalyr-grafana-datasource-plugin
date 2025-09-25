@@ -275,24 +275,47 @@ func displayPQData(result *LRQResult, response backend.DataResponse) backend.Dat
 	return response
 }
 
-// CheckHealth handles health checks sent from Grafana to the plugin.
-// The main use case for these health checks is the test button on the
-// datasource configuration page which allows users to verify that
-// a datasource is working as expected.
+// CheckHealth handles health checks sent from the Grafana server to the plugin.
+// Used by the test button on the config page to validate the DataSet url and api key.
 func (d *DataSetDatasource) CheckHealth(ctx context.Context, req *backend.CheckHealthRequest) (*backend.CheckHealthResult, error) {
-	statusCode, err := d.dataSetClient.DoFacetRequest(ctx, FacetRequest{
-		QueryType: "facet",
-		MaxCount:  1,
-		Field:     "test",
-	})
-	if err != nil {
-		return nil, err
-	}
+	const refId = "A"
+	const powerQuery = "grafana_plugin_checkhealth=1 | limit 1"
 
-	if statusCode != 200 {
+	resp, err := d.QueryData(
+		ctx,
+		&backend.QueryDataRequest{
+			Queries: []backend.DataQuery{
+				{
+					RefID: refId,
+					TimeRange: backend.TimeRange{
+						From: time.Now().Add(-1 * time.Minute),
+						To:   time.Now(),
+					},
+					JSON: []byte(fmt.Sprintf(`{"expression":"%s","queryType":"Power Query"}`, powerQuery)),
+				},
+			},
+		},
+	)
+	if err != nil {
 		return &backend.CheckHealthResult{
 			Status:  backend.HealthStatusError,
-			Message: "Failed to connect to DataSet, please inspect the Grafana server log for details",
+			Message: "Failed to connect to DataSet: QueryData failed: " + err.Error(),
+		}, nil
+	}
+
+	dataResp, ok := resp.Responses[refId]
+	if !ok {
+		return &backend.CheckHealthResult{
+			Status:  backend.HealthStatusError,
+			Message: "Failed to connect to DataSet: No response for RefID " + refId,
+		}, nil
+	}
+
+	// DataResponse.Error is set when the http status code is not 200
+	if dataResp.Error != nil {
+		return &backend.CheckHealthResult{
+			Status:  backend.HealthStatusError,
+			Message: "Failed to connect to DataSet: DataResponse.Error: " + dataResp.Error.Error(),
 		}, nil
 	}
 

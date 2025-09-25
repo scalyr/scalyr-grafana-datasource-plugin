@@ -130,7 +130,7 @@ func TestLiveQueryDataPlot(t *testing.T) {
 					},
 					Interval:      1 * time.Minute,
 					MaxDataPoints: 1000,
-					JSON:          []byte(`{"expression":"count(severity != 3)","queryType":"Standard","breakDownFacetValue":"severity"}`),
+					JSON:          []byte(`{"expression":"count(serverHost='scalyr-metalog')","queryType":"Standard","breakDownFacetValue":"tag"}`),
 				},
 			},
 		},

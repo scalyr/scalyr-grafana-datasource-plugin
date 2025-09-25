@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.7
+
+- Plugin setup changes:
+  - Use a less expensive api key check
+  - Ensure the default DataSet url is set
+
 ## 3.1.6
 
 - Rate limit DataSet LRQ sessions rather than HTTP requests
