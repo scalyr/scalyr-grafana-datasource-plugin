@@ -85,6 +85,7 @@ func (d *DataSetDatasource) query(ctx context.Context, query backend.DataQuery) 
 			Pq: &PQOptions{
 				Query:      qm.Expression,
 				ResultType: TABLE,
+				Frequency:  HIGH,
 			},
 		}
 	} else {

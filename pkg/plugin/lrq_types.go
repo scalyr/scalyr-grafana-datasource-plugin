@@ -19,7 +19,7 @@ const COLUMN = "COLUMN"
 // PLOT is a value for both a request "type" and a PQ "resultType"
 const PLOT = "PLOT"
 
-// Possible values for "frequency" of PLOT requests
+// Possible values for "frequency"
 const LOW = "LOW"
 const HIGH = "HIGH"
 
@@ -55,6 +55,7 @@ type TopFacetOptions struct {
 type PQOptions struct {
 	Query      string `json:"query"`
 	ResultType string `json:"resultType"`
+	Frequency  string `json:"frequency"`
 }
 
 type PlotOptions struct {

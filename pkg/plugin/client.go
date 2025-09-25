@@ -57,7 +57,7 @@ func NewDataSetClient(dataSetUrl string, apiKey string) DataSetClient {
 }
 
 func (d *dataSetClient) newRequest(method, url string, body io.Reader) (*http.Request, error) {
-	const VERSION = "3.1.6"
+	const VERSION = "3.1.7"
 
 	// Apply the rate limiter to the initial POST request of the LRQ api session.
 	// This ensures that later LRQ api "pings" (ie GET requests) are not rate-limited;
@@ -79,7 +79,7 @@ func (d *dataSetClient) newRequest(method, url string, body io.Reader) (*http.Re
 	// However RoundTrip should not modify the request (ref: go doc net/http.RoundTripper)
 	request.Header.Set("Authorization", "Bearer "+d.apiKey)
 	request.Header.Set("Content-Type", "application/json")
-	request.Header.Set("User-Agent", "sentinelone-dataset-datasource/"+VERSION)
+	request.Header.Set("User-Agent", "grafana-sentinelone-dataset-datasource/"+VERSION)
 
 	return request, nil
 }
