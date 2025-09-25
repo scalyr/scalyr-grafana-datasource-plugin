@@ -311,20 +311,11 @@ func (d *DataSetDatasource) CheckHealth(ctx context.Context, req *backend.CheckH
 		}, nil
 	}
 
+	// DataResponse.Error is set when the http status code is not 200
 	if dataResp.Error != nil {
 		return &backend.CheckHealthResult{
 			Status:  backend.HealthStatusError,
 			Message: "Failed to connect to DataSet: DataResponse.Error: " + dataResp.Error.Error(),
-		}, nil
-	}
-
-	// FIXME Look into upgrading to a later version and add a liveDataSource test
-	// NB At least for grafana-plugin-sdk-go v0.250.0, backend.DataResponse.Status is not set.
-	// Thankfully backend.DataResponse.Error is set when the http status code is not 200.
-	if dataResp.Status != backend.StatusUnknown && dataResp.Status != 0 && dataResp.Status != backend.StatusOK {
-		return &backend.CheckHealthResult{
-			Status:  backend.HealthStatusError,
-			Message: fmt.Sprintf("Failed to connect to DataSet: Received HTTP status code %d", dataResp.Status),
 		}, nil
 	}
 
