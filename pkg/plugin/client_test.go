@@ -74,6 +74,7 @@ func TestClientRateLimiter(t *testing.T) {
 		Pq: &PQOptions{
 			Query:      "message contains 'error'\n| columns timestamp,severity,message",
 			ResultType: TABLE,
+			Frequency:  HIGH,
 		},
 	}
 

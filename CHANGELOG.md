@@ -5,6 +5,7 @@
 - Plugin setup changes:
   - Use a less expensive api key check
   - Ensure the default DataSet url is set
+- Set the power query frequency to high (for performance)
 
 ## 3.1.6
 
